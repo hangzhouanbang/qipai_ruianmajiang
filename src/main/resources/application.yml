@@ -3,12 +3,5 @@ spring:
     mongodb:
       uri: mongodb://localhost:27017/qipai_ruianmajiang
       
-  application:
-    name: qipai-ruianmajiang
 server:
   port: 2001
-  
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://127.0.0.1:8761/eureka/
