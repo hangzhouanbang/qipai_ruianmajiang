@@ -63,4 +63,10 @@ public class MajiangGameQueryService {
 		return gamePlayerDboDao.findByGameId(gameId);
 	}
 
+	public void leaveGame(String playerId, String gameId) {
+		GamePlayerDbo gamePlayerDbo = gamePlayerDboDao.findByPlayerIdAndGameId(playerId, gameId);
+		gamePlayerDbo.setState(GamePlayerState.leave.name());
+		gamePlayerDboDao.save(gamePlayerDbo);
+	}
+
 }

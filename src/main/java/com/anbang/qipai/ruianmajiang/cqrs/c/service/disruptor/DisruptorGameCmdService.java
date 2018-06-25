@@ -3,8 +3,10 @@ package com.anbang.qipai.ruianmajiang.cqrs.c.service.disruptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.anbang.qipai.ruianmajiang.cqrs.c.domain.PlayerNotInGameException;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.GameCmdService;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.impl.GameCmdServiceImpl;
+import com.dml.mpgame.GamePlayerNotFoundException;
 import com.highto.framework.concurrent.DeferredResult;
 import com.highto.framework.ddd.CommonCommand;
 
@@ -28,6 +30,26 @@ public class DisruptorGameCmdService extends DisruptorCmdServiceBase implements 
 			result.getResult();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public String leaveGame(String playerId) throws PlayerNotInGameException, GamePlayerNotFoundException {
+		CommonCommand cmd = new CommonCommand(GameCmdServiceImpl.class.getName(), "leaveGame", playerId);
+		DeferredResult<String> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd, () -> {
+			String gameId = gameCmdServiceImpl.leaveGame(cmd.getParameter());
+			return gameId;
+		});
+		try {
+			return result.getResult();
+		} catch (Exception e) {
+			if (e instanceof PlayerNotInGameException) {
+				throw (PlayerNotInGameException) e;
+			} else if (e instanceof GamePlayerNotFoundException) {
+				throw (GamePlayerNotFoundException) e;
+			} else {
+				throw new RuntimeException(e);
+			}
 		}
 	}
 

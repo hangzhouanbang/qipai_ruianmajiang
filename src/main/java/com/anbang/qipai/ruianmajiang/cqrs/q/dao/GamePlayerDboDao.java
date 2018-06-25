@@ -10,4 +10,6 @@ public interface GamePlayerDboDao {
 
 	List<GamePlayerDbo> findByGameId(String gameId);
 
+	GamePlayerDbo findByPlayerIdAndGameId(String playerId, String gameId);
+
 }

@@ -30,13 +30,14 @@ public class MajiangGameManager {
 		playerIdGameIdMap.put(playerId, gameId);
 	}
 
-	public void leave(String playerId) throws PlayerNotInGameException, GamePlayerNotFoundException {
+	public String leave(String playerId) throws PlayerNotInGameException, GamePlayerNotFoundException {
 		String gameId = playerIdGameIdMap.get(playerId);
 		if (gameId == null) {
 			throw new PlayerNotInGameException();
 		}
 		MajiangGame game = gameIdMajiangGameMap.get(gameId);
 		game.leave(playerId);
+		return gameId;
 	}
 
 	public MajiangGame findGameById(String gameId) {

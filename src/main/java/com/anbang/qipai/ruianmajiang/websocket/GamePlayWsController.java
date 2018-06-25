@@ -1,6 +1,7 @@
 package com.anbang.qipai.ruianmajiang.websocket;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -12,7 +13,10 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import com.anbang.qipai.ruianmajiang.cqrs.c.service.GameCmdService;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.PlayerAuthService;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.GamePlayerDbo;
+import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangGameQueryService;
 import com.google.gson.Gson;
 
 @Component
@@ -22,6 +26,12 @@ public class GamePlayWsController extends TextWebSocketHandler {
 
 	@Autowired
 	private PlayerAuthService playerAuthService;
+
+	@Autowired
+	private GameCmdService gameCmdService;
+
+	@Autowired
+	private MajiangGameQueryService majiangGameQueryService;
 
 	private ExecutorService executorService = Executors.newCachedThreadPool();
 
@@ -48,8 +58,18 @@ public class GamePlayWsController extends TextWebSocketHandler {
 
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+		String closedPlayerId = wsNotifier.findPlayerIdBySessionId(session.getId());
 		wsNotifier.removeSession(session.getId());
-		// TODO 离开逻辑
+		String gameId = gameCmdService.leaveGame(closedPlayerId);
+		majiangGameQueryService.leaveGame(closedPlayerId, gameId);
+		// 通知其他玩家
+		List<GamePlayerDbo> gamePlayerDboList = majiangGameQueryService.findGamePlayerDbosForGame(gameId);
+		gamePlayerDboList.forEach((gamePlayerDbo) -> {
+			String playerId = gamePlayerDbo.getPlayerId();
+			if (!playerId.equals(closedPlayerId)) {
+				wsNotifier.
+			}
+		});
 	}
 
 	@Override

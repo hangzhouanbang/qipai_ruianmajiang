@@ -10,4 +10,6 @@ public interface GamePlayerDboRepository extends MongoRepository<GamePlayerDbo, 
 
 	List<GamePlayerDbo> findByGameId(String gameId);
 
+	GamePlayerDbo findByPlayerIdAndGameId(String playerId, String gameId);
+
 }

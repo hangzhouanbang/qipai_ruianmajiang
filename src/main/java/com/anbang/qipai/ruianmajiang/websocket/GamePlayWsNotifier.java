@@ -19,9 +19,9 @@ public class GamePlayWsNotifier {
 
 	private Map<String, Long> sessionIdActivetimeMap = new ConcurrentHashMap<>();
 
-	private Map<String, String> sessionIdMemberIdMap = new ConcurrentHashMap<>();
+	private Map<String, String> sessionIdPlayerIdMap = new ConcurrentHashMap<>();
 
-	private Map<String, String> memberIdSessionIdMap = new ConcurrentHashMap<>();
+	private Map<String, String> playerIdSessionIdMap = new ConcurrentHashMap<>();
 
 	private ExecutorService executorService = Executors.newCachedThreadPool();
 
@@ -31,9 +31,9 @@ public class GamePlayWsNotifier {
 		WebSocketSession removedSession = idSessionMap.remove(id);
 		sessionIdActivetimeMap.remove(id);
 		if (removedSession != null) {
-			String removedMemberId = sessionIdMemberIdMap.remove(id);
-			if (removedMemberId != null) {
-				memberIdSessionIdMap.remove(removedMemberId);
+			String removedPlayerId = sessionIdPlayerIdMap.remove(id);
+			if (removedPlayerId != null) {
+				playerIdSessionIdMap.remove(removedPlayerId);
 			}
 		}
 		return removedSession;
@@ -46,7 +46,7 @@ public class GamePlayWsNotifier {
 	 * @return
 	 */
 	public boolean isRawSession(String id) {
-		return sessionIdMemberIdMap.get(id) == null;
+		return sessionIdPlayerIdMap.get(id) == null;
 	}
 
 	public void addSession(WebSocketSession session) {
@@ -54,17 +54,21 @@ public class GamePlayWsNotifier {
 		sessionIdActivetimeMap.put(session.getId(), System.currentTimeMillis());
 	}
 
-	public void updateSession(String sessionId, String memberId) throws SessionAlreadyExistsException {
-		if (memberIdSessionIdMap.containsKey(memberId)) {
+	public void updateSession(String sessionId, String playerId) throws SessionAlreadyExistsException {
+		if (playerIdSessionIdMap.containsKey(playerId)) {
 			throw new SessionAlreadyExistsException();
 		}
 		sessionIdActivetimeMap.put(sessionId, System.currentTimeMillis());
-		sessionIdMemberIdMap.put(sessionId, memberId);
-		memberIdSessionIdMap.put(memberId, sessionId);
+		sessionIdPlayerIdMap.put(sessionId, playerId);
+		playerIdSessionIdMap.put(playerId, sessionId);
 	}
 
 	public void updateSession(String id) {
 		sessionIdActivetimeMap.put(id, System.currentTimeMillis());
+	}
+
+	public String findPlayerIdBySessionId(String sessionId) {
+		return sessionIdPlayerIdMap.get(sessionId);
 	}
 
 	@Scheduled(cron = "0/10 * * * * ?")

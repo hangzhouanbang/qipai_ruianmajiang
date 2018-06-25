@@ -25,4 +25,9 @@ public class MongodbGamePlayerDboDao implements GamePlayerDboDao {
 		return repository.findByGameId(gameId);
 	}
 
+	@Override
+	public GamePlayerDbo findByPlayerIdAndGameId(String playerId, String gameId) {
+		return repository.findByPlayerIdAndGameId(playerId, gameId);
+	}
+
 }
