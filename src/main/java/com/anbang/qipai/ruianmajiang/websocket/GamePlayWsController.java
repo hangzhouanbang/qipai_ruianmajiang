@@ -67,7 +67,7 @@ public class GamePlayWsController extends TextWebSocketHandler {
 		gamePlayerDboList.forEach((gamePlayerDbo) -> {
 			String playerId = gamePlayerDbo.getPlayerId();
 			if (!playerId.equals(closedPlayerId)) {
-				wsNotifier.
+				wsNotifier.notifyToQuery(playerId, QueryScope.gameInfo.name());
 			}
 		});
 	}

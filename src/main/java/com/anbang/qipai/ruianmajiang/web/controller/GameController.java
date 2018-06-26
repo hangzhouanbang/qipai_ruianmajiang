@@ -77,6 +77,25 @@ public class GameController {
 		return vo;
 	}
 
-	// TODO: 都点了准备后,创建麻将 “局”
+	/**
+	 * 最开始的准备,不适用下一盘的准备
+	 * 
+	 * @param token
+	 * @return
+	 */
+	@RequestMapping(value = "/ready")
+	@ResponseBody
+	public CommonVO ready(String token) {
+		CommonVO vo = new CommonVO();
+		Map data = new HashMap();
+		vo.setData(data);
+		String playerId = playerAuthService.getPlayerIdByToken(token);
+		if (playerId == null) {
+			vo.setSuccess(false);
+			vo.setMsg("invalid token");
+			return vo;
+		}
+		String gameId = gameCmdService.readyForGame(playerId);
+	}
 
 }

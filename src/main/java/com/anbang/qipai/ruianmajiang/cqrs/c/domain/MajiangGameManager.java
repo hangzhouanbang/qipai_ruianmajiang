@@ -3,9 +3,9 @@ package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.dml.mpgame.FixedNumberOfPlayersGameReadyStrategy;
 import com.dml.mpgame.Game;
-import com.dml.mpgame.GamePlayerNotFoundException;
-import com.dml.mpgame.proxy.HostGameProxy;
+import com.dml.mpgame.HostGameLeaveStrategy;
 
 public class MajiangGameManager {
 
@@ -17,6 +17,8 @@ public class MajiangGameManager {
 			boolean dapao) {
 
 		Game newGame = new Game();
+		newGame.setLeaveStrategy(new HostGameLeaveStrategy(playerId));
+		newGame.setReadyStrategy(new FixedNumberOfPlayersGameReadyStrategy(renshu));
 		newGame.create(gameId, playerId);
 		MajiangGame majiangGame = new MajiangGame();
 		majiangGame.setDapao(dapao);
@@ -24,19 +26,29 @@ public class MajiangGameManager {
 		majiangGame.setPanshu(panshu);
 		majiangGame.setRenshu(renshu);
 		majiangGame.setTaishu(taishu);
-		majiangGame.setGame(new HostGameProxy(newGame));
+		majiangGame.setGame(newGame);
 		gameIdMajiangGameMap.put(gameId, majiangGame);
 
 		playerIdGameIdMap.put(playerId, gameId);
 	}
 
-	public String leave(String playerId) throws PlayerNotInGameException, GamePlayerNotFoundException {
+	public String leave(String playerId) throws Exception {
 		String gameId = playerIdGameIdMap.get(playerId);
 		if (gameId == null) {
 			throw new PlayerNotInGameException();
 		}
 		MajiangGame game = gameIdMajiangGameMap.get(gameId);
 		game.leave(playerId);
+		return gameId;
+	}
+
+	public String ready(String playerId, long currentTime) throws Exception {
+		String gameId = playerIdGameIdMap.get(playerId);
+		if (gameId == null) {
+			throw new PlayerNotInGameException();
+		}
+		MajiangGame game = gameIdMajiangGameMap.get(gameId);
+		game.ready(playerId, currentTime);
 		return gameId;
 	}
 

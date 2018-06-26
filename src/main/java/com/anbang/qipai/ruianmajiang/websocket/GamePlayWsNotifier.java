@@ -1,6 +1,7 @@
 package com.anbang.qipai.ruianmajiang.websocket;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -8,6 +9,7 @@ import java.util.concurrent.Executors;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import com.google.gson.Gson;
@@ -69,6 +71,25 @@ public class GamePlayWsNotifier {
 
 	public String findPlayerIdBySessionId(String sessionId) {
 		return sessionIdPlayerIdMap.get(sessionId);
+	}
+
+	public void notifyToQuery(String playerId, String scope) {
+		executorService.submit(() -> {
+			CommonMO mo = new CommonMO();
+			mo.setMsg("query");
+			Map data = new HashMap();
+			data.put("scope", scope);
+			mo.setData(data);
+			String payLoad = gson.toJson(mo);
+			WebSocketSession session = idSessionMap.get(playerIdSessionIdMap.get(playerId));
+			if (session != null) {
+				try {
+					session.sendMessage(new TextMessage(payLoad));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 
 	@Scheduled(cron = "0/10 * * * * ?")
