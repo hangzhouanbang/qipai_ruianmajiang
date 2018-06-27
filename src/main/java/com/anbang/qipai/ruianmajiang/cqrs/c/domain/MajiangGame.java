@@ -1,11 +1,11 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
 import com.dml.majiang.Ju;
+import com.dml.majiang.MenFengDongZhuangDeterminer;
 import com.dml.majiang.NoHuapaiRandomAvaliablePaiFiller;
 import com.dml.majiang.Pan;
-import com.dml.majiang.PositionDongZhuangDeterminer;
 import com.dml.majiang.RandomGuipaiDeterminer;
-import com.dml.majiang.RandomMustHasDongPlayersPositionDeterminer;
+import com.dml.majiang.RandomMustHasDongPlayersMenFengDeterminer;
 import com.dml.mpgame.Game;
 import com.dml.mpgame.GameState;
 
@@ -26,8 +26,8 @@ public class MajiangGame {
 		game.ready(playerId);
 		if (game.getState().equals(GameState.playing)) {// 游戏开始了，那么要创建新的局
 			ju = new Ju();
-			ju.setPlayersPositionDeterminer(new RandomMustHasDongPlayersPositionDeterminer(currentTime));
-			ju.setZhuangDeterminerForFirstPan(new PositionDongZhuangDeterminer());
+			ju.setPlayersMenFengDeterminer(new RandomMustHasDongPlayersMenFengDeterminer(currentTime));
+			ju.setZhuangDeterminerForFirstPan(new MenFengDongZhuangDeterminer());
 			ju.setAvaliablePaiFiller(new NoHuapaiRandomAvaliablePaiFiller(currentTime + 1));
 			ju.setGuipaiDeterminer(new RandomGuipaiDeterminer(currentTime + 2));
 			Pan firstPan = new Pan();
@@ -35,7 +35,7 @@ public class MajiangGame {
 			ju.setCurrentPan(firstPan);
 
 			// 开始定位置
-			ju.determinePlayersPosition();// TODO 必须强调是定第一盘的位置
+			ju.determinePlayersMenFengForFirstPan();
 
 			// 开始定第一盘庄家
 			ju.determineZhuangForFirstPan();
