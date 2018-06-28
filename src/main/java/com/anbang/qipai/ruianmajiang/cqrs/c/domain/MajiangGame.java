@@ -6,7 +6,6 @@ import com.dml.majiang.NoHuapaiRandomAvaliablePaiFiller;
 import com.dml.majiang.Pan;
 import com.dml.majiang.RandomGuipaiDeterminer;
 import com.dml.majiang.RandomMustHasDongPlayersMenFengDeterminer;
-import com.dml.majiang.SequentialAndNotGuipaiBaibanForShowFaPaiStrategy;
 import com.dml.majiang.ZhuangMoPaiInitialActionUpdater;
 import com.dml.mpgame.Game;
 import com.dml.mpgame.GameState;
@@ -32,7 +31,7 @@ public class MajiangGame {
 			ju.setZhuangDeterminerForFirstPan(new MenFengDongZhuangDeterminer());
 			ju.setAvaliablePaiFiller(new NoHuapaiRandomAvaliablePaiFiller(currentTime + 1));
 			ju.setGuipaiDeterminer(new RandomGuipaiDeterminer(currentTime + 2));
-			ju.setFaPaiStrategy(new SequentialAndNotGuipaiBaibanForShowFaPaiStrategy());
+			ju.setFaPaiStrategy(new RuianMajiangFaPaiStrategy());
 			ju.setInitialActionUpdater(new ZhuangMoPaiInitialActionUpdater());
 
 			Pan firstPan = new Pan();
@@ -62,7 +61,7 @@ public class MajiangGame {
 		}
 	}
 
-	public void action(String playerId, int actionId) {
+	public void action(String playerId, int actionId) throws Exception {
 		ju.action(playerId, actionId);
 	}
 
