@@ -95,7 +95,7 @@ public class GameController {
 			vo.setMsg("invalid token");
 			return vo;
 		}
-		String gameId = gameCmdService.readyForGame(playerId);
+		String gameId = gameCmdService.readyForGame(playerId, System.currentTimeMillis());
 	}
 
 }

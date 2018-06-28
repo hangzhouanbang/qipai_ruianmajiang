@@ -6,6 +6,8 @@ import com.dml.majiang.NoHuapaiRandomAvaliablePaiFiller;
 import com.dml.majiang.Pan;
 import com.dml.majiang.RandomGuipaiDeterminer;
 import com.dml.majiang.RandomMustHasDongPlayersMenFengDeterminer;
+import com.dml.majiang.SequentialAndNotGuipaiBaibanForShowFaPaiStrategy;
+import com.dml.majiang.ZhuangMoPaiInitialActionUpdater;
 import com.dml.mpgame.Game;
 import com.dml.mpgame.GameState;
 
@@ -26,15 +28,18 @@ public class MajiangGame {
 		game.ready(playerId);
 		if (game.getState().equals(GameState.playing)) {// 游戏开始了，那么要创建新的局
 			ju = new Ju();
-			ju.setPlayersMenFengDeterminer(new RandomMustHasDongPlayersMenFengDeterminer(currentTime));
+			ju.setPlayersMenFengDeterminerForFirstPan(new RandomMustHasDongPlayersMenFengDeterminer(currentTime));
 			ju.setZhuangDeterminerForFirstPan(new MenFengDongZhuangDeterminer());
 			ju.setAvaliablePaiFiller(new NoHuapaiRandomAvaliablePaiFiller(currentTime + 1));
 			ju.setGuipaiDeterminer(new RandomGuipaiDeterminer(currentTime + 2));
+			ju.setFaPaiStrategy(new SequentialAndNotGuipaiBaibanForShowFaPaiStrategy());
+			ju.setInitialActionUpdater(new ZhuangMoPaiInitialActionUpdater());
+
 			Pan firstPan = new Pan();
 			game.allPlayerIds().forEach((pid) -> firstPan.addPlayer(pid));
 			ju.setCurrentPan(firstPan);
 
-			// 开始定位置
+			// 开始定第一盘的门风
 			ju.determinePlayersMenFengForFirstPan();
 
 			// 开始定第一盘庄家
@@ -46,9 +51,19 @@ public class MajiangGame {
 			// 开始定财神
 			ju.determineGuipai();
 
-			// TODO 开始发牌
+			// 开始发牌
+			ju.faPai();
 
+			// 庄家可以摸第一张牌
+			ju.updateInitialAction();
+
+			// 庄家摸第一张牌,进入正式行牌流程
+			action(ju.getCurrentPan().getZhuangPlayerId(), 1);
 		}
+	}
+
+	public void action(String playerId, int actionId) {
+		ju.action(playerId, actionId);
 	}
 
 	public Game getGame() {
