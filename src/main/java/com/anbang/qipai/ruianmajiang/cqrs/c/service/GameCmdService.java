@@ -9,4 +9,6 @@ public interface GameCmdService {
 
 	String readyForGame(String playerId, Long currentTime) throws Exception;
 
+	void joinGame(String playerId, String gameId) throws Exception;
+
 }

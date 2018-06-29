@@ -19,6 +19,10 @@ public class MajiangGame {
 	private boolean dapao;
 	private Ju ju;
 
+	public void join(String playerId) throws Exception {
+		game.join(playerId);
+	}
+
 	public void leave(String playerId) throws Exception {
 		game.leave(playerId);
 	}

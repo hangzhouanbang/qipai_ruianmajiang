@@ -39,9 +39,6 @@ public class GameController {
 
 	/**
 	 * 新一局游戏
-	 * 
-	 * @param token
-	 * @return
 	 */
 	@RequestMapping(value = "/newgame")
 	@ResponseBody
@@ -53,6 +50,27 @@ public class GameController {
 		String token = playerAuthService.newSessionForPlayer(playerId);
 		Map data = new HashMap();
 		data.put("gameId", newGameId);
+		data.put("token", token);
+		vo.setData(data);
+		return vo;
+	}
+
+	/**
+	 * 加入游戏
+	 */
+	@RequestMapping(value = "/joingame")
+	@ResponseBody
+	public CommonVO joingame(String playerId, String gameId) {
+		CommonVO vo = new CommonVO();
+		try {
+			gameCmdService.joinGame(playerId, gameId);
+		} catch (Exception e) {
+			vo.setSuccess(false);
+			vo.setMsg(e.getClass().toString());
+			return vo;
+		}
+		String token = playerAuthService.newSessionForPlayer(playerId);
+		Map data = new HashMap();
 		data.put("token", token);
 		vo.setData(data);
 		return vo;

@@ -37,12 +37,14 @@ public class RuianMajiangFaPaiStrategy implements FaPaiStrategy {
 							player.addPublicPai(pai);
 						} else {
 							player.addShoupai(pai);
+							player.addPaiToGouXingCalculator(pai);
 						}
 					} else {// 白板不是鬼牌
 						if (pai.equals(MajiangPai.baiban)) { // 白板公示
 							player.addPublicPai(pai);
 						} else {
 							player.addShoupai(pai);
+							player.addPaiToGouXingCalculator(pai);
 						}
 					}
 				}

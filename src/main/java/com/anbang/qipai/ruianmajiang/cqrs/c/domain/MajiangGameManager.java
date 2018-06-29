@@ -32,6 +32,14 @@ public class MajiangGameManager {
 		playerIdGameIdMap.put(playerId, gameId);
 	}
 
+	public void join(String playerId, String gameId) throws Exception {
+		MajiangGame game = gameIdMajiangGameMap.get(gameId);
+		if (game == null) {
+			throw new MajinagGameNotFoundException();
+		}
+		game.join(playerId);
+	}
+
 	public String leave(String playerId) throws Exception {
 		String gameId = playerIdGameIdMap.get(playerId);
 		if (gameId == null) {
