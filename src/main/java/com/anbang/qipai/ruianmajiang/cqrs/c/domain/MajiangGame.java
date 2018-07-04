@@ -4,6 +4,7 @@ import com.dml.majiang.Ju;
 import com.dml.majiang.MenFengDongZhuangDeterminer;
 import com.dml.majiang.NoHuapaiRandomAvaliablePaiFiller;
 import com.dml.majiang.Pan;
+import com.dml.majiang.PanActionFrame;
 import com.dml.majiang.RandomGuipaiDeterminer;
 import com.dml.majiang.RandomMustHasDongPlayersMenFengDeterminer;
 import com.dml.majiang.ZhuangMoPaiInitialActionUpdater;
@@ -27,7 +28,7 @@ public class MajiangGame {
 		game.leave(playerId);
 	}
 
-	public void ready(String playerId, long currentTime) throws Exception {
+	public PanActionFrame ready(String playerId, long currentTime) throws Exception {
 		game.ready(playerId);
 		if (game.getState().equals(GameState.playing)) {// 游戏开始了，那么要创建新的局
 			ju = new Ju();
@@ -61,12 +62,14 @@ public class MajiangGame {
 			ju.updateInitialAction();
 
 			// 庄家摸第一张牌,进入正式行牌流程
-			action(ju.getCurrentPan().getZhuangPlayerId(), 1);
+			return action(ju.getCurrentPan().getZhuangPlayerId(), 1);
+		} else {
+			return null;
 		}
 	}
 
-	public void action(String playerId, int actionId) throws Exception {
-		ju.action(playerId, actionId);
+	public PanActionFrame action(String playerId, int actionId) throws Exception {
+		return ju.action(playerId, actionId);
 	}
 
 	public Game getGame() {
@@ -115,6 +118,14 @@ public class MajiangGame {
 
 	public void setDapao(boolean dapao) {
 		this.dapao = dapao;
+	}
+
+	public Ju getJu() {
+		return ju;
+	}
+
+	public void setJu(Ju ju) {
+		this.ju = ju;
 	}
 
 }

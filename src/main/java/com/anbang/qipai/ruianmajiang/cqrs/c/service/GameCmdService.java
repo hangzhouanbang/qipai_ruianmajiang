@@ -1,5 +1,8 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.service;
 
+import com.anbang.qipai.ruianmajiang.cqrs.c.domain.JoinGameResult;
+import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyForGameResult;
+
 public interface GameCmdService {
 
 	void newMajiangGame(String gameId, String playerId, Integer difen, Integer taishu, Integer panshu, Integer renshu,
@@ -7,8 +10,8 @@ public interface GameCmdService {
 
 	String leaveGame(String playerId) throws Exception;
 
-	String readyForGame(String playerId, Long currentTime) throws Exception;
+	ReadyForGameResult readyForGame(String playerId, Long currentTime) throws Exception;
 
-	void joinGame(String playerId, String gameId) throws Exception;
+	JoinGameResult joinGame(String playerId, String gameId) throws Exception;
 
 }

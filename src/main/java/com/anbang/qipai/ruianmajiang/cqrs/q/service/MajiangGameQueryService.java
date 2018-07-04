@@ -54,7 +54,7 @@ public class MajiangGameQueryService {
 		gamePlayerDbo.setHeadimgurl(headimgurl);
 		gamePlayerDbo.setNickname(nickname);
 		gamePlayerDbo.setPlayerId(playerId);
-		gamePlayerDbo.setState(GamePlayerState.joined.name());
+		gamePlayerDbo.setState(GamePlayerState.joined);
 		gamePlayerDboDao.save(gamePlayerDbo);
 
 	}
@@ -65,7 +65,7 @@ public class MajiangGameQueryService {
 
 	public void leaveGame(String playerId, String gameId) {
 		GamePlayerDbo gamePlayerDbo = gamePlayerDboDao.findByPlayerIdAndGameId(playerId, gameId);
-		gamePlayerDbo.setState(GamePlayerState.leave.name());
+		gamePlayerDbo.setState(GamePlayerState.leave);
 		gamePlayerDboDao.save(gamePlayerDbo);
 	}
 

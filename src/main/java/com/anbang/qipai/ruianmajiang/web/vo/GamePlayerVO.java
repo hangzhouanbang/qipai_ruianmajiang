@@ -12,7 +12,7 @@ public class GamePlayerVO {
 		playerId = dbo.getPlayerId();
 		nickname = dbo.getNickname();
 		headimgurl = dbo.getHeadimgurl();
-		state = dbo.getState();
+		state = dbo.getState().name();
 	}
 
 	public String getPlayerId() {

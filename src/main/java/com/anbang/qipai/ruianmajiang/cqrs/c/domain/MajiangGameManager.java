@@ -1,8 +1,10 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.dml.majiang.PanActionFrame;
 import com.dml.mpgame.FixedNumberOfPlayersGameReadyStrategy;
 import com.dml.mpgame.Game;
 import com.dml.mpgame.HostGameLeaveStrategy;
@@ -32,12 +34,18 @@ public class MajiangGameManager {
 		playerIdGameIdMap.put(playerId, gameId);
 	}
 
-	public void join(String playerId, String gameId) throws Exception {
+	public JoinGameResult join(String playerId, String gameId) throws Exception {
 		MajiangGame game = gameIdMajiangGameMap.get(gameId);
 		if (game == null) {
 			throw new MajinagGameNotFoundException();
 		}
 		game.join(playerId);
+		JoinGameResult result = new JoinGameResult();
+		result.setGameId(gameId);
+		List<String> playerIds = game.getGame().allPlayerIds();
+		playerIds.remove(playerId);
+		result.setOtherPlayerIds(playerIds);
+		return result;
 	}
 
 	public String leave(String playerId) throws Exception {
@@ -50,14 +58,23 @@ public class MajiangGameManager {
 		return gameId;
 	}
 
-	public String ready(String playerId, long currentTime) throws Exception {
+	public ReadyForGameResult ready(String playerId, long currentTime) throws Exception {
 		String gameId = playerIdGameIdMap.get(playerId);
 		if (gameId == null) {
 			throw new PlayerNotInGameException();
 		}
 		MajiangGame game = gameIdMajiangGameMap.get(gameId);
-		game.ready(playerId, currentTime);
-		return gameId;
+		PanActionFrame panActionFrame = game.ready(playerId, currentTime);
+		ReadyForGameResult result = new ReadyForGameResult();
+		result.setGameId(gameId);
+		result.setGameState(game.getGame().getState());
+		result.setFirstActionframeDataOfFirstPan(panActionFrame.getFrameData());
+
+		List<String> playerIds = game.getGame().allPlayerIds();
+		playerIds.remove(playerId);
+		result.setOtherPlayerIds(playerIds);
+
+		return result;
 	}
 
 	public MajiangGame findGameById(String gameId) {

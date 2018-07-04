@@ -3,6 +3,8 @@ package com.anbang.qipai.ruianmajiang.cqrs.c.service.disruptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.anbang.qipai.ruianmajiang.cqrs.c.domain.JoinGameResult;
+import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyForGameResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.GameCmdService;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.impl.GameCmdServiceImpl;
 import com.highto.framework.concurrent.DeferredResult;
@@ -32,16 +34,16 @@ public class DisruptorGameCmdService extends DisruptorCmdServiceBase implements 
 	}
 
 	@Override
-	public void joinGame(String playerId, String gameId) throws Exception {
+	public JoinGameResult joinGame(String playerId, String gameId) throws Exception {
 		CommonCommand cmd = new CommonCommand(GameCmdServiceImpl.class.getName(), "joinGame", playerId, gameId);
-		DeferredResult<Object> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd, () -> {
-			gameCmdServiceImpl.joinGame(cmd.getParameter(), cmd.getParameter());
-			return null;
+		DeferredResult<JoinGameResult> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd, () -> {
+			JoinGameResult joinGameResult = gameCmdServiceImpl.joinGame(cmd.getParameter(), cmd.getParameter());
+			return joinGameResult;
 		});
 		try {
-			result.getResult();
+			return result.getResult();
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			throw e;
 		}
 	}
 
@@ -60,12 +62,13 @@ public class DisruptorGameCmdService extends DisruptorCmdServiceBase implements 
 	}
 
 	@Override
-	public String readyForGame(String playerId, Long currentTime) throws Exception {
+	public ReadyForGameResult readyForGame(String playerId, Long currentTime) throws Exception {
 		CommonCommand cmd = new CommonCommand(GameCmdServiceImpl.class.getName(), "readyForGame", playerId,
 				currentTime);
-		DeferredResult<String> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd, () -> {
-			String gameId = gameCmdServiceImpl.readyForGame(cmd.getParameter(), cmd.getParameter());
-			return gameId;
+		DeferredResult<ReadyForGameResult> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd, () -> {
+			ReadyForGameResult readyForGameResult = gameCmdServiceImpl.readyForGame(cmd.getParameter(),
+					cmd.getParameter());
+			return readyForGameResult;
 		});
 		try {
 			return result.getResult();

@@ -1,5 +1,6 @@
 package com.anbang.qipai.ruianmajiang.web.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,13 +11,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.anbang.qipai.ruianmajiang.cqrs.c.domain.JoinGameResult;
+import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyForGameResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.GameCmdService;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.PlayerAuthService;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.GamePlayerDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangGameQueryService;
+import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangPlayQueryService;
 import com.anbang.qipai.ruianmajiang.web.vo.CommonVO;
 import com.anbang.qipai.ruianmajiang.web.vo.GameVO;
+import com.anbang.qipai.ruianmajiang.websocket.GamePlayWsNotifier;
+import com.anbang.qipai.ruianmajiang.websocket.QueryScope;
+import com.dml.mpgame.GameState;
 
 /**
  * 游戏框架相关
@@ -36,6 +43,12 @@ public class GameController {
 
 	@Autowired
 	private PlayerAuthService playerAuthService;
+
+	@Autowired
+	private MajiangPlayQueryService majiangPlayQueryService;
+
+	@Autowired
+	private GamePlayWsNotifier wsNotifier;
 
 	/**
 	 * 新一局游戏
@@ -62,16 +75,24 @@ public class GameController {
 	@ResponseBody
 	public CommonVO joingame(String playerId, String gameId) {
 		CommonVO vo = new CommonVO();
+		JoinGameResult joinGameResult;
 		try {
-			gameCmdService.joinGame(playerId, gameId);
+			joinGameResult = gameCmdService.joinGame(playerId, gameId);
 		} catch (Exception e) {
 			vo.setSuccess(false);
 			vo.setMsg(e.getClass().toString());
 			return vo;
 		}
+		// TODO q端 majiangGameQueryService.joinGame
+		// 通知其他人
+		for (String otherPlayerId : joinGameResult.getOtherPlayerIds()) {
+			wsNotifier.notifyToQuery(playerId, QueryScope.gameInfo.name());
+		}
+
 		String token = playerAuthService.newSessionForPlayer(playerId);
 		Map data = new HashMap();
 		data.put("token", token);
+
 		vo.setData(data);
 		return vo;
 	}
@@ -113,7 +134,32 @@ public class GameController {
 			vo.setMsg("invalid token");
 			return vo;
 		}
-		String gameId = gameCmdService.readyForGame(playerId, System.currentTimeMillis());
+
+		ReadyForGameResult readyForGameResult;
+		try {
+			readyForGameResult = gameCmdService.readyForGame(playerId, System.currentTimeMillis());
+		} catch (Exception e) {
+			vo.setSuccess(false);
+			vo.setMsg(e.getClass().getName());
+			return vo;
+		}
+
+		majiangPlayQueryService.readyForGame(readyForGameResult);
+		// 通知其他人
+		for (String otherPlayerId : readyForGameResult.getOtherPlayerIds()) {
+			wsNotifier.notifyToQuery(playerId, QueryScope.gameInfo.name());
+			if (readyForGameResult.getGameState().equals(GameState.playing)) {
+				wsNotifier.notifyToQuery(playerId, QueryScope.panForMe.name());
+			}
+		}
+
+		List<QueryScope> queryScopes = new ArrayList<>();
+		queryScopes.add(QueryScope.gameInfo);
+		if (readyForGameResult.getGameState().equals(GameState.playing)) {
+			queryScopes.add(QueryScope.panForMe);
+		}
+		data.put("queryScopes", queryScopes);
+		return vo;
 	}
 
 }

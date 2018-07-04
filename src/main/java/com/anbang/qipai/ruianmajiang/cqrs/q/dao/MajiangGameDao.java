@@ -8,4 +8,6 @@ public interface MajiangGameDao {
 
 	void save(MajiangGameDbo majiangGameDbo);
 
+	void update(String id, byte[] latestPanActionFrameData);
+
 }
