@@ -1,5 +1,7 @@
 package com.anbang.qipai.ruianmajiang.cqrs.q.service;
 
+import java.nio.ByteBuffer;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -39,8 +41,13 @@ public class MajiangPlayQueryService {
 			throw new Exception("game not playing");
 		}
 		byte[] frameData = majiangGameDbo.getLatestPanActionFrameData();
-		PanValueObject panValueObject = new PanValueObject(frameData);
-		pvFilter.filter(panValueObject);
+		PanValueObject panValueObject = new PanValueObject();
+		try {
+			panValueObject.fillByByteBuffer(ByteBuffer.wrap(frameData));
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		pvFilter.filter(panValueObject, playerId);
 		return panValueObject;
 	}
 

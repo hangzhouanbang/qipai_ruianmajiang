@@ -41,21 +41,7 @@ public class MajiangGameQueryService {
 		majiangGameDbo.setRenshu(renshu);
 		majiangGameDao.save(majiangGameDbo);
 
-		PlayerInfo playerInfo = playerInfoDao.findById(playerId);
-		String nickname = null;
-		String headimgurl = null;
-		if (playerInfo != null) {
-			nickname = playerInfo.getNickname();
-			headimgurl = playerInfo.getHeadimgurl();
-		}
-
-		GamePlayerDbo gamePlayerDbo = new GamePlayerDbo();
-		gamePlayerDbo.setGameId(newGameId);
-		gamePlayerDbo.setHeadimgurl(headimgurl);
-		gamePlayerDbo.setNickname(nickname);
-		gamePlayerDbo.setPlayerId(playerId);
-		gamePlayerDbo.setState(GamePlayerState.joined);
-		gamePlayerDboDao.save(gamePlayerDbo);
+		joinGame(playerId, newGameId);
 
 	}
 
@@ -66,6 +52,24 @@ public class MajiangGameQueryService {
 	public void leaveGame(String playerId, String gameId) {
 		GamePlayerDbo gamePlayerDbo = gamePlayerDboDao.findByPlayerIdAndGameId(playerId, gameId);
 		gamePlayerDbo.setState(GamePlayerState.leave);
+		gamePlayerDboDao.save(gamePlayerDbo);
+	}
+
+	public void joinGame(String playerId, String gameId) {
+		PlayerInfo playerInfo = playerInfoDao.findById(playerId);
+		String nickname = null;
+		String headimgurl = null;
+		if (playerInfo != null) {
+			nickname = playerInfo.getNickname();
+			headimgurl = playerInfo.getHeadimgurl();
+		}
+
+		GamePlayerDbo gamePlayerDbo = new GamePlayerDbo();
+		gamePlayerDbo.setGameId(gameId);
+		gamePlayerDbo.setHeadimgurl(headimgurl);
+		gamePlayerDbo.setNickname(nickname);
+		gamePlayerDbo.setPlayerId(playerId);
+		gamePlayerDbo.setState(GamePlayerState.joined);
 		gamePlayerDboDao.save(gamePlayerDbo);
 	}
 

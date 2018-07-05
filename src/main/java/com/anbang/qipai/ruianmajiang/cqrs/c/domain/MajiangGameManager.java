@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.dml.majiang.PanActionFrame;
 import com.dml.mpgame.FixedNumberOfPlayersGameReadyStrategy;
 import com.dml.mpgame.Game;
 import com.dml.mpgame.HostGameLeaveStrategy;
@@ -64,11 +63,11 @@ public class MajiangGameManager {
 			throw new PlayerNotInGameException();
 		}
 		MajiangGame game = gameIdMajiangGameMap.get(gameId);
-		PanActionFrame panActionFrame = game.ready(playerId, currentTime);
+		byte[] panActionFrameData = game.ready(playerId, currentTime);
 		ReadyForGameResult result = new ReadyForGameResult();
 		result.setGameId(gameId);
 		result.setGameState(game.getGame().getState());
-		result.setFirstActionframeDataOfFirstPan(panActionFrame.getFrameData());
+		result.setFirstActionframeDataOfFirstPan(panActionFrameData);
 
 		List<String> playerIds = game.getGame().allPlayerIds();
 		playerIds.remove(playerId);

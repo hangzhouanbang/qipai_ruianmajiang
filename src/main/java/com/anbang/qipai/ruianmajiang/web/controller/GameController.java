@@ -83,7 +83,7 @@ public class GameController {
 			vo.setMsg(e.getClass().toString());
 			return vo;
 		}
-		// TODO q端 majiangGameQueryService.joinGame
+		majiangGameQueryService.joinGame(playerId, gameId);
 		// 通知其他人
 		for (String otherPlayerId : joinGameResult.getOtherPlayerIds()) {
 			wsNotifier.notifyToQuery(playerId, QueryScope.gameInfo.name());
