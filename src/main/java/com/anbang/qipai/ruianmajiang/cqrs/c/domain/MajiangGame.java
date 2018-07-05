@@ -38,7 +38,7 @@ public class MajiangGame {
 			ju.setFaPaiStrategy(new RuianMajiangFaPaiStrategy());
 			ju.setInitialActionUpdater(new ZhuangMoPaiInitialActionUpdater());
 			ju.setMoActionProcessor(new RuianMajiangMoActionProcessor());
-			ju.setMoActionUpdater(new RuianMajiangMajiangPlayerMoActionUpdater());
+			ju.setMoActionUpdater(new RuianMajiangMoActionUpdater());
 
 			ju.setPanActionFrameBufferSize(2000);
 			ju.setPanShu(panshu);
