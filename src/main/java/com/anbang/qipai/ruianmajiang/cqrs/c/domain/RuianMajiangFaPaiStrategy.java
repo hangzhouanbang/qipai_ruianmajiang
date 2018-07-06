@@ -20,6 +20,13 @@ public class RuianMajiangFaPaiStrategy implements FaPaiStrategy {
 
 	private int faPaiCountsForOnePlayer;
 
+	public RuianMajiangFaPaiStrategy() {
+	}
+
+	public RuianMajiangFaPaiStrategy(int faPaiCountsForOnePlayer) {
+		this.faPaiCountsForOnePlayer = faPaiCountsForOnePlayer;
+	}
+
 	@Override
 	public void faPai(Ju ju) throws Exception {
 		Pan currentPan = ju.getCurrentPan();

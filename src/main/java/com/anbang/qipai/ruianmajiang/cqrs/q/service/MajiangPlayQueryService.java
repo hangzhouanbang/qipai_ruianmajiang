@@ -10,10 +10,13 @@ import com.anbang.qipai.ruianmajiang.cqrs.q.dao.GamePlayerDboDao;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dao.MajiangGameDao;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.GamePlayerDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameDbo;
+import com.dml.majiang.ByteBufferSerializer;
 import com.dml.majiang.LiangangangPanValueObjectPlayerViewFilter;
+import com.dml.majiang.PanActionFrame;
 import com.dml.majiang.PanValueObject;
 import com.dml.mpgame.GamePlayerState;
 import com.dml.mpgame.GameState;
+import com.dml.mpgame.GameValueObject;
 
 @Component
 public class MajiangPlayQueryService {
@@ -41,20 +44,25 @@ public class MajiangPlayQueryService {
 			throw new Exception("game not playing");
 		}
 		byte[] frameData = majiangGameDbo.getLatestPanActionFrameData();
-		PanValueObject panValueObject = new PanValueObject();
+		PanActionFrame panActionFrame = null;
 		try {
-			panValueObject.fillByByteBuffer(ByteBuffer.wrap(frameData));
+			panActionFrame = ByteBufferSerializer.byteBufferToObj(ByteBuffer.wrap(frameData));
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
+		PanValueObject panValueObject = panActionFrame.getPanAfterAction();
 		pvFilter.filter(panValueObject, playerId);
 		return panValueObject;
 	}
 
 	public void readyForGame(ReadyForGameResult readyForGameResult) {
-		if (readyForGameResult.getGameState().equals(GameState.playing)) {
-			majiangGameDao.update(readyForGameResult.getGameId(),
-					readyForGameResult.getFirstActionframeDataOfFirstPan());
+		GameValueObject gameValueObject = readyForGameResult.getGame();
+		majiangGameDao.update(gameValueObject.getId(), gameValueObject.getState());
+		gameValueObject.getPlayers().forEach((player) -> {
+			gamePlayerDboDao.update(player.getId(), gameValueObject.getId(), player.getState());
+		});
+		if (gameValueObject.getState().equals(GameState.playing)) {
+			majiangGameDao.update(gameValueObject.getId(), readyForGameResult.getFirstActionframeDataOfFirstPan());
 			// TODO 记录一条MajiangGameDbo，回放的时候要做
 		}
 	}

@@ -3,14 +3,22 @@ package com.anbang.qipai.ruianmajiang.cqrs.q.dao.mongodb;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
 
 import com.anbang.qipai.ruianmajiang.cqrs.q.dao.GamePlayerDboDao;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dao.mongodb.repository.GamePlayerDboRepository;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.GamePlayerDbo;
+import com.dml.mpgame.GamePlayerState;
 
 @Component
 public class MongodbGamePlayerDboDao implements GamePlayerDboDao {
+
+	@Autowired
+	private MongoTemplate mongoTemplate;
 
 	@Autowired
 	private GamePlayerDboRepository repository;
@@ -28,6 +36,12 @@ public class MongodbGamePlayerDboDao implements GamePlayerDboDao {
 	@Override
 	public GamePlayerDbo findByPlayerIdAndGameId(String playerId, String gameId) {
 		return repository.findByPlayerIdAndGameId(playerId, gameId);
+	}
+
+	@Override
+	public void update(String playerId, String gameId, GamePlayerState state) {
+		mongoTemplate.updateFirst(new Query(Criteria.where("playerId").is(playerId).and("gameId").is(gameId)),
+				new Update().set("state", state), GamePlayerDbo.class);
 	}
 
 }

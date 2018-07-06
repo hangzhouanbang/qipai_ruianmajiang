@@ -148,14 +148,14 @@ public class GameController {
 		// 通知其他人
 		for (String otherPlayerId : readyForGameResult.getOtherPlayerIds()) {
 			wsNotifier.notifyToQuery(playerId, QueryScope.gameInfo.name());
-			if (readyForGameResult.getGameState().equals(GameState.playing)) {
+			if (readyForGameResult.getGame().getState().equals(GameState.playing)) {
 				wsNotifier.notifyToQuery(playerId, QueryScope.panForMe.name());
 			}
 		}
 
 		List<QueryScope> queryScopes = new ArrayList<>();
 		queryScopes.add(QueryScope.gameInfo);
-		if (readyForGameResult.getGameState().equals(GameState.playing)) {
+		if (readyForGameResult.getGame().getState().equals(GameState.playing)) {
 			queryScopes.add(QueryScope.panForMe);
 		}
 		data.put("queryScopes", queryScopes);

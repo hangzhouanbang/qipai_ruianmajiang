@@ -3,28 +3,19 @@ package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.dml.mpgame.GameState;
+import com.dml.mpgame.GameValueObject;
 
 public class ReadyForGameResult {
-	private String gameId;
-	private GameState gameState;
+	private GameValueObject game;
 	private byte[] firstActionframeDataOfFirstPan;
 	private List<String> otherPlayerIds = new ArrayList<>();;
 
-	public String getGameId() {
-		return gameId;
+	public GameValueObject getGame() {
+		return game;
 	}
 
-	public void setGameId(String gameId) {
-		this.gameId = gameId;
-	}
-
-	public GameState getGameState() {
-		return gameState;
-	}
-
-	public void setGameState(GameState gameState) {
-		this.gameState = gameState;
+	public void setGame(GameValueObject game) {
+		this.game = game;
 	}
 
 	public byte[] getFirstActionframeDataOfFirstPan() {

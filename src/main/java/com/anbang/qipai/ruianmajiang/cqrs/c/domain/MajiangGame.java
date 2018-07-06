@@ -35,7 +35,7 @@ public class MajiangGame {
 			ju.setZhuangDeterminerForFirstPan(new MenFengDongZhuangDeterminer());
 			ju.setAvaliablePaiFiller(new NoHuapaiRandomAvaliablePaiFiller(currentTime + 1));
 			ju.setGuipaiDeterminer(new RandomGuipaiDeterminer(currentTime + 2));
-			ju.setFaPaiStrategy(new RuianMajiangFaPaiStrategy());
+			ju.setFaPaiStrategy(new RuianMajiangFaPaiStrategy(16));
 			ju.setInitialActionUpdater(new ZhuangMoPaiInitialActionUpdater());
 			ju.setMoActionProcessor(new RuianMajiangMoActionProcessor());
 			ju.setMoActionUpdater(new RuianMajiangMoActionUpdater());

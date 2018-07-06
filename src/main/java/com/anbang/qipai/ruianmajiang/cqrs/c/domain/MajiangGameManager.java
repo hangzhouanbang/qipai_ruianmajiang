@@ -4,20 +4,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.dml.mpgame.FixedNumberOfPlayersGameJoinStrategy;
 import com.dml.mpgame.FixedNumberOfPlayersGameReadyStrategy;
 import com.dml.mpgame.Game;
+import com.dml.mpgame.GameValueObject;
 import com.dml.mpgame.HostGameLeaveStrategy;
 
 public class MajiangGameManager {
 
 	private Map<String, MajiangGame> gameIdMajiangGameMap = new HashMap<>();
 
+	/**
+	 * 一台服务器对于同一个用户（一个socket）同时只能玩一场游戏。
+	 */
 	private Map<String, String> playerIdGameIdMap = new HashMap<>();
 
 	public void newMajiangGame(String gameId, String playerId, int difen, int taishu, int panshu, int renshu,
 			boolean dapao) {
 
 		Game newGame = new Game();
+		newGame.setGameJoinStrategy(new FixedNumberOfPlayersGameJoinStrategy(renshu));
 		newGame.setLeaveStrategy(new HostGameLeaveStrategy(playerId));
 		newGame.setReadyStrategy(new FixedNumberOfPlayersGameReadyStrategy(renshu));
 		newGame.create(gameId, playerId);
@@ -39,6 +45,7 @@ public class MajiangGameManager {
 			throw new MajinagGameNotFoundException();
 		}
 		game.join(playerId);
+		playerIdGameIdMap.put(playerId, gameId);
 		JoinGameResult result = new JoinGameResult();
 		result.setGameId(gameId);
 		List<String> playerIds = game.getGame().allPlayerIds();
@@ -54,6 +61,7 @@ public class MajiangGameManager {
 		}
 		MajiangGame game = gameIdMajiangGameMap.get(gameId);
 		game.leave(playerId);
+		playerIdGameIdMap.remove(playerId);
 		return gameId;
 	}
 
@@ -65,8 +73,7 @@ public class MajiangGameManager {
 		MajiangGame game = gameIdMajiangGameMap.get(gameId);
 		byte[] panActionFrameData = game.ready(playerId, currentTime);
 		ReadyForGameResult result = new ReadyForGameResult();
-		result.setGameId(gameId);
-		result.setGameState(game.getGame().getState());
+		result.setGame(new GameValueObject(game.getGame()));
 		result.setFirstActionframeDataOfFirstPan(panActionFrameData);
 
 		List<String> playerIds = game.getGame().allPlayerIds();
