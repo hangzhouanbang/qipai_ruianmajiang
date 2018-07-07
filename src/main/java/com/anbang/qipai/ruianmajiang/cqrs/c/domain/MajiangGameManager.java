@@ -87,4 +87,17 @@ public class MajiangGameManager {
 		return gameIdMajiangGameMap.get(gameId);
 	}
 
+	public MajiangActionResult majiangAction(String playerId, int actionId) throws Exception {
+		String gameId = playerIdGameIdMap.get(playerId);
+		if (gameId == null) {
+			throw new PlayerNotInGameException();
+		}
+		MajiangGame game = gameIdMajiangGameMap.get(gameId);
+		byte[] panActionFrameData = game.action(playerId, actionId);
+		MajiangActionResult result = new MajiangActionResult();
+		result.setGame(new GameValueObject(game.getGame()));
+		result.setActionFrameDataAfterAction(panActionFrameData);
+		return result;
+	}
+
 }

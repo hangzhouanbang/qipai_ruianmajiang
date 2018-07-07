@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangActionResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyForGameResult;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dao.GamePlayerDboDao;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dao.MajiangGameDao;
@@ -65,6 +66,17 @@ public class MajiangPlayQueryService {
 			majiangGameDao.update(gameValueObject.getId(), readyForGameResult.getFirstActionframeDataOfFirstPan());
 			// TODO 记录一条MajiangGameDbo，回放的时候要做
 		}
+	}
+
+	public void action(MajiangActionResult majiangActionResult) {
+		GameValueObject gameValueObject = majiangActionResult.getGame();
+		majiangGameDao.update(gameValueObject.getId(), gameValueObject.getState());
+		gameValueObject.getPlayers().forEach((player) -> {
+			gamePlayerDboDao.update(player.getId(), gameValueObject.getId(), player.getState());
+		});
+
+		majiangGameDao.update(gameValueObject.getId(), majiangActionResult.getActionFrameDataAfterAction());
+		// TODO 记录一条MajiangGameDbo，回放的时候要做
 	}
 
 }

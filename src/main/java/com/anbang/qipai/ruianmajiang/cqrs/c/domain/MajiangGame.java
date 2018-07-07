@@ -1,5 +1,6 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
+import com.dml.majiang.DachushoupaiDaActionProcessor;
 import com.dml.majiang.Ju;
 import com.dml.majiang.MenFengDongZhuangDeterminer;
 import com.dml.majiang.NoHuapaiRandomAvaliablePaiFiller;
@@ -39,6 +40,10 @@ public class MajiangGame {
 			ju.setInitialActionUpdater(new ZhuangMoPaiInitialActionUpdater());
 			ju.setMoActionProcessor(new RuianMajiangMoActionProcessor());
 			ju.setMoActionUpdater(new RuianMajiangMoActionUpdater());
+			ju.setDaActionProcessor(new DachushoupaiDaActionProcessor());
+			ju.setDaActionUpdater(new RuianMajiangDaActionUpdater());
+
+			ju.addActionStatisticsListener(new CaizipaiListener());
 
 			ju.setPanActionFrameBufferSize(2000);
 			ju.setPanShu(panshu);

@@ -38,24 +38,30 @@ public class RuianMajiangFaPaiStrategy implements FaPaiStrategy {
 			for (int j = 0; j < 4; j++) {
 				MajiangPlayer player = currentPan.findPlayerByMenFeng(playerMenFeng);
 				if (player != null) {
-					MajiangPai pai = avaliablePaiList.remove(0);
-					if (baibanIsGuipai) {// 白板是鬼牌
-						if (pai.equals(MajiangPai.hongzhong)) {// 红中公示
-							player.addPublicPai(pai);
-						} else {
-							player.addShoupai(pai);
-							player.addPaiToGouXingCalculator(pai);
-						}
-					} else {// 白板不是鬼牌
-						if (pai.equals(MajiangPai.baiban)) { // 白板公示
-							player.addPublicPai(pai);
-						} else {
-							player.addShoupai(pai);
-							player.addPaiToGouXingCalculator(pai);
-						}
-					}
+					faPai(avaliablePaiList, player, baibanIsGuipai);
 				}
 				playerMenFeng = MajiangPositionCircle.nextClockwise(playerMenFeng);
+			}
+		}
+	}
+
+	private void faPai(List<MajiangPai> avaliablePaiList, MajiangPlayer player, boolean baibanIsGuipai) {
+		MajiangPai pai = avaliablePaiList.remove(0);
+		if (baibanIsGuipai) {// 白板是鬼牌
+			if (pai.equals(MajiangPai.hongzhong)) {// 红中公示
+				player.addPublicPai(pai);
+				faPai(avaliablePaiList, player, baibanIsGuipai);
+			} else {
+				player.addShoupai(pai);
+				player.addPaiToGouXingCalculator(pai);
+			}
+		} else {// 白板不是鬼牌
+			if (pai.equals(MajiangPai.baiban)) { // 白板公示
+				player.addPublicPai(pai);
+				faPai(avaliablePaiList, player, baibanIsGuipai);
+			} else {
+				player.addShoupai(pai);
+				player.addPaiToGouXingCalculator(pai);
 			}
 		}
 	}

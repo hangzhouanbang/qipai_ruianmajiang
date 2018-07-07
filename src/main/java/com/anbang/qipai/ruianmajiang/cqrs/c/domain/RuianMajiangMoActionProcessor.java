@@ -17,20 +17,24 @@ public class RuianMajiangMoActionProcessor implements MajiangPlayerMoActionProce
 		List<MajiangPai> avaliablePaiList = currentPan.getAvaliablePaiList();
 		boolean baibanIsGuipai = currentPan.getPublicGuipaiSet().contains(MajiangPai.baiban);
 		MajiangPlayer player = currentPan.findPlayerById(playerId);
+		moPai(avaliablePaiList, player, baibanIsGuipai);
+	}
+
+	private void moPai(List<MajiangPai> avaliablePaiList, MajiangPlayer player, boolean baibanIsGuipai) {
 		MajiangPai pai = avaliablePaiList.remove(0);
 		if (baibanIsGuipai) {// 白板是鬼牌
 			if (pai.equals(MajiangPai.hongzhong)) {// 红中公示
 				player.addPublicPai(pai);
+				moPai(avaliablePaiList, player, baibanIsGuipai);
 			} else {
-				player.addShoupai(pai);
-				player.addPaiToGouXingCalculator(pai);
+				player.moPai(pai);
 			}
 		} else {// 白板不是鬼牌
 			if (pai.equals(MajiangPai.baiban)) { // 白板公示
 				player.addPublicPai(pai);
+				moPai(avaliablePaiList, player, baibanIsGuipai);
 			} else {
-				player.addShoupai(pai);
-				player.addPaiToGouXingCalculator(pai);
+				player.moPai(pai);
 			}
 		}
 	}
