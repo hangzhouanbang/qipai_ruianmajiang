@@ -14,6 +14,12 @@ public class RuianMajiangDaActionUpdater implements MajiangPlayerDaActionUpdater
 		Pan currentPan = ju.getCurrentPan();
 		MajiangPlayer player = currentPan.findPlayerById(daAction.getActionPlayerId());
 		player.clearActionCandidates();
+
+		MajiangPlayer xiajiaPlayer = currentPan.findXiajia(player);
+		xiajiaPlayer.clearActionCandidates();
+		// 下家可以吃碰杠
+		xiajiaPlayer.tryChiAndGenerateCandidateActions(daAction.getPai());
+
 		// TODO 接着做
 
 	}
