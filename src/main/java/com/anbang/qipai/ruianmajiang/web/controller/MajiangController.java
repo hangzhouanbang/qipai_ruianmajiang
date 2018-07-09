@@ -14,7 +14,7 @@ import com.anbang.qipai.ruianmajiang.cqrs.c.service.PlayerAuthService;
 import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangPlayQueryService;
 import com.anbang.qipai.ruianmajiang.web.vo.CommonVO;
 import com.anbang.qipai.ruianmajiang.websocket.QueryScope;
-import com.dml.majiang.PanValueObject;
+import com.dml.majiang.PanActionFrame;
 
 /**
  * 打麻将相关
@@ -41,9 +41,9 @@ public class MajiangController {
 	 * @param token
 	 * @return
 	 */
-	@RequestMapping(value = "/pan_for_me")
+	@RequestMapping(value = "/pan_action_frame_for_me")
 	@ResponseBody
-	public CommonVO panforme(String token, String gameId) {
+	public CommonVO panactionframeforme(String token, String gameId) {
 		CommonVO vo = new CommonVO();
 		Map data = new HashMap();
 		vo.setData(data);
@@ -53,15 +53,15 @@ public class MajiangController {
 			vo.setMsg("invalid token");
 			return vo;
 		}
-		PanValueObject panValueObject;
+		PanActionFrame panActionFrame;
 		try {
-			panValueObject = majiangPlayQueryService.findAndFilterCurrentPanValueObjectForPlayer(gameId, playerId);
+			panActionFrame = majiangPlayQueryService.findAndFilterCurrentPanValueObjectForPlayer(gameId, playerId);
 		} catch (Exception e) {
 			vo.setSuccess(false);
 			vo.setMsg(e.getMessage());
 			return vo;
 		}
-		data.put("pan", panValueObject);
+		data.put("panActionFrame", panActionFrame);
 		return vo;
 	}
 

@@ -12,9 +12,8 @@ import com.anbang.qipai.ruianmajiang.cqrs.q.dao.MajiangGameDao;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.GamePlayerDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameDbo;
 import com.dml.majiang.ByteBufferSerializer;
-import com.dml.majiang.LiangangangPanValueObjectPlayerViewFilter;
+import com.dml.majiang.LiangangangPanActionFramePlayerViewFilter;
 import com.dml.majiang.PanActionFrame;
-import com.dml.majiang.PanValueObject;
 import com.dml.mpgame.GamePlayerState;
 import com.dml.mpgame.GameState;
 import com.dml.mpgame.GameValueObject;
@@ -28,9 +27,9 @@ public class MajiangPlayQueryService {
 	@Autowired
 	private MajiangGameDao majiangGameDao;
 
-	private LiangangangPanValueObjectPlayerViewFilter pvFilter = new LiangangangPanValueObjectPlayerViewFilter();
+	private LiangangangPanActionFramePlayerViewFilter pvFilter = new LiangangangPanActionFramePlayerViewFilter();
 
-	public PanValueObject findAndFilterCurrentPanValueObjectForPlayer(String gameId, String playerId) throws Exception {
+	public PanActionFrame findAndFilterCurrentPanValueObjectForPlayer(String gameId, String playerId) throws Exception {
 		GamePlayerDbo gamePlayerDbo = gamePlayerDboDao.findByPlayerIdAndGameId(playerId, gameId);
 		if (gamePlayerDbo == null) {
 			throw new Exception("player dont play game");
@@ -51,9 +50,8 @@ public class MajiangPlayQueryService {
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
-		PanValueObject panValueObject = panActionFrame.getPanAfterAction();
-		pvFilter.filter(panValueObject, playerId);
-		return panValueObject;
+		pvFilter.filter(panActionFrame, playerId);
+		return panActionFrame;
 	}
 
 	public void readyForGame(ReadyForGameResult readyForGameResult) {

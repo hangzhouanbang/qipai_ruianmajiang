@@ -7,6 +7,7 @@ import com.dml.majiang.NoHuapaiRandomAvaliablePaiFiller;
 import com.dml.majiang.Pan;
 import com.dml.majiang.RandomGuipaiDeterminer;
 import com.dml.majiang.RandomMustHasDongPlayersMenFengDeterminer;
+import com.dml.majiang.ShunziChiActionProcessor;
 import com.dml.majiang.ZhuangMoPaiInitialActionUpdater;
 import com.dml.mpgame.Game;
 import com.dml.mpgame.GameState;
@@ -42,6 +43,8 @@ public class MajiangGame {
 			ju.setMoActionUpdater(new RuianMajiangMoActionUpdater());
 			ju.setDaActionProcessor(new DachushoupaiDaActionProcessor());
 			ju.setDaActionUpdater(new RuianMajiangDaActionUpdater());
+			ju.setChiActionProcessor(new ShunziChiActionProcessor());
+			ju.setChiActionUpdater(new RuianMajiangChiActionUpdater());
 
 			ju.addActionStatisticsListener(new CaizipaiListener());
 

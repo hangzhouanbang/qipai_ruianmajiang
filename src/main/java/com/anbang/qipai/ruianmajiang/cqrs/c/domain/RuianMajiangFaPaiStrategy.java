@@ -40,7 +40,7 @@ public class RuianMajiangFaPaiStrategy implements FaPaiStrategy {
 				if (player != null) {
 					faPai(avaliablePaiList, player, baibanIsGuipai);
 				}
-				playerMenFeng = MajiangPositionCircle.nextClockwise(playerMenFeng);
+				playerMenFeng = MajiangPositionCircle.nextAntiClockwise(playerMenFeng);
 			}
 		}
 	}

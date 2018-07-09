@@ -9,10 +9,10 @@ import com.dml.majiang.Pan;
 public class RuianMajiangDaActionUpdater implements MajiangPlayerDaActionUpdater {
 
 	@Override
-	public void updateActions(String playerId, MajiangDaAction daAction, Ju ju) throws Exception {
+	public void updateActions(MajiangDaAction daAction, Ju ju) throws Exception {
 
 		Pan currentPan = ju.getCurrentPan();
-		MajiangPlayer player = currentPan.findPlayerById(playerId);
+		MajiangPlayer player = currentPan.findPlayerById(daAction.getActionPlayerId());
 		player.clearActionCandidates();
 		// TODO 接着做
 

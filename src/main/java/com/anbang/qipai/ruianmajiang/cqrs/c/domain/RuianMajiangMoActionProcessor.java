@@ -12,12 +12,13 @@ import com.dml.majiang.Pan;
 public class RuianMajiangMoActionProcessor implements MajiangPlayerMoActionProcessor {
 
 	@Override
-	public void process(String playerId, MajiangMoAction action, Ju ju) throws Exception {
+	public void process(MajiangMoAction action, Ju ju) throws Exception {
 		Pan currentPan = ju.getCurrentPan();
 		List<MajiangPai> avaliablePaiList = currentPan.getAvaliablePaiList();
 		boolean baibanIsGuipai = currentPan.getPublicGuipaiSet().contains(MajiangPai.baiban);
-		MajiangPlayer player = currentPan.findPlayerById(playerId);
+		MajiangPlayer player = currentPan.findPlayerById(action.getActionPlayerId());
 		moPai(avaliablePaiList, player, baibanIsGuipai);
+		currentPan.setActivePaiCursor(null);
 	}
 
 	private void moPai(List<MajiangPai> avaliablePaiList, MajiangPlayer player, boolean baibanIsGuipai) {
