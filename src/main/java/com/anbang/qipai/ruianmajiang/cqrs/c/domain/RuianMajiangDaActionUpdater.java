@@ -18,7 +18,23 @@ public class RuianMajiangDaActionUpdater implements MajiangPlayerDaActionUpdater
 		MajiangPlayer xiajiaPlayer = currentPan.findXiajia(player);
 		xiajiaPlayer.clearActionCandidates();
 		// 下家可以吃碰杠
-		xiajiaPlayer.tryChiAndGenerateCandidateActions(daAction.getPai());
+		xiajiaPlayer.tryChiAndGenerateCandidateActions(daAction.getActionPlayerId(), daAction.getPai());
+		xiajiaPlayer.tryPengAndGenerateCandidateAction(daAction.getActionPlayerId(), daAction.getPai());
+		xiajiaPlayer.tryGangdachuAndGenerateCandidateAction(daAction.getActionPlayerId(), daAction.getPai());
+		xiajiaPlayer.checkAndGenerateGuoCandidateAction();
+
+		while (true) {
+			xiajiaPlayer = currentPan.findXiajia(xiajiaPlayer);
+			if (!xiajiaPlayer.getId().equals(daAction.getActionPlayerId())) {
+				xiajiaPlayer.clearActionCandidates();
+				// 其他的可以碰杠
+				xiajiaPlayer.tryPengAndGenerateCandidateAction(daAction.getActionPlayerId(), daAction.getPai());
+				xiajiaPlayer.tryGangdachuAndGenerateCandidateAction(daAction.getActionPlayerId(), daAction.getPai());
+				xiajiaPlayer.checkAndGenerateGuoCandidateAction();
+			} else {
+				break;
+			}
+		}
 
 		// TODO 接着做
 
