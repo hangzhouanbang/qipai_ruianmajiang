@@ -93,7 +93,6 @@ public class MajiangController {
 			vo.setMsg(e.getClass().getName());
 			return vo;
 		}
-
 		majiangPlayQueryService.action(majiangActionResult);
 
 		data.put("queryScope", QueryScope.panForMe);// TODO 盘结束，局结束

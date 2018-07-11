@@ -56,9 +56,17 @@ public class GamePlayWsNotifier {
 		sessionIdActivetimeMap.put(session.getId(), System.currentTimeMillis());
 	}
 
-	public void updateSession(String sessionId, String playerId) throws SessionAlreadyExistsException {
-		if (playerIdSessionIdMap.containsKey(playerId)) {
-			throw new SessionAlreadyExistsException();
+	public void updateSession(String sessionId, String playerId) {
+		String sessionAlreadyExistsId = playerIdSessionIdMap.get(playerId);
+		if (sessionAlreadyExistsId != null) {
+			WebSocketSession removedSession = removeSession(sessionAlreadyExistsId);
+			if (removedSession != null) {
+				try {
+					removedSession.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		sessionIdActivetimeMap.put(sessionId, System.currentTimeMillis());
 		sessionIdPlayerIdMap.put(sessionId, playerId);

@@ -112,15 +112,7 @@ public class GamePlayWsController extends TextWebSocketHandler {
 			return;
 		}
 		if (wsNotifier.isRawSession(session.getId())) {// 第一条心跳
-			try {
-				wsNotifier.updateSession(session.getId(), playerId);
-			} catch (SessionAlreadyExistsException e1) {
-				try {
-					session.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
+			wsNotifier.updateSession(session.getId(), playerId);
 		} else {
 			wsNotifier.updateSession(session.getId());
 		}

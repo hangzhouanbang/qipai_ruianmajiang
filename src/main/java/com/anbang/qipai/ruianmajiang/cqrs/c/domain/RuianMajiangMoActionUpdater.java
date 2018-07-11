@@ -14,6 +14,10 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 		MajiangPlayer player = currentPan.findPlayerById(moAction.getActionPlayerId());
 		player.clearActionCandidates();
 
+		// TODO 庄家摸第一张牌直接放手牌 ？那直接4个一样怎么办？ 新加杠四个手牌类型？ 摸第一张牌是公开牌直接放公开牌列表 ？
+
+		// TODO 摸来的是公开牌
+
 		// 有手牌或刻子可以杠这个摸来的牌
 		player.tryShoupaigangmoAndGenerateCandidateAction();
 		player.tryKezigangmoAndGenerateCandidateAction();
