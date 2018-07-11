@@ -8,6 +8,7 @@ import com.dml.majiang.KeziPengActionProcessor;
 import com.dml.majiang.MenFengDongZhuangDeterminer;
 import com.dml.majiang.NoHuapaiRandomAvaliablePaiFiller;
 import com.dml.majiang.Pan;
+import com.dml.majiang.PanActionFrame;
 import com.dml.majiang.RandomGuipaiDeterminer;
 import com.dml.majiang.RandomMustHasDongPlayersMenFengDeterminer;
 import com.dml.majiang.ShunziChiActionProcessor;
@@ -32,7 +33,7 @@ public class MajiangGame {
 		game.leave(playerId);
 	}
 
-	public byte[] ready(String playerId, long currentTime) throws Exception {
+	public PanActionFrame ready(String playerId, long currentTime) throws Exception {
 		game.ready(playerId);
 		if (game.getState().equals(GameState.playing)) {// 游戏开始了，那么要创建新的局
 			ju = new Ju();
@@ -57,10 +58,8 @@ public class MajiangGame {
 
 			ju.addActionStatisticsListener(new CaizipaiListener());
 
-			ju.setPanActionFrameBufferSize(2000);
 			ju.setPanShu(panshu);
 			Pan firstPan = new Pan();
-			firstPan.setPanActionFrameBufferSize(ju.getPanActionFrameBufferSize());
 			game.allPlayerIds().forEach((pid) -> firstPan.addPlayer(pid));
 			ju.setCurrentPan(firstPan);
 
@@ -89,7 +88,7 @@ public class MajiangGame {
 		}
 	}
 
-	public byte[] action(String playerId, int actionId) throws Exception {
+	public PanActionFrame action(String playerId, int actionId) throws Exception {
 		return ju.action(playerId, actionId);
 	}
 

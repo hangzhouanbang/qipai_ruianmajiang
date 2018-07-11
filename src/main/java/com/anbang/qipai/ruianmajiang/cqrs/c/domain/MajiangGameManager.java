@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.dml.majiang.PanActionFrame;
 import com.dml.mpgame.FixedNumberOfPlayersGameJoinStrategy;
 import com.dml.mpgame.FixedNumberOfPlayersGameReadyStrategy;
 import com.dml.mpgame.Game;
@@ -71,10 +72,10 @@ public class MajiangGameManager {
 			throw new PlayerNotInGameException();
 		}
 		MajiangGame game = gameIdMajiangGameMap.get(gameId);
-		byte[] panActionFrameData = game.ready(playerId, currentTime);
+		PanActionFrame panActionFrame = game.ready(playerId, currentTime);
 		ReadyForGameResult result = new ReadyForGameResult();
 		result.setGame(new GameValueObject(game.getGame()));
-		result.setFirstActionframeDataOfFirstPan(panActionFrameData);
+		result.setFirstActionFrame(panActionFrame);
 
 		List<String> playerIds = game.getGame().allPlayerIds();
 		playerIds.remove(playerId);
@@ -93,10 +94,10 @@ public class MajiangGameManager {
 			throw new PlayerNotInGameException();
 		}
 		MajiangGame game = gameIdMajiangGameMap.get(gameId);
-		byte[] panActionFrameData = game.action(playerId, actionId);
+		PanActionFrame panActionFrame = game.action(playerId, actionId);
 		MajiangActionResult result = new MajiangActionResult();
 		result.setGame(new GameValueObject(game.getGame()));
-		result.setActionFrameDataAfterAction(panActionFrameData);
+		result.setPanActionFrame(panActionFrame);
 		return result;
 	}
 

@@ -86,7 +86,7 @@ public class GameController {
 		majiangGameQueryService.joinGame(playerId, gameId);
 		// 通知其他人
 		for (String otherPlayerId : joinGameResult.getOtherPlayerIds()) {
-			wsNotifier.notifyToQuery(playerId, QueryScope.gameInfo.name());
+			wsNotifier.notifyToQuery(otherPlayerId, QueryScope.gameInfo.name());
 		}
 
 		String token = playerAuthService.newSessionForPlayer(playerId);

@@ -1,0 +1,24 @@
+package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
+
+import java.nio.ByteBuffer;
+
+import com.dml.majiang.MopaiReason;
+
+public class RuianBupai implements MopaiReason {
+
+	private static final String name = "bupai";
+
+	@Override
+	public void toByteBuffer(ByteBuffer bb) throws Throwable {
+	}
+
+	@Override
+	public void fillByByteBuffer(ByteBuffer bb) throws Throwable {
+	}
+
+	@Override
+	public String getName() {
+		return name;
+	}
+
+}

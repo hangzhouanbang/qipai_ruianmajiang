@@ -1,10 +1,11 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
+import com.dml.majiang.PanActionFrame;
 import com.dml.mpgame.GameValueObject;
 
 public class MajiangActionResult {
 	private GameValueObject game;
-	private byte[] actionFrameDataAfterAction;
+	private PanActionFrame panActionFrame;
 
 	public GameValueObject getGame() {
 		return game;
@@ -14,12 +15,12 @@ public class MajiangActionResult {
 		this.game = game;
 	}
 
-	public byte[] getActionFrameDataAfterAction() {
-		return actionFrameDataAfterAction;
+	public PanActionFrame getPanActionFrame() {
+		return panActionFrame;
 	}
 
-	public void setActionFrameDataAfterAction(byte[] actionFrameDataAfterAction) {
-		this.actionFrameDataAfterAction = actionFrameDataAfterAction;
+	public void setPanActionFrame(PanActionFrame panActionFrame) {
+		this.panActionFrame = panActionFrame;
 	}
 
 }

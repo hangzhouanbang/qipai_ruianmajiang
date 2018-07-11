@@ -3,11 +3,12 @@ package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.dml.majiang.PanActionFrame;
 import com.dml.mpgame.GameValueObject;
 
 public class ReadyForGameResult {
 	private GameValueObject game;
-	private byte[] firstActionframeDataOfFirstPan;
+	private PanActionFrame firstActionFrame;
 	private List<String> otherPlayerIds = new ArrayList<>();;
 
 	public GameValueObject getGame() {
@@ -18,12 +19,12 @@ public class ReadyForGameResult {
 		this.game = game;
 	}
 
-	public byte[] getFirstActionframeDataOfFirstPan() {
-		return firstActionframeDataOfFirstPan;
+	public PanActionFrame getFirstActionFrame() {
+		return firstActionFrame;
 	}
 
-	public void setFirstActionframeDataOfFirstPan(byte[] firstActionframeDataOfFirstPan) {
-		this.firstActionframeDataOfFirstPan = firstActionframeDataOfFirstPan;
+	public void setFirstActionFrame(PanActionFrame firstActionFrame) {
+		this.firstActionFrame = firstActionFrame;
 	}
 
 	public List<String> getOtherPlayerIds() {
