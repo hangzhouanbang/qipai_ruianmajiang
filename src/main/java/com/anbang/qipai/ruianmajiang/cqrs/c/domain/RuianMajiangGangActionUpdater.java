@@ -10,7 +10,7 @@ public class RuianMajiangGangActionUpdater implements MajiangPlayerGangActionUpd
 	@Override
 	public void updateActions(MajiangGangAction gangAction, Ju ju) throws Exception {
 		Pan currentPan = ju.getCurrentPan();
-		currentPan.playerClearActionCandidates(gangAction.getActionPlayerId());
+		currentPan.clearAllPlayersActionCandidates();
 		// TODO 接着做
 	}
 

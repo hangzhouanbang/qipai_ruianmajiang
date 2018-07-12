@@ -6,7 +6,7 @@ import com.dml.majiang.MopaiReason;
 
 public class RuianBupai implements MopaiReason {
 
-	private static final String name = "bupai";
+	public static final String name = "bupai";
 
 	@Override
 	public void toByteBuffer(ByteBuffer bb) throws Throwable {

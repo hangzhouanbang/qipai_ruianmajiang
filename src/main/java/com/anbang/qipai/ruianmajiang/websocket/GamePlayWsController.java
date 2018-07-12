@@ -59,6 +59,8 @@ public class GamePlayWsController extends TextWebSocketHandler {
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
 		String closedPlayerId = wsNotifier.findPlayerIdBySessionId(session.getId());
+		// TODO 测试代码
+		System.out.println("连接断了 <" + closedPlayerId + "> (" + System.currentTimeMillis() + ")");
 		wsNotifier.removeSession(session.getId());
 		String gameId = gameCmdService.leaveGame(closedPlayerId);
 		majiangGameQueryService.leaveGame(closedPlayerId, gameId);
@@ -68,6 +70,8 @@ public class GamePlayWsController extends TextWebSocketHandler {
 			String playerId = gamePlayerDbo.getPlayerId();
 			if (!playerId.equals(closedPlayerId)) {
 				wsNotifier.notifyToQuery(playerId, QueryScope.gameInfo.name());
+				// TODO 测试代码
+				System.out.println("通知 ConnectionClosed <" + playerId + "> (" + System.currentTimeMillis() + ")");
 			}
 		});
 	}

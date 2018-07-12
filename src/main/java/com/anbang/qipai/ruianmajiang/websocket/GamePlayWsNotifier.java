@@ -83,19 +83,46 @@ public class GamePlayWsNotifier {
 
 	public void notifyToQuery(String playerId, String scope) {
 		executorService.submit(() -> {
+			System.out.println("发送worker开始执行" + "=" + playerId + "=" + "=" + scope + "=");
 			CommonMO mo = new CommonMO();
+			System.out.println("通知发送开始1");
 			mo.setMsg("query");
+			System.out.println("通知发送开始2");
 			Map data = new HashMap();
+			System.out.println("通知发送开始3");
 			data.put("scope", scope);
+			System.out.println("通知发送开始4");
 			mo.setData(data);
+			System.out.println("通知发送开始5");
 			String payLoad = gson.toJson(mo);
-			WebSocketSession session = idSessionMap.get(playerIdSessionIdMap.get(playerId));
+			System.out.println("通知发送开始6");
+			WebSocketSession session = null;
+			try {
+				session = idSessionMap.get(playerIdSessionIdMap.get(playerId));
+			} catch (Throwable t) {
+				t.printStackTrace();
+			}
+			System.out.println("通知发送开始7");
 			if (session != null) {
 				try {
+					// TODO 测试代码
+					System.out.println("通知发送开始8");
+					System.out.println("通知发送开始{" + session.isOpen() + "}：<" + playerId + "> " + payLoad + " ("
+							+ System.currentTimeMillis() + ")");
+					System.out.println("通知发送开始2");
 					session.sendMessage(new TextMessage(payLoad));
+					System.out.println("通知发送结束{" + session.isOpen() + "}：<" + playerId + "> " + payLoad + " ("
+							+ System.currentTimeMillis() + ")");
 				} catch (IOException e) {
+					// TODO 测试代码
+					System.out.println(
+							"通知发送失败（ioe）：<" + playerId + "> " + payLoad + " (" + System.currentTimeMillis() + ")");
 					e.printStackTrace();
 				}
+			} else {
+				// TODO 测试代码
+				System.out.println("通知发送失败（session is null）：<" + playerId + "> " + payLoad + " ("
+						+ System.currentTimeMillis() + ")");
 			}
 		});
 	}

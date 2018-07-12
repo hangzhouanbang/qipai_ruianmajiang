@@ -87,6 +87,8 @@ public class GameController {
 		// 通知其他人
 		for (String otherPlayerId : joinGameResult.getOtherPlayerIds()) {
 			wsNotifier.notifyToQuery(otherPlayerId, QueryScope.gameInfo.name());
+			// TODO 测试代码
+			System.out.println("通知 joingame <" + otherPlayerId + "> (" + System.currentTimeMillis() + ")");
 		}
 
 		String token = playerAuthService.newSessionForPlayer(playerId);
@@ -147,9 +149,13 @@ public class GameController {
 		majiangPlayQueryService.readyForGame(readyForGameResult);
 		// 通知其他人
 		for (String otherPlayerId : readyForGameResult.getOtherPlayerIds()) {
-			wsNotifier.notifyToQuery(playerId, QueryScope.gameInfo.name());
+			wsNotifier.notifyToQuery(otherPlayerId, QueryScope.gameInfo.name());
+			// TODO 测试代码
+			System.out.println("通知 ready <" + otherPlayerId + "> (" + System.currentTimeMillis() + ")");
 			if (readyForGameResult.getGame().getState().equals(GameState.playing)) {
-				wsNotifier.notifyToQuery(playerId, QueryScope.panForMe.name());
+				wsNotifier.notifyToQuery(otherPlayerId, QueryScope.panForMe.name());
+				// TODO 测试代码
+				System.out.println("通知 playing <" + otherPlayerId + "> (" + System.currentTimeMillis() + ")");
 			}
 		}
 
