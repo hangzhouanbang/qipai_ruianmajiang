@@ -41,22 +41,12 @@ public class GamePlayWsNotifier {
 		return removedSession;
 	}
 
-	/**
-	 * 是否是刚连上还没发过心跳消息的
-	 * 
-	 * @param id
-	 * @return
-	 */
-	public boolean isRawSession(String id) {
-		return sessionIdPlayerIdMap.get(id) == null;
-	}
-
 	public void addSession(WebSocketSession session) {
 		idSessionMap.put(session.getId(), session);
 		sessionIdActivetimeMap.put(session.getId(), System.currentTimeMillis());
 	}
 
-	public void updateSession(String sessionId, String playerId) {
+	public void bindPlayer(String sessionId, String playerId) {
 		String sessionAlreadyExistsId = playerIdSessionIdMap.get(playerId);
 		if (sessionAlreadyExistsId != null) {
 			WebSocketSession removedSession = removeSession(sessionAlreadyExistsId);
@@ -68,9 +58,9 @@ public class GamePlayWsNotifier {
 				}
 			}
 		}
-		sessionIdActivetimeMap.put(sessionId, System.currentTimeMillis());
 		sessionIdPlayerIdMap.put(sessionId, playerId);
 		playerIdSessionIdMap.put(playerId, sessionId);
+		updateSession(sessionId);
 	}
 
 	public void updateSession(String id) {
@@ -96,12 +86,11 @@ public class GamePlayWsNotifier {
 			System.out.println("通知发送开始5");
 			String payLoad = gson.toJson(mo);
 			System.out.println("通知发送开始6");
-			WebSocketSession session = null;
-			try {
-				session = idSessionMap.get(playerIdSessionIdMap.get(playerId));
-			} catch (Throwable t) {
-				t.printStackTrace();
+			String sessionId = playerIdSessionIdMap.get(playerId);
+			if (sessionId == null) {
+				return;
 			}
+			WebSocketSession session = idSessionMap.get(sessionId);
 			System.out.println("通知发送开始7");
 			if (session != null) {
 				try {

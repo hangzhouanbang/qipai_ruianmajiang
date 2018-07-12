@@ -43,6 +43,9 @@ public class GamePlayWsController extends TextWebSocketHandler {
 		executorService.submit(() -> {
 			CommonMO mo = gson.fromJson(message.getPayload(), CommonMO.class);
 			String msg = mo.getMsg();
+			if ("bindPlayer".equals(msg)) {// 绑定玩家
+				processBindPlayer(session, mo.getData());
+			}
 			if ("heartbeat".equals(msg)) {// 心跳
 				processHeartbeat(session, mo.getData());
 			} else {
@@ -54,6 +57,9 @@ public class GamePlayWsController extends TextWebSocketHandler {
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 		wsNotifier.addSession(session);
+		CommonMO mo = new CommonMO();
+		mo.setMsg("bindPlayer");
+		sendMessage(session, gson.toJson(mo));
 	}
 
 	@Override
@@ -90,6 +96,35 @@ public class GamePlayWsController extends TextWebSocketHandler {
 	}
 
 	/**
+	 * 绑定玩家
+	 * 
+	 * @param session
+	 * @param data
+	 */
+	private void processBindPlayer(WebSocketSession session, Object data) {
+		Map map = (Map) data;
+		String token = (String) map.get("token");
+		if (token == null) {// 非法访问
+			try {
+				session.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return;
+		}
+		String playerId = playerAuthService.getPlayerIdByToken(token);
+		if (playerId == null) {// 非法的token
+			try {
+				session.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return;
+		}
+		wsNotifier.bindPlayer(session.getId(), playerId);
+	}
+
+	/**
 	 * 心跳
 	 *
 	 * @param session
@@ -115,11 +150,7 @@ public class GamePlayWsController extends TextWebSocketHandler {
 			}
 			return;
 		}
-		if (wsNotifier.isRawSession(session.getId())) {// 第一条心跳
-			wsNotifier.updateSession(session.getId(), playerId);
-		} else {
-			wsNotifier.updateSession(session.getId());
-		}
+		wsNotifier.updateSession(session.getId());
 	}
 
 	private void sendMessage(WebSocketSession session, String message) {
