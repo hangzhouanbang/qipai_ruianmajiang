@@ -60,6 +60,8 @@ public class GamePlayWsController extends TextWebSocketHandler {
 		CommonMO mo = new CommonMO();
 		mo.setMsg("bindPlayer");
 		sendMessage(session, gson.toJson(mo));
+		// TODO 测试代码
+		System.out.println("有新连接" + session.toString() + ",bindPlayer已发送");
 	}
 
 	@Override
@@ -91,7 +93,6 @@ public class GamePlayWsController extends TextWebSocketHandler {
 				e.printStackTrace();
 			}
 		});
-		wsNotifier.removeSession(session.getId());
 		error.printStackTrace();
 	}
 
@@ -122,6 +123,9 @@ public class GamePlayWsController extends TextWebSocketHandler {
 			return;
 		}
 		wsNotifier.bindPlayer(session.getId(), playerId);
+
+		// TODO 测试代码
+		System.out.println("绑定玩家 <" + playerId + "> (" + System.currentTimeMillis() + ")");
 	}
 
 	/**
@@ -154,10 +158,12 @@ public class GamePlayWsController extends TextWebSocketHandler {
 	}
 
 	private void sendMessage(WebSocketSession session, String message) {
-		try {
-			session.sendMessage(new TextMessage(message));
-		} catch (IOException e) {
-			e.printStackTrace();
+		synchronized (session) {
+			try {
+				session.sendMessage(new TextMessage(message));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }

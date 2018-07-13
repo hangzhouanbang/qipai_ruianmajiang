@@ -57,6 +57,7 @@ public class MajiangController {
 		try {
 			panActionFrame = majiangPlayQueryService.findAndFilterCurrentPanValueObjectForPlayer(gameId, playerId);
 		} catch (Exception e) {
+			e.printStackTrace();
 			vo.setSuccess(false);
 			vo.setMsg(e.getMessage());
 			return vo;

@@ -6,14 +6,15 @@ import com.dml.majiang.MajiangPai;
 import com.dml.majiang.MajiangPlayer;
 import com.dml.majiang.MajiangPlayerMoActionUpdater;
 import com.dml.majiang.Pan;
+import com.dml.majiang.ShoupaiCalculator;
 
 public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater {
 
 	@Override
 	public void updateActions(MajiangMoAction moAction, Ju ju) throws Exception {
 		Pan currentPan = ju.getCurrentPan();
-		currentPan.clearAllPlayersActionCandidates();
 		MajiangPlayer player = currentPan.findPlayerById(moAction.getActionPlayerId());
+		player.clearActionCandidates();
 
 		// 摸到公开牌了要补牌(继续摸牌)
 		boolean baibanIsGuipai = currentPan.getPublicGuipaiSet().contains(MajiangPai.baiban);
@@ -21,10 +22,12 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 		if (baibanIsGuipai) {// 白板是鬼牌
 			if (gangmoShoupai.equals(MajiangPai.hongzhong)) {// 红中是公开牌
 				player.addActionCandidate(new MajiangMoAction(player.getId(), new RuianBupai()));
+				return;
 			}
 		} else {// 白板不是鬼牌
 			if (gangmoShoupai.equals(MajiangPai.baiban)) { // 白板是公开牌
 				player.addActionCandidate(new MajiangMoAction(player.getId(), new RuianBupai()));
+				return;
 			}
 		}
 
@@ -35,9 +38,16 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 		// 杠四个手牌
 		player.tryGangsigeshoupaiAndGenerateCandidateAction();
 
-		// 可以胡
-		// 非胡牌型特殊胡-三财神
-		// int guipaiCount = player.countShoupaiGuipai();// TODO 可用鬼牌统计
+		// 胡
+		// 先判断成不成胡
+		ShoupaiCalculator shoupaiCalculator = player.getShoupaiCalculator();
+
+		// // 非胡牌型特殊胡-三财神
+		// MoGuipaiCounter moGuipaiCounter =
+		// ju.getActionStatisticsListenerManager().findListener(MoGuipaiCounter.class);
+		// if (moGuipaiCounter.getCount() == 3) {
+		//
+		// }
 
 		// 可胡牌型的胡
 

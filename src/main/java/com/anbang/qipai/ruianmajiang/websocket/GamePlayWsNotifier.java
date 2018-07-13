@@ -49,10 +49,10 @@ public class GamePlayWsNotifier {
 	public void bindPlayer(String sessionId, String playerId) {
 		String sessionAlreadyExistsId = playerIdSessionIdMap.get(playerId);
 		if (sessionAlreadyExistsId != null) {
-			WebSocketSession removedSession = removeSession(sessionAlreadyExistsId);
-			if (removedSession != null) {
+			WebSocketSession sessionAlreadyExists = idSessionMap.get(sessionAlreadyExistsId);
+			if (sessionAlreadyExists != null) {
 				try {
-					removedSession.close();
+					sessionAlreadyExists.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -88,26 +88,20 @@ public class GamePlayWsNotifier {
 			System.out.println("通知发送开始6");
 			String sessionId = playerIdSessionIdMap.get(playerId);
 			if (sessionId == null) {
+				// TODO 测试代码
+				System.out.println("玩家" + playerId + "没有被绑定");
 				return;
 			}
 			WebSocketSession session = idSessionMap.get(sessionId);
 			System.out.println("通知发送开始7");
 			if (session != null) {
-				try {
-					// TODO 测试代码
-					System.out.println("通知发送开始8");
-					System.out.println("通知发送开始{" + session.isOpen() + "}：<" + playerId + "> " + payLoad + " ("
-							+ System.currentTimeMillis() + ")");
-					System.out.println("通知发送开始2");
-					session.sendMessage(new TextMessage(payLoad));
-					System.out.println("通知发送结束{" + session.isOpen() + "}：<" + playerId + "> " + payLoad + " ("
-							+ System.currentTimeMillis() + ")");
-				} catch (IOException e) {
-					// TODO 测试代码
-					System.out.println(
-							"通知发送失败（ioe）：<" + playerId + "> " + payLoad + " (" + System.currentTimeMillis() + ")");
-					e.printStackTrace();
-				}
+				// TODO 测试代码
+				System.out.println("通知发送开始8");
+				System.out.println("通知发送开始{" + session.isOpen() + "}：<" + playerId + "> " + payLoad + " ("
+						+ System.currentTimeMillis() + ")");
+				sendMessage(session, payLoad);
+				System.out.println("通知发送结束{" + session.isOpen() + "}：<" + playerId + "> " + payLoad + " ("
+						+ System.currentTimeMillis() + ")");
 			} else {
 				// TODO 测试代码
 				System.out.println("通知发送失败（session is null）：<" + playerId + "> " + payLoad + " ("
@@ -116,14 +110,24 @@ public class GamePlayWsNotifier {
 		});
 	}
 
+	private void sendMessage(WebSocketSession session, String message) {
+		synchronized (session) {
+			try {
+				session.sendMessage(new TextMessage(message));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 	@Scheduled(cron = "0/10 * * * * ?")
 	public void closeAndRemoveOTSessions() {
 		sessionIdActivetimeMap.forEach((id, time) -> {
 			if ((System.currentTimeMillis() - time) > (30 * 1000)) {
-				WebSocketSession removedSession = removeSession(id);
-				if (removedSession != null) {
+				WebSocketSession sessionToClose = idSessionMap.get(id);
+				if (sessionToClose != null) {
 					try {
-						removedSession.close();
+						sessionToClose.close();
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
