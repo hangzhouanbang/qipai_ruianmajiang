@@ -53,6 +53,7 @@ public class MajiangGameManager {
 		playerIds.remove(playerId);
 		result.setOtherPlayerIds(playerIds);
 		return result;
+		// TODO 最好要和ready一样，返回GameValueObject。
 	}
 
 	public String leave(String playerId) throws Exception {
@@ -64,6 +65,7 @@ public class MajiangGameManager {
 		game.leave(playerId);
 		playerIdGameIdMap.remove(playerId);
 		return gameId;
+		// TODO 要和ready一样，返回GameValueObject。否则q端有bug
 	}
 
 	public ReadyForGameResult ready(String playerId, long currentTime) throws Exception {
