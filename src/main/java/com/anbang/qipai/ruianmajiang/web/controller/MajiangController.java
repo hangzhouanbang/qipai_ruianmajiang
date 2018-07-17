@@ -13,6 +13,7 @@ import com.anbang.qipai.ruianmajiang.cqrs.c.service.MajiangPlayCmdService;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.PlayerAuthService;
 import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangPlayQueryService;
 import com.anbang.qipai.ruianmajiang.web.vo.CommonVO;
+import com.anbang.qipai.ruianmajiang.websocket.GamePlayWsNotifier;
 import com.anbang.qipai.ruianmajiang.websocket.QueryScope;
 import com.dml.majiang.PanActionFrame;
 
@@ -34,6 +35,9 @@ public class MajiangController {
 
 	@Autowired
 	private PlayerAuthService playerAuthService;
+
+	@Autowired
+	private GamePlayWsNotifier wsNotifier;
 
 	/**
 	 * 当前盘我应该看到的所有信息
@@ -95,6 +99,11 @@ public class MajiangController {
 			return vo;
 		}
 		majiangPlayQueryService.action(majiangActionResult);
+
+		// 通知其他人
+		for (String otherPlayerId : majiangActionResult.getOtherPlayerIds()) {
+			wsNotifier.notifyToQuery(otherPlayerId, QueryScope.panForMe.name());
+		}
 
 		data.put("queryScope", QueryScope.panForMe);// TODO 盘结束，局结束
 		return vo;

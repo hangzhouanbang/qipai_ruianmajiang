@@ -1,5 +1,7 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
+import java.util.List;
+
 import com.dml.majiang.Ju;
 import com.dml.majiang.MajiangMoAction;
 import com.dml.majiang.MajiangPai;
@@ -41,6 +43,24 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 		// 胡
 		// 先判断成不成胡
 		ShoupaiCalculator shoupaiCalculator = player.getShoupaiCalculator();
+		List<MajiangPai> guipaiList = player.findGuipaiList();
+		if (!guipaiList.isEmpty()) {// 有财神
+			MajiangPai[] xushupaiArray = MajiangPai.xushupaiArray();
+			MajiangPai[] paiTypesForGuipaiAct;// 鬼牌可以扮演的牌类
+			if (baibanIsGuipai) {// 白板是鬼牌
+				paiTypesForGuipaiAct = new MajiangPai[xushupaiArray.length + 1];
+				System.arraycopy(xushupaiArray, 0, paiTypesForGuipaiAct, 0, xushupaiArray.length);
+				paiTypesForGuipaiAct[27] = MajiangPai.facai;
+			} else {// 白板不是鬼牌
+				paiTypesForGuipaiAct = new MajiangPai[xushupaiArray.length + 2];
+				System.arraycopy(xushupaiArray, 0, paiTypesForGuipaiAct, 0, xushupaiArray.length);
+				paiTypesForGuipaiAct[27] = MajiangPai.hongzhong;
+				paiTypesForGuipaiAct[28] = MajiangPai.facai;
+			}
+
+		} else {// 没财神
+
+		}
 
 		// // 非胡牌型特殊胡-三财神
 		// MoGuipaiCounter moGuipaiCounter =
@@ -54,8 +74,9 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 		// 需要有“过”
 		player.checkAndGenerateGuoCandidateAction();
 
-		// // TODO 啥也不能干，那只能打出牌
-		// player.generateDaActions();
+		// TODO 啥也不能干，那只能打出牌
+		player.generateDaActions();
+
 	}
 
 }

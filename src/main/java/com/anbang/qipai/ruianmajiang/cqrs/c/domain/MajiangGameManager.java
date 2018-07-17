@@ -100,6 +100,9 @@ public class MajiangGameManager {
 		MajiangActionResult result = new MajiangActionResult();
 		result.setGame(new GameValueObject(game.getGame()));
 		result.setPanActionFrame(panActionFrame);
+		List<String> playerIds = game.getGame().allPlayerIds();
+		playerIds.remove(playerId);
+		result.setOtherPlayerIds(playerIds);
 		return result;
 	}
 

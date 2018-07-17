@@ -1,7 +1,9 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
 import com.dml.majiang.Ju;
+import com.dml.majiang.LundaoMopai;
 import com.dml.majiang.MajiangDaAction;
+import com.dml.majiang.MajiangMoAction;
 import com.dml.majiang.MajiangPlayer;
 import com.dml.majiang.MajiangPlayerDaActionUpdater;
 import com.dml.majiang.Pan;
@@ -34,6 +36,12 @@ public class RuianMajiangDaActionUpdater implements MajiangPlayerDaActionUpdater
 			} else {
 				break;
 			}
+		}
+
+		// 如果所有玩家啥也做不了,那就下家摸牌
+		if (currentPan.allPlayerHasNoActionCandidates()) {
+			xiajiaPlayer = currentPan.findXiajia(player);
+			xiajiaPlayer.addActionCandidate(new MajiangMoAction(xiajiaPlayer.getId(), new LundaoMopai()));
 		}
 
 		// TODO 接着做
