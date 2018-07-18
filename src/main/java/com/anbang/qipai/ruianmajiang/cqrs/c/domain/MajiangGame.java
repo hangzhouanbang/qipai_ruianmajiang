@@ -7,6 +7,7 @@ import com.dml.majiang.Ju;
 import com.dml.majiang.KeziPengActionProcessor;
 import com.dml.majiang.MenFengDongZhuangDeterminer;
 import com.dml.majiang.MoGuipaiCounter;
+import com.dml.majiang.NoDanpaiOneDuiziGouXingPanHu;
 import com.dml.majiang.NoHuapaiRandomAvaliablePaiFiller;
 import com.dml.majiang.Pan;
 import com.dml.majiang.PanActionFrame;
@@ -43,6 +44,7 @@ public class MajiangGame {
 			ju.setAvaliablePaiFiller(new NoHuapaiRandomAvaliablePaiFiller(currentTime + 1));
 			ju.setGuipaiDeterminer(new RandomGuipaiDeterminer(currentTime + 2));
 			ju.setFaPaiStrategy(new RuianMajiangFaPaiStrategy(16));
+			ju.setGouXingPanHu(new NoDanpaiOneDuiziGouXingPanHu());
 			ju.setInitialActionUpdater(new ZhuangMoPaiInitialActionUpdater());
 			ju.setMoActionProcessor(new RuianMajiangMoActionProcessor());
 			ju.setMoActionUpdater(new RuianMajiangMoActionUpdater());

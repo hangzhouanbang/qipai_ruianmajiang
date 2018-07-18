@@ -1,15 +1,20 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import com.dml.majiang.GouXing;
+import com.dml.majiang.GouXingPanHu;
 import com.dml.majiang.GuipaiDangPai;
 import com.dml.majiang.Ju;
 import com.dml.majiang.MajiangMoAction;
 import com.dml.majiang.MajiangPai;
 import com.dml.majiang.MajiangPlayer;
 import com.dml.majiang.MajiangPlayerMoActionUpdater;
+import com.dml.majiang.PaiXing;
 import com.dml.majiang.Pan;
 import com.dml.majiang.ShoupaiCalculator;
+import com.dml.majiang.ShoupaiWithGuipaiDangGouXingZu;
 
 public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater {
 
@@ -43,6 +48,7 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 
 		// 胡
 		// 先判断成不成胡
+		GouXingPanHu gouXingPanHu = ju.getGouXingPanHu();
 		ShoupaiCalculator shoupaiCalculator = player.getShoupaiCalculator();
 		List<MajiangPai> guipaiList = player.findGuipaiList();
 		if (!guipaiList.isEmpty()) {// 有财神
@@ -60,6 +66,7 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 			}
 
 			// 开始循环财神各种当法，算构型
+			List<ShoupaiWithGuipaiDangGouXingZu> shoupaiWithGuipaiDangGouXingZuList = new ArrayList<>();
 			int guipaiCount = guipaiList.size();
 			int maxZuheCode = (int) Math.pow(paiTypesForGuipaiAct.length, guipaiCount);
 			int[] modArray = new int[guipaiCount];
@@ -85,14 +92,47 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 				}
 				if (guipaiDangPaiArray != null) {
 					// 先把所有当的鬼牌加入计算器
-					// for (int i = 0; i < guipaiDangPaiArray.length; i++) {
-					// shoupaiCalculator.addPai(guipaiDangPaiArray[i].getDangpai());
-					// }
-					// List<GouXing> gouXingList = shoupaiCalculator.calculateAllGouXing();
+					for (int i = 0; i < guipaiDangPaiArray.length; i++) {
+						shoupaiCalculator.addPai(guipaiDangPaiArray[i].getDangpai());
+					}
+					// 计算构型
+					List<GouXing> gouXingList = shoupaiCalculator.calculateAllGouXing();
+					// 再把所有当的鬼牌移出计算器
+					for (int i = 0; i < guipaiDangPaiArray.length; i++) {
+						shoupaiCalculator.removePai(guipaiDangPaiArray[i].getDangpai());
+					}
+					ShoupaiWithGuipaiDangGouXingZu shoupaiWithGuipaiDangGouXingZu = new ShoupaiWithGuipaiDangGouXingZu();
+					shoupaiWithGuipaiDangGouXingZu.setGouXingList(gouXingList);
+					shoupaiWithGuipaiDangGouXingZu.setGuipaiDangPaiArray(guipaiDangPaiArray);
+					shoupaiWithGuipaiDangGouXingZuList.add(shoupaiWithGuipaiDangGouXingZu);
 				}
 			}
 
-			// ShoupaiWithGuipaiDangGouXingZu
+			// 对于可胡的构型，计算出所有牌型
+			for (ShoupaiWithGuipaiDangGouXingZu shoupaiWithGuipaiDangGouXingZu : shoupaiWithGuipaiDangGouXingZuList) {
+				GuipaiDangPai[] guipaiDangPaiArray = shoupaiWithGuipaiDangGouXingZu.getGuipaiDangPaiArray();
+				List<GouXing> gouXingList = shoupaiWithGuipaiDangGouXingZu.getGouXingList();
+				for (GouXing gouXing : gouXingList) {
+					int chichuShunziCount = player.countChichupaiZu();
+					int pengchuKeziCount = player.countPengchupaiZu();
+					int gangchuGangziCount = player.countGangchupaiZu();
+					boolean hu = gouXingPanHu.panHu(gouXing.getGouXingCode(), chichuShunziCount, pengchuKeziCount,
+							gangchuGangziCount);
+					if (hu) {
+						// 先把所有当的鬼牌加入计算器
+						for (int i = 0; i < guipaiDangPaiArray.length; i++) {
+							shoupaiCalculator.addPai(guipaiDangPaiArray[i].getDangpai());
+						}
+						// 计算牌型
+						List<PaiXing> paiXingList = shoupaiCalculator.calculateAllPaiXingFromGouXing(gouXing);
+						// 再把所有当的鬼牌移出计算器
+						for (int i = 0; i < guipaiDangPaiArray.length; i++) {
+							shoupaiCalculator.removePai(guipaiDangPaiArray[i].getDangpai());
+						}
+						// TODO
+					}
+				}
+			}
 
 		} else {// 没财神
 
@@ -104,8 +144,6 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 		// if (moGuipaiCounter.getCount() == 3) {
 		//
 		// }
-
-		// 可胡牌型的胡
 
 		// 需要有“过”
 		player.checkAndGenerateGuoCandidateAction();
