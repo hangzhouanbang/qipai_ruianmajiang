@@ -63,6 +63,12 @@ public class InitProcessor {
 			e.printStackTrace();
 		}
 
+		// try {
+		// Class.forName("com.dml.majiang.GouXingCalculator");
+		// } catch (ClassNotFoundException e) {
+		// e.printStackTrace();
+		// }
+
 		try {
 			recover();
 		} catch (Throwable throwable) {
