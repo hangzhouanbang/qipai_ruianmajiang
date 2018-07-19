@@ -68,6 +68,8 @@ public class InitProcessor {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
+		// 过滤掉一些不可能胡的构型，以节约内存
+		filterGouXingCalculator();
 
 		try {
 			recover();
@@ -75,6 +77,11 @@ public class InitProcessor {
 			throwable.printStackTrace();
 			System.exit(0);
 		}
+	}
+
+	// 过滤掉一些不可能胡的构型，以节约内存
+	private void filterGouXingCalculator() {
+		// TODO
 	}
 
 	private void recover() throws Throwable {
