@@ -14,6 +14,7 @@ import com.dml.majiang.MajiangPlayerMoActionUpdater;
 import com.dml.majiang.PaiXing;
 import com.dml.majiang.Pan;
 import com.dml.majiang.ShoupaiCalculator;
+import com.dml.majiang.ShoupaiPaiXing;
 import com.dml.majiang.ShoupaiWithGuipaiDangGouXingZu;
 
 public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater {
@@ -129,7 +130,11 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 						for (int i = 0; i < guipaiDangPaiArray.length; i++) {
 							shoupaiCalculator.removePai(guipaiDangPaiArray[i].getDangpai());
 						}
-						// TODO
+						for (PaiXing paiXing : paiXingList) {
+							ShoupaiPaiXing shoupaiPaiXing = paiXing
+									.generateShoupaiPaiXingByGuipaiDangPai(guipaiDangPaiArray);
+							// TODO 组成全牌型
+						}
 					}
 				}
 			}
