@@ -13,6 +13,7 @@ import com.dml.majiang.MajiangPlayer;
 import com.dml.majiang.MajiangPlayerMoActionUpdater;
 import com.dml.majiang.PaiXing;
 import com.dml.majiang.Pan;
+import com.dml.majiang.QuanPaiXing;
 import com.dml.majiang.ShoupaiCalculator;
 import com.dml.majiang.ShoupaiPaiXing;
 import com.dml.majiang.ShoupaiWithGuipaiDangGouXingZu;
@@ -109,6 +110,7 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 				}
 			}
 
+			List<QuanPaiXing> quanPaiXingList = new ArrayList<>();
 			// 对于可胡的构型，计算出所有牌型
 			for (ShoupaiWithGuipaiDangGouXingZu shoupaiWithGuipaiDangGouXingZu : shoupaiWithGuipaiDangGouXingZuList) {
 				GuipaiDangPai[] guipaiDangPaiArray = shoupaiWithGuipaiDangGouXingZu.getGuipaiDangPaiArray();
@@ -133,10 +135,17 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 						for (PaiXing paiXing : paiXingList) {
 							ShoupaiPaiXing shoupaiPaiXing = paiXing
 									.generateShoupaiPaiXingByGuipaiDangPai(guipaiDangPaiArray);
-							// TODO 组成全牌型
+							QuanPaiXing quanPaiXing = new QuanPaiXing(shoupaiPaiXing, player.getChichupaiZuList(),
+									player.getPengchupaiZuList(), player.getGangchupaiZuList());
+							quanPaiXingList.add(quanPaiXing);
 						}
 					}
 				}
+			}
+
+			if (!quanPaiXingList.isEmpty()) {// 有胡牌型
+				// 要选出分数最高的胡牌型
+				// TODO
 			}
 
 		} else {// 没财神
