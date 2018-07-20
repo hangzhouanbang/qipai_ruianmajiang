@@ -133,8 +133,10 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 							shoupaiCalculator.removePai(guipaiDangPaiArray[i].getDangpai());
 						}
 						for (PaiXing paiXing : paiXingList) {
-							ShoupaiPaiXing shoupaiPaiXing = paiXing
+							List<ShoupaiPaiXing> shoupaiPaiXingList = paiXing
 									.generateShoupaiPaiXingByGuipaiDangPai(guipaiDangPaiArray);
+							// TODO 对于每一个ShoupaiPaiXing还要变换最后牌
+
 							QuanPaiXing quanPaiXing = new QuanPaiXing(shoupaiPaiXing, player.getChichupaiZuList(),
 									player.getPengchupaiZuList(), player.getGangchupaiZuList());
 							quanPaiXingList.add(quanPaiXing);
@@ -145,7 +147,7 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 
 			if (!quanPaiXingList.isEmpty()) {// 有胡牌型
 				// 要选出分数最高的胡牌型
-				// TODO
+				// TODO 刚摸来的牌还没算进去呢
 			}
 
 		} else {// 没财神
