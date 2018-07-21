@@ -7,7 +7,7 @@ import com.dml.majiang.Ju;
 import com.dml.majiang.MajiangPai;
 import com.dml.majiang.MajiangPlayer;
 import com.dml.majiang.MajiangPosition;
-import com.dml.majiang.MajiangPositionCircle;
+import com.dml.majiang.MajiangPositionUtil;
 import com.dml.majiang.Pan;
 
 /**
@@ -40,7 +40,7 @@ public class RuianMajiangFaPaiStrategy implements FaPaiStrategy {
 				if (player != null) {
 					faPai(avaliablePaiList, player, baibanIsGuipai);
 				}
-				playerMenFeng = MajiangPositionCircle.nextAntiClockwise(playerMenFeng);
+				playerMenFeng = MajiangPositionUtil.nextPositionAntiClockwise(playerMenFeng);
 			}
 		}
 	}

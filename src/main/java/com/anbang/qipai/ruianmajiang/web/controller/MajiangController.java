@@ -98,7 +98,13 @@ public class MajiangController {
 			vo.setMsg(e.getClass().getName());
 			return vo;
 		}
-		majiangPlayQueryService.action(majiangActionResult);
+		try {
+			majiangPlayQueryService.action(majiangActionResult);
+		} catch (Throwable e) {
+			vo.setSuccess(false);
+			vo.setMsg(e.getMessage());
+			return vo;
+		}
 
 		// 通知其他人
 		for (String otherPlayerId : majiangActionResult.getOtherPlayerIds()) {

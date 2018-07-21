@@ -46,7 +46,7 @@ public class MajiangPlayQueryService {
 		return panActionFrame;
 	}
 
-	public void readyForGame(ReadyForGameResult readyForGameResult) {
+	public void readyForGame(ReadyForGameResult readyForGameResult) throws Throwable {
 		GameValueObject gameValueObject = readyForGameResult.getGame();
 		majiangGameDao.update(gameValueObject.getId(), gameValueObject.getState());
 		gameValueObject.getPlayers().forEach((player) -> {
@@ -54,12 +54,12 @@ public class MajiangPlayQueryService {
 		});
 		if (gameValueObject.getState().equals(GameState.playing)) {
 			PanActionFrame panActionFrame = readyForGameResult.getFirstActionFrame();
-			majiangGameDao.update(gameValueObject.getId(), panActionFrame.toByteArray(2000));
+			majiangGameDao.update(gameValueObject.getId(), panActionFrame.toByteArray(1024 * 8));
 			// TODO 记录一条Frame，回放的时候要做
 		}
 	}
 
-	public void action(MajiangActionResult majiangActionResult) {
+	public void action(MajiangActionResult majiangActionResult) throws Throwable {
 		GameValueObject gameValueObject = majiangActionResult.getGame();
 		majiangGameDao.update(gameValueObject.getId(), gameValueObject.getState());
 		gameValueObject.getPlayers().forEach((player) -> {
@@ -67,7 +67,7 @@ public class MajiangPlayQueryService {
 		});
 
 		PanActionFrame panActionFrame = majiangActionResult.getPanActionFrame();
-		majiangGameDao.update(gameValueObject.getId(), panActionFrame.toByteArray(2000));
+		majiangGameDao.update(gameValueObject.getId(), panActionFrame.toByteArray(1024 * 8));
 		// TODO 记录一条Frame，回放的时候要做
 	}
 

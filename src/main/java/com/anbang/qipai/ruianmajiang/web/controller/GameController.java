@@ -146,7 +146,13 @@ public class GameController {
 			return vo;
 		}
 
-		majiangPlayQueryService.readyForGame(readyForGameResult);
+		try {
+			majiangPlayQueryService.readyForGame(readyForGameResult);
+		} catch (Throwable e) {
+			vo.setSuccess(false);
+			vo.setMsg(e.getMessage());
+			return vo;
+		}
 		// 通知其他人
 		for (String otherPlayerId : readyForGameResult.getOtherPlayerIds()) {
 			wsNotifier.notifyToQuery(otherPlayerId, QueryScope.gameInfo.name());
