@@ -17,8 +17,16 @@ public class RuianMajiangGuoActionUpdater implements MajiangPlayerGuoActionUpdat
 		MajiangPlayer player = currentPan.findPlayerById(guoAction.getActionPlayerId());
 
 		if (currentPan.allPlayerHasNoActionCandidates()) {// 如果所有玩家啥也干不了
-			// 那就我摸牌
-			player.addActionCandidate(new MajiangMoAction(player.getId(), new LundaoMopai()));
+
+			// 那我说话
+			// 首先看一下我是不是有摸进待处理的牌了
+			if (player.getGangmoShoupai() != null) {
+				// 有的话那要我打牌
+				player.generateDaActions();
+			} else {
+				// 没有的话那就我摸牌
+				player.addActionCandidate(new MajiangMoAction(player.getId(), new LundaoMopai()));
+			}
 		}
 	}
 

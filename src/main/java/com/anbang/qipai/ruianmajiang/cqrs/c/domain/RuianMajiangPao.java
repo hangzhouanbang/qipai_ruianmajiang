@@ -15,6 +15,57 @@ public class RuianMajiangPao {
 	private int caishenShu;
 	private int value;
 
+	public void calculate() {
+		int pao = 0;
+		if (hongzhongPeng) {
+			pao++;
+		}
+		if (hongzhongAnke) {
+			pao++;
+		}
+		if (hongzhongGang) {
+			pao++;
+		}
+		if (facaiPeng) {
+			pao++;
+		}
+		if (facaiAnke) {
+			pao++;
+		}
+		if (facaiGang) {
+			pao++;
+		}
+		if (zuofengPeng) {
+			pao++;
+		}
+		if (zuofengAnke) {
+			pao++;
+		}
+		if (zuofengGang) {
+			pao++;
+		}
+		if (hu) {
+			pao++;
+		}
+
+		boolean siBaiban = (baibanShu == 4);
+		boolean sanCaishen = (caishenShu == 3);
+
+		if (siBaiban && sanCaishen) {
+			pao = (7 + pao) * 4;
+		} else if (siBaiban) {
+			pao += caishenShu;
+			pao = (4 + pao) * 2;
+		} else if (sanCaishen) {
+			pao += baibanShu;
+			pao = (3 + pao) * 2;
+		} else {
+			pao += caishenShu;
+			pao += baibanShu;
+		}
+		value = pao;
+	}
+
 	public boolean isHongzhongPeng() {
 		return hongzhongPeng;
 	}

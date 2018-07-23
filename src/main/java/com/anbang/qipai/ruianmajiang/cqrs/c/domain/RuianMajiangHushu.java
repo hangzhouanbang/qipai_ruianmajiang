@@ -1,6 +1,7 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
 public class RuianMajiangHushu {
+	private int dihu;
 	private boolean hu;
 	private boolean zimoHu;
 	private boolean biandangHu;
@@ -18,12 +19,25 @@ public class RuianMajiangHushu {
 	private int yijiuangangShu;
 	private int erbaangangShu;
 	private int fengziangangShu;
-	private int hongzhongDuiziShu;
-	private int facaiDuiziShu;
-	private int zuofengDuiziShu;
+	private boolean hongzhongDuizi;
+	private boolean facaiDuizi;
+	private boolean zuofengDuizi;
 	private int baibanShu;
 	private RuianMajiangTaishu taishu;
 	private int value;
+
+	public void calculate() {
+		// TODO Auto-generated method stub
+
+	}
+
+	public int getDihu() {
+		return dihu;
+	}
+
+	public void setDihu(int dihu) {
+		this.dihu = dihu;
+	}
 
 	public boolean isHu() {
 		return hu;
@@ -161,28 +175,28 @@ public class RuianMajiangHushu {
 		this.fengziangangShu = fengziangangShu;
 	}
 
-	public int getHongzhongDuiziShu() {
-		return hongzhongDuiziShu;
+	public boolean isHongzhongDuizi() {
+		return hongzhongDuizi;
 	}
 
-	public void setHongzhongDuiziShu(int hongzhongDuiziShu) {
-		this.hongzhongDuiziShu = hongzhongDuiziShu;
+	public void setHongzhongDuizi(boolean hongzhongDuizi) {
+		this.hongzhongDuizi = hongzhongDuizi;
 	}
 
-	public int getFacaiDuiziShu() {
-		return facaiDuiziShu;
+	public boolean isFacaiDuizi() {
+		return facaiDuizi;
 	}
 
-	public void setFacaiDuiziShu(int facaiDuiziShu) {
-		this.facaiDuiziShu = facaiDuiziShu;
+	public void setFacaiDuizi(boolean facaiDuizi) {
+		this.facaiDuizi = facaiDuizi;
 	}
 
-	public int getZuofengDuiziShu() {
-		return zuofengDuiziShu;
+	public boolean isZuofengDuizi() {
+		return zuofengDuizi;
 	}
 
-	public void setZuofengDuiziShu(int zuofengDuiziShu) {
-		this.zuofengDuiziShu = zuofengDuiziShu;
+	public void setZuofengDuizi(boolean zuofengDuizi) {
+		this.zuofengDuizi = zuofengDuizi;
 	}
 
 	public int getBaibanShu() {

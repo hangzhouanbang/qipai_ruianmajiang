@@ -2,8 +2,29 @@ package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
 public class RuianMajiangPanPlayerScore {
 	private RuianMajiangPao pao;
+	private int paoScore;
 	private RuianMajiangHushu hushu;
-	private int value;
+
+	/**
+	 * 有可能是负数
+	 */
+	private int jiesuanHushu;
+
+	/**
+	 * 有可能是负数
+	 */
+	private int jiesuanPao;
+
+	private int jiesuanScore;
+
+	public void jiesuan(int jiesuanHushu, int jiesuanPao) {
+		if (pao != null) {
+			paoScore = pao.getValue() * 10;
+		}
+		this.jiesuanHushu = jiesuanHushu;
+		this.jiesuanPao = jiesuanPao;
+		// TODO 通过jiesuanHushu和jiesuanPao计算jiesuanScore
+	}
 
 	public RuianMajiangPao getPao() {
 		return pao;
@@ -21,12 +42,36 @@ public class RuianMajiangPanPlayerScore {
 		this.hushu = hushu;
 	}
 
-	public int getValue() {
-		return value;
+	public int getPaoScore() {
+		return paoScore;
 	}
 
-	public void setValue(int value) {
-		this.value = value;
+	public void setPaoScore(int paoScore) {
+		this.paoScore = paoScore;
+	}
+
+	public int getJiesuanHushu() {
+		return jiesuanHushu;
+	}
+
+	public void setJiesuanHushu(int jiesuanHushu) {
+		this.jiesuanHushu = jiesuanHushu;
+	}
+
+	public int getJiesuanPao() {
+		return jiesuanPao;
+	}
+
+	public void setJiesuanPao(int jiesuanPao) {
+		this.jiesuanPao = jiesuanPao;
+	}
+
+	public int getJiesuanScore() {
+		return jiesuanScore;
+	}
+
+	public void setJiesuanScore(int jiesuanScore) {
+		this.jiesuanScore = jiesuanScore;
 	}
 
 }

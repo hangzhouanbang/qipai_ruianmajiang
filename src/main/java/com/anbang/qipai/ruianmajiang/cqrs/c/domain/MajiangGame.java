@@ -45,6 +45,9 @@ public class MajiangGame {
 			ju.setGuipaiDeterminer(new RandomGuipaiDeterminer(currentTime + 2));
 			ju.setFaPaiStrategy(new RuianMajiangFaPaiStrategy(16));
 			ju.setGouXingPanHu(new NoDanpaiOneDuiziGouXingPanHu());
+			RuianMajiangJuResultBuilder ruianMajiangJuResultBuilder = new RuianMajiangJuResultBuilder();
+			ruianMajiangJuResultBuilder.setDihu(difen);
+			ju.setJuResultBuilder(ruianMajiangJuResultBuilder);
 			ju.setInitialActionUpdater(new ZhuangMoPaiInitialActionUpdater());
 			ju.setMoActionProcessor(new RuianMajiangMoActionProcessor());
 			ju.setMoActionUpdater(new RuianMajiangMoActionUpdater());

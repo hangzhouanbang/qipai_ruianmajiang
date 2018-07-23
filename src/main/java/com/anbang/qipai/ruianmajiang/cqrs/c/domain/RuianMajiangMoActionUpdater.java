@@ -1,6 +1,7 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import com.dml.majiang.GanghouBupai;
@@ -17,12 +18,21 @@ import com.dml.majiang.PaiXing;
 import com.dml.majiang.Pan;
 import com.dml.majiang.ShoupaiCalculator;
 import com.dml.majiang.ShoupaiDuiziZu;
+import com.dml.majiang.ShoupaiGangziZu;
+import com.dml.majiang.ShoupaiKeziZu;
 import com.dml.majiang.ShoupaiPaiXing;
 import com.dml.majiang.ShoupaiShunziZu;
 import com.dml.majiang.ShoupaiWithGuipaiDangGouXingZu;
 
 public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater {
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.dml.majiang.MajiangPlayerMoActionUpdater#updateActions(com.dml.majiang.
+	 * MajiangMoAction, com.dml.majiang.Ju)
+	 */
 	@Override
 	public void updateActions(MajiangMoAction moAction, Ju ju) throws Exception {
 		Pan currentPan = ju.getCurrentPan();
@@ -51,10 +61,18 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 		// 杠四个手牌
 		player.tryGangsigeshoupaiAndGenerateCandidateAction();
 
+		// 刻子杠手牌
+		player.tryKezigangshoupaiAndGenerateCandidateAction();
+
 		// 胡
+		RuianMajiangJuResultBuilder ruianMajiangJuResultBuilder = (RuianMajiangJuResultBuilder) ju.getJuResultBuilder();
+		int dihu = ruianMajiangJuResultBuilder.getDihu();
 		GouXingPanHu gouXingPanHu = ju.getGouXingPanHu();
 		ShoupaiCalculator shoupaiCalculator = player.getShoupaiCalculator();
 		List<MajiangPai> guipaiList = player.findGuipaiList();
+		int chichuShunziCount = player.countChichupaiZu();
+		int pengchuKeziCount = player.countPengchupaiZu();
+		int gangchuGangziCount = player.countGangchupaiZu();
 		List<ShoupaiPaiXing> huPaiShoupaiPaiXingList = new ArrayList<>();
 		if (!guipaiList.isEmpty()) {// 有财神
 			MajiangPai[] xushupaiArray = MajiangPai.xushupaiArray();
@@ -126,9 +144,6 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 				GuipaiDangPai[] guipaiDangPaiArray = shoupaiWithGuipaiDangGouXingZu.getGuipaiDangPaiArray();
 				List<GouXing> gouXingList = shoupaiWithGuipaiDangGouXingZu.getGouXingList();
 				for (GouXing gouXing : gouXingList) {
-					int chichuShunziCount = player.countChichupaiZu();
-					int pengchuKeziCount = player.countPengchupaiZu();
-					int gangchuGangziCount = player.countGangchupaiZu();
 					boolean hu = gouXingPanHu.panHu(gouXing.getGouXingCode(), chichuShunziCount, pengchuKeziCount,
 							gangchuGangziCount);
 					if (hu) {
@@ -153,6 +168,24 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 						for (PaiXing paiXing : paiXingList) {
 							List<ShoupaiPaiXing> shoupaiPaiXingList = paiXing
 									.generateShoupaiPaiXingByGuipaiDangPai(guipaiDangPaiArray);
+							// 过滤暗杠或暗刻有两个财神当的
+							Iterator<ShoupaiPaiXing> i = shoupaiPaiXingList.iterator();
+							while (i.hasNext()) {
+								ShoupaiPaiXing shoupaiPaiXing = i.next();
+								for (ShoupaiKeziZu shoupaiKeziZu : shoupaiPaiXing.getKeziList()) {
+									if (shoupaiKeziZu.countGuipai() > 1) {
+										i.remove();
+										break;
+									}
+								}
+								for (ShoupaiGangziZu shoupaiGangziZu : shoupaiPaiXing.getGangziList()) {
+									if (shoupaiGangziZu.countGuipai() > 1) {
+										i.remove();
+										break;
+									}
+								}
+							}
+
 							// 对于每一个ShoupaiPaiXing还要变换最后弄进的牌
 							for (ShoupaiPaiXing shoupaiPaiXing : shoupaiPaiXingList) {
 								List<ShoupaiPaiXing> shoupaiPaiXingListWithDifftentLastActionPaiInZu = shoupaiPaiXing
@@ -178,9 +211,6 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 			}
 
 			for (GouXing gouXing : gouXingList) {
-				int chichuShunziCount = player.countChichupaiZu();
-				int pengchuKeziCount = player.countPengchupaiZu();
-				int gangchuGangziCount = player.countGangchupaiZu();
 				boolean hu = gouXingPanHu.panHu(gouXing.getGouXingCode(), chichuShunziCount, pengchuKeziCount,
 						gangchuGangziCount);
 				if (hu) {
@@ -276,19 +306,17 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 			int pengchupaiZuCount = player.countPengchupaiZu();
 			int gangchupaiZuCount = player.countGangchupaiZu();
 			// 开始计算和手牌型有关的参数
-			RuianMajiangPanPlayerScore[] scoreArray = new RuianMajiangPanPlayerScore[huPaiShoupaiPaiXingList.size()];
-			int[] scoreValueScoreArrayIdxArray = new int[scoreArray.length];// 低16位scoreArray的idx,高16位分数值
-			for (int i = 0; i < scoreArray.length; i++) {
+			RuianMajiangHushu[] hushuArray = new RuianMajiangHushu[huPaiShoupaiPaiXingList.size()];
+			int[] scoreValueScoreArrayIdxArray = new int[hushuArray.length];// 低16位scoreArray的idx,高16位分数值
+			for (int i = 0; i < hushuArray.length; i++) {
 				ShoupaiPaiXing huPaiShoupaiPaiXing = huPaiShoupaiPaiXingList.get(i);
 
-				RuianMajiangPanPlayerScore score = new RuianMajiangPanPlayerScore();
-				RuianMajiangPao pao = new RuianMajiangPao();
 				RuianMajiangHushu hushu = new RuianMajiangHushu();
+				hushu.setDihu(dihu);
 				RuianMajiangTaishu taishu = new RuianMajiangTaishu();
 				hushu.setTaishu(taishu);
-				score.setHushu(hushu);
-				score.setPao(pao);
-				scoreArray[i] = score;
+				// 牌型变化和炮无关，所以不用考虑炮
+				hushuArray[i] = hushu;
 
 				taishu.setBaibanShu(baibanShu);
 				taishu.setDanzhangdiaoHu(fangruShoupaiCount == 1);
@@ -309,16 +337,18 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 				taishu.setHunyiseHu(hunyise);
 				int shoupaiKeziCount = huPaiShoupaiPaiXing.countKezi();
 				int shoupaiGangziCount = huPaiShoupaiPaiXing.countGangzi();
+				ShoupaiDuiziZu huPaiDuiziZu = null;
 				boolean allShunzi = (pengchupaiZuCount == 0 && gangchupaiZuCount == 0 && shoupaiKeziCount == 0
 						&& shoupaiGangziCount == 0);
 				boolean biandangHu = false;
+				boolean qiandangHu = false;
 				if (allShunzi) {
 					ShoupaiDuiziZu shoupaiDuiziZu = huPaiShoupaiPaiXing.getDuiziList().get(0);
 					boolean hongzhongDuizi = shoupaiDuiziZu.getDuiziType().equals(MajiangPai.hongzhong);
 					boolean facaiDuizi = shoupaiDuiziZu.getDuiziType().equals(MajiangPai.facai);
 					boolean menFengPaiDuizi = shoupaiDuiziZu.getDuiziType().equals(menFengPai);
 					if (!hongzhongDuizi && !facaiDuizi && !menFengPaiDuizi) {
-						ShoupaiDuiziZu huPaiDuiziZu = huPaiShoupaiPaiXing.findDuiziZuHasLastActionPai();
+						huPaiDuiziZu = huPaiShoupaiPaiXing.findDuiziZuHasLastActionPai();
 						if (huPaiDuiziZu == null) {
 							ShoupaiShunziZu huPaiShunziZu = huPaiShoupaiPaiXing.findShunziZuHasLastActionPai();
 							if (huPaiShunziZu != null) {
@@ -343,6 +373,8 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 										}
 									} else {
 									}
+								} else {
+									qiandangHu = true;
 								}
 							}
 						}
@@ -362,8 +394,118 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 
 				hushu.setBaibanShu(baibanShu);
 				hushu.setBiandangHu(biandangHu);
-				hushu.setDandiaoHu(dandiaoHu);
+				hushu.setDandiaoHu(huPaiDuiziZu != null);
 
+				int erbaangangShu = 0;
+				for (int j = 0; j < erbapaiArray.length; j++) {
+					if (huPaiShoupaiPaiXing.hasGangziForPaiType(erbapaiArray[j])) {
+						erbaangangShu++;
+					}
+				}
+				hushu.setErbaangangShu(erbaangangShu);// TODO 财神只能有一个
+
+				int erbaankeShu = 0;
+				for (int j = 0; j < erbapaiArray.length; j++) {
+					if (huPaiShoupaiPaiXing.hasKeziForPaiType(erbapaiArray[j])) {
+						erbaankeShu++;
+					}
+				}
+				hushu.setErbaankeShu(erbaankeShu);
+
+				hushu.setErbaminggangShu(erbaminggangShu);
+				hushu.setErbapengShu(erbapengShu);
+				hushu.setFacaiDuizi(huPaiShoupaiPaiXing.hasDuiziForPaiType(MajiangPai.facai));
+
+				int fengziangangShu = 0;
+				for (int j = 0; j < fengzipaiArray.length; j++) {
+					if (huPaiShoupaiPaiXing.hasGangziForPaiType(fengzipaiArray[j])) {
+						fengziangangShu++;
+					}
+				}
+				hushu.setFengziangangShu(fengziangangShu);
+
+				int fengziankeShu = 0;
+				for (int j = 0; j < fengzipaiArray.length; j++) {
+					if (huPaiShoupaiPaiXing.hasKeziForPaiType(fengzipaiArray[j])) {
+						fengziankeShu++;
+					}
+				}
+				hushu.setFengziankeShu(fengziankeShu);
+
+				hushu.setFengziminggangShu(fengziminggangShu);
+				hushu.setFengzipengShu(fengzipengShu);
+				hushu.setHongzhongDuizi(huPaiShoupaiPaiXing.hasDuiziForPaiType(MajiangPai.hongzhong));
+				hushu.setHu(true);
+				hushu.setQiandangHu(qiandangHu);
+
+				int yijiuangangShu = 0;
+				for (int j = 0; j < yijiupaiArray.length; j++) {
+					if (player.ifGangchuForPaiType(yijiupaiArray[j])) {
+						yijiuangangShu++;
+					}
+				}
+				hushu.setYijiuangangShu(yijiuangangShu);
+
+				int yijiuankeShu = 0;
+				for (int j = 0; j < yijiupaiArray.length; j++) {
+					if (player.ifPengchuForPaiType(yijiupaiArray[j])) {
+						yijiuankeShu++;
+					}
+				}
+				hushu.setYijiuankeShu(yijiuankeShu);
+
+				hushu.setYijiuminggangShu(yijiuminggangShu);
+				hushu.setYijiupengShu(yijiupengShu);
+				hushu.setZimoHu(true);
+				hushu.setZuofengDuizi(huPaiShoupaiPaiXing.hasDuiziForPaiType(menFengPai));
+
+				// pao.setBaibanShu(baibanShu);
+				// pao.setCaishenShu(caishenShu);
+				// pao.setFacaiAnke(facaiAnke);
+				// pao.setFacaiGang(gangchuFacai | facaiAngang);
+				// pao.setFacaiPeng(pengchuFacai);
+				// if (hongzhongAnke) {
+				// ShoupaiKeziZu hongzhongKeziZu =
+				// huPaiShoupaiPaiXing.findFirstKeziZuForPaiType(MajiangPai.hongzhong);
+				// if (hongzhongKeziZu.countGuipai() == 0) {
+				// pao.setHongzhongAnke(true);
+				// }
+				// }
+				//
+				// boolean hongzhongAnGang = false;
+				// if (hongzhongGang) {
+				// ShoupaiGangziZu hongzhongGangziZu = huPaiShoupaiPaiXing
+				// .findFirstGangziZuForPaiType(MajiangPai.hongzhong);
+				// if (hongzhongGangziZu.countGuipai() == 0) {
+				// pao.setHongzhongAnke(true);
+				// }
+				// }
+				//
+				// pao.setHongzhongGang(gangchuHongzhong | hongzhongAnGang);
+				// pao.setHongzhongPeng(pengchuHongzhong);
+				// pao.setHu(true);
+				//
+				// if (zuofengAnke) {
+				// ShoupaiKeziZu zuofengKeziZu =
+				// huPaiShoupaiPaiXing.findFirstKeziZuForPaiType(menFengPai);
+				// if (zuofengKeziZu.countGuipai() == 0) {
+				// pao.setZuofengAnke(true);
+				// }
+				// }
+				//
+				// boolean zuofengAnGangNoCaishen = false;
+				// if (zuofengAnGang) {
+				// ShoupaiGangziZu zuofengGangziZu =
+				// huPaiShoupaiPaiXing.findFirstGangziZuForPaiType(menFengPai);
+				// if (zuofengGangziZu.countGuipai() == 0) {
+				// zuofengAnGangNoCaishen = true;
+				// }
+				// }
+				// pao.setZuofengGang(zuofengGang | zuofengAnGangNoCaishen);
+				// pao.setZuofengPeng(zuofengPeng);
+
+				hushu.calculate();
+				// TODO
 			}
 
 		}
@@ -378,8 +520,10 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 		// 需要有“过”
 		player.checkAndGenerateGuoCandidateAction();
 
-		// TODO 啥也不能干，那只能打出牌
-		player.generateDaActions();
+		// 啥也不能干，那只能打出牌
+		if (player.getActionCandidates().isEmpty()) {
+			player.generateDaActions();
+		}
 
 	}
 
