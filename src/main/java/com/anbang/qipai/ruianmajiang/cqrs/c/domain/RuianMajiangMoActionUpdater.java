@@ -1,6 +1,7 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import com.dml.majiang.GouXing;
 import com.dml.majiang.GouXingPanHu;
 import com.dml.majiang.GuipaiDangPai;
 import com.dml.majiang.Ju;
+import com.dml.majiang.MajiangHuAction;
 import com.dml.majiang.MajiangMoAction;
 import com.dml.majiang.MajiangPai;
 import com.dml.majiang.MajiangPlayer;
@@ -276,7 +278,7 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 			}
 			int fengzipengShu = 0;
 			MajiangPai[] fengzipaiArray = new MajiangPai[] { MajiangPai.dongfeng, MajiangPai.nanfeng, MajiangPai.xifeng,
-					MajiangPai.beifeng };
+					MajiangPai.beifeng, MajiangPai.hongzhong, MajiangPai.facai };
 			for (int i = 0; i < fengzipaiArray.length; i++) {
 				if (player.ifPengchuForPaiType(fengzipaiArray[i])) {
 					fengzipengShu++;
@@ -307,7 +309,7 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 			int gangchupaiZuCount = player.countGangchupaiZu();
 			// 开始计算和手牌型有关的参数
 			RuianMajiangHushu[] hushuArray = new RuianMajiangHushu[huPaiShoupaiPaiXingList.size()];
-			int[] scoreValueScoreArrayIdxArray = new int[hushuArray.length];// 低16位scoreArray的idx,高16位分数值
+			int[] hushuArrayValueIdxArray = new int[hushuArray.length];// 低16位scoreArray的idx,高16位分数值
 			for (int i = 0; i < hushuArray.length; i++) {
 				ShoupaiPaiXing huPaiShoupaiPaiXing = huPaiShoupaiPaiXingList.get(i);
 
@@ -402,7 +404,7 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 						erbaangangShu++;
 					}
 				}
-				hushu.setErbaangangShu(erbaangangShu);// TODO 财神只能有一个
+				hushu.setErbaangangShu(erbaangangShu);
 
 				int erbaankeShu = 0;
 				for (int j = 0; j < erbapaiArray.length; j++) {
@@ -505,17 +507,24 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 				// pao.setZuofengPeng(zuofengPeng);
 
 				hushu.calculate();
-				// TODO
+				hushuArrayValueIdxArray[i] = (i | (hushu.getValue() << 16));// 低16位scoreArray的idx,高16位分数值
 			}
+			Arrays.sort(hushuArrayValueIdxArray);
+			int bestHuShoupaiPaiXingIdx = ((hushuArrayValueIdxArray[hushuArrayValueIdxArray.length - 1] << 16) >>> 16);
+			// 找到了最佳
+			ShoupaiPaiXing bestHuShoupaiPaiXing = huPaiShoupaiPaiXingList.get(bestHuShoupaiPaiXingIdx);
+			RuianMajiangHushu bestHuHushu = hushuArray[bestHuShoupaiPaiXingIdx];
+			player.addActionCandidate(new MajiangHuAction(new RuianMajiangHu(bestHuShoupaiPaiXing, bestHuHushu)));
+		} else {// 不成胡
+
+			// // 非胡牌型特殊胡-三财神
+			// MoGuipaiCounter moGuipaiCounter =
+			// ju.getActionStatisticsListenerManager().findListener(MoGuipaiCounter.class);
+			// if (moGuipaiCounter.getCount() == 3) {
+			//
+			// }
 
 		}
-
-		// // 非胡牌型特殊胡-三财神
-		// MoGuipaiCounter moGuipaiCounter =
-		// ju.getActionStatisticsListenerManager().findListener(MoGuipaiCounter.class);
-		// if (moGuipaiCounter.getCount() == 3) {
-		//
-		// }
 
 		// 需要有“过”
 		player.checkAndGenerateGuoCandidateAction();

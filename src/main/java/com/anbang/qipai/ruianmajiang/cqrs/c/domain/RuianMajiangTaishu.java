@@ -25,6 +25,75 @@ public class RuianMajiangTaishu {
 	private boolean shuangCaisheng;
 	private int value;
 
+	public void calculate() {
+		int tai = 0;
+		if (hongzhongPeng) {
+			tai++;
+		}
+		if (hongzhongAnke) {
+			tai++;
+		}
+		if (hongzhongGang) {
+			tai++;
+		}
+		if (facaiPeng) {
+			tai++;
+		}
+		if (facaiAnke) {
+			tai++;
+		}
+		if (facaiGang) {
+			tai++;
+		}
+		if (zuofengPeng) {
+			tai++;
+		}
+		if (zuofengAnke) {
+			tai++;
+		}
+		if (zuofengGang) {
+			tai++;
+		}
+		tai += baibanShu;
+		if (danzhangdiaoHu) {
+			tai++;
+		}
+		if (pingHu) {
+			tai++;
+		}
+		if (qianggangHu) {
+			tai++;
+		}
+		if (gangkaiHu) {
+			tai++;
+		}
+		if (hunyiseHu) {
+			tai += 2;
+		}
+		if (duiduiHu) {
+			tai += 2;
+		}
+		if (sifengqiHu) {
+			tai += 3;
+		}
+		if (sancaishenHu) {
+			tai += 3;
+		}
+		if (tianHu) {
+			tai += 3;
+		}
+		if (diHu) {
+			tai += 3;
+		}
+		if (qingyiseHu) {
+			tai += 3;
+		}
+		if (shuangCaisheng) {
+			tai++;
+		}
+		value = tai;
+	}
+
 	public boolean isHongzhongPeng() {
 		return hongzhongPeng;
 	}

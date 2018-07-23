@@ -27,8 +27,51 @@ public class RuianMajiangHushu {
 	private int value;
 
 	public void calculate() {
-		// TODO Auto-generated method stub
-
+		taishu.calculate();
+		int hu = 0;
+		if (zimoHu) {
+			hu += 2;
+		}
+		if (biandangHu) {
+			hu += 2;
+		}
+		if (qiandangHu) {
+			hu += 2;
+		}
+		if (dandiaoHu) {
+			hu += 2;
+		}
+		hu += (yijiupengShu * 4);
+		hu += (erbapengShu * 2);
+		hu += (fengzipengShu * 4);
+		hu += (yijiuankeShu * 8);
+		hu += (erbaankeShu * 4);
+		hu += (fengziankeShu * 8);
+		hu += (yijiuminggangShu * 16);
+		hu += (erbaminggangShu * 8);
+		hu += (fengziminggangShu * 16);
+		hu += (yijiuangangShu * 32);
+		hu += (erbaangangShu * 16);
+		hu += (fengziangangShu * 32);
+		if (hongzhongDuizi) {
+			hu += 2;
+		}
+		if (facaiDuizi) {
+			hu += 2;
+		}
+		if (zuofengDuizi) {
+			hu += 2;
+		}
+		hu += (baibanShu * 4);
+		if (this.hu) {
+			if (taishu.getValue() < 3) {
+				value = (int) ((dihu + hu) * Math.pow(2, taishu.getValue()));
+			} else {
+				value = (500 + 200 * (taishu.getValue() - 3));
+			}
+		} else {
+			value = (int) (hu * Math.pow(2, taishu.getValue()));
+		}
 	}
 
 	public int getDihu() {
