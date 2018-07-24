@@ -1,6 +1,7 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import com.dml.majiang.Ju;
@@ -9,6 +10,7 @@ import com.dml.majiang.MajiangPai;
 import com.dml.majiang.MajiangPlayer;
 import com.dml.majiang.MajiangPlayerHuActionProcessor;
 import com.dml.majiang.Pan;
+import com.dml.majiang.ShoupaiPaiXing;
 
 public class RuianMajiangHuActionProcessor implements MajiangPlayerHuActionProcessor {
 
@@ -16,6 +18,7 @@ public class RuianMajiangHuActionProcessor implements MajiangPlayerHuActionProce
 	public void process(MajiangHuAction action, Ju ju) throws Exception {
 		RuianMajiangHu hu = (RuianMajiangHu) action.getHu();
 		RuianMajiangHushu huPlayerHushu = hu.getHushu();
+		ShoupaiPaiXing huShoupaiPaiXing = hu.getShoupaiPaiXing();
 		Pan currentPan = ju.getCurrentPan();
 		MajiangPlayer huPlayer = currentPan.findPlayerById(action.getActionPlayerId());
 		RuianMajiangJuResultBuilder ruianMajiangJuResultBuilder = (RuianMajiangJuResultBuilder) ju.getJuResultBuilder();
@@ -24,10 +27,12 @@ public class RuianMajiangHuActionProcessor implements MajiangPlayerHuActionProce
 
 		// 两两结算RuianMajiangPanPlayerScore
 		List<String> playerIdList = currentPan.sortedPlayerIdList();
-		List<RuianMajiangPanPlayerScore> playerScoreList = new ArrayList<>();
+		List<RuianMajiangPanPlayerResult> playerResultList = new ArrayList<>();
 		playerIdList.forEach((playerId) -> {
+			RuianMajiangPanPlayerResult playerResult = new RuianMajiangPanPlayerResult();
+			playerResult.setPlayerId(playerId);
 			RuianMajiangPanPlayerScore score = new RuianMajiangPanPlayerScore();
-			score.setPlayerId(playerId);
+			playerResult.setScore(score);
 			if (playerId.equals(huPlayer.getId())) {
 				score.setHushu(huPlayerHushu);
 			} else {
@@ -35,15 +40,17 @@ public class RuianMajiangHuActionProcessor implements MajiangPlayerHuActionProce
 				score.setHushu(RuianMajiangJiesuanCalculator.calculateBestHushuForBuhuPlayer(dihu,
 						currentPan.findPlayerById(playerId), baibanIsGuipai));
 			}
-			playerScoreList.add(score);
+			playerResultList.add(playerResult);
 		});
 
-		for (int i = 0; i < playerScoreList.size(); i++) {
-			RuianMajiangPanPlayerScore score1 = playerScoreList.get(i);
-			String playerId1 = score1.getPlayerId();
-			for (int j = (i + 1); j < playerScoreList.size(); j++) {
-				RuianMajiangPanPlayerScore score2 = playerScoreList.get(j);
-				String playerId2 = score2.getPlayerId();
+		for (int i = 0; i < playerResultList.size(); i++) {
+			RuianMajiangPanPlayerResult playerResult1 = playerResultList.get(i);
+			RuianMajiangPanPlayerScore score1 = playerResult1.getScore();
+			String playerId1 = playerResult1.getPlayerId();
+			for (int j = (i + 1); j < playerResultList.size(); j++) {
+				RuianMajiangPanPlayerResult playerResult2 = playerResultList.get(j);
+				RuianMajiangPanPlayerScore score2 = playerResult2.getScore();
+				String playerId2 = playerResult2.getPlayerId();
 				if (playerId1.equals(huPlayer.getId())) {// 1胡2不胡
 					int jiesuanHushu = quzheng(huPlayerHushu.getValue());
 					// 是不是庄家胡
@@ -106,12 +113,24 @@ public class RuianMajiangHuActionProcessor implements MajiangPlayerHuActionProce
 				}
 			}
 		}
-		playerScoreList.forEach((score) -> score.jiesuan());
 
-		// List<RuianMajiangPanPlayerScore> playerScoreList = new ArrayList<>();
+		// 胡的那家shoupaixing放入结果，其余不胡的shoupailist放入结果
+		playerResultList.forEach((playerResult) -> {
+			MajiangPlayer player = currentPan.findPlayerById(playerResult.getPlayerId());
+			playerResult.getScore().jiesuan();
+			if (playerResult.getPlayerId().equals(huPlayer.getId())) {
+				playerResult.setHu(true);
+				playerResult.setBestShoupaiPaiXing(huShoupaiPaiXing);
+			} else {
+				playerResult.setHu(false);
+				playerResult.setGuipaiTypeSet(new HashSet<>(player.getGuipaiTypeSet()));
+				playerResult.setShoupaiList(new ArrayList<>(player.getFangruShoupaiList()));
+			}
+		});
+
 		RuianMajiangPanResult ruianMajiangPanResult = new RuianMajiangPanResult();
-		ruianMajiangPanResult.setPlayerScoreList(playerScoreList);
-		currentPan.setResult(ruianMajiangPanResult);
+		ruianMajiangPanResult.setPlayerResultList(playerResultList);
+		ju.addFinishedPanResult(ruianMajiangPanResult);
 
 	}
 

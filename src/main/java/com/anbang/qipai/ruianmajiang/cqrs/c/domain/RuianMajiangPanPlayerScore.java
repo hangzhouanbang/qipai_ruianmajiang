@@ -2,7 +2,6 @@ package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
 public class RuianMajiangPanPlayerScore {
 
-	private String playerId;
 	private RuianMajiangPao pao;
 	private int paoScore;
 	private RuianMajiangHushu hushu;
@@ -28,14 +27,6 @@ public class RuianMajiangPanPlayerScore {
 
 	public void jiesuanHushu(int delta) {
 		jiesuanHushu += delta;
-	}
-
-	public String getPlayerId() {
-		return playerId;
-	}
-
-	public void setPlayerId(String playerId) {
-		this.playerId = playerId;
 	}
 
 	public RuianMajiangPao getPao() {

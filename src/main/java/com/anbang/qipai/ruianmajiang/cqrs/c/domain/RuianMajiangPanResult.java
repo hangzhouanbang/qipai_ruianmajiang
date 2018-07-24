@@ -1,32 +1,19 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
-import java.nio.ByteBuffer;
 import java.util.List;
 
 import com.dml.majiang.PanResult;
 
 public class RuianMajiangPanResult implements PanResult {
 
-	private List<RuianMajiangPanPlayerScore> playerScoreList;
+	private List<RuianMajiangPanPlayerResult> playerResultList;
 
-	@Override
-	public void toByteBuffer(ByteBuffer bb) throws Throwable {
-		// TODO Auto-generated method stub
-
+	public List<RuianMajiangPanPlayerResult> getPlayerResultList() {
+		return playerResultList;
 	}
 
-	@Override
-	public void fillByByteBuffer(ByteBuffer bb) throws Throwable {
-		// TODO Auto-generated method stub
-
-	}
-
-	public List<RuianMajiangPanPlayerScore> getPlayerScoreList() {
-		return playerScoreList;
-	}
-
-	public void setPlayerScoreList(List<RuianMajiangPanPlayerScore> playerScoreList) {
-		this.playerScoreList = playerScoreList;
+	public void setPlayerResultList(List<RuianMajiangPanPlayerResult> playerResultList) {
+		this.playerResultList = playerResultList;
 	}
 
 }

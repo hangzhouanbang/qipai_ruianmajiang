@@ -9,6 +9,7 @@ import com.dml.mpgame.GameValueObject;
 public class MajiangActionResult {
 	private GameValueObject game;
 	private PanActionFrame panActionFrame;
+	private RuianMajiangPanResult result;
 	private List<String> otherPlayerIds = new ArrayList<>();
 
 	public GameValueObject getGame() {
@@ -25,6 +26,14 @@ public class MajiangActionResult {
 
 	public void setPanActionFrame(PanActionFrame panActionFrame) {
 		this.panActionFrame = panActionFrame;
+	}
+
+	public RuianMajiangPanResult getResult() {
+		return result;
+	}
+
+	public void setResult(RuianMajiangPanResult result) {
+		this.result = result;
 	}
 
 	public List<String> getOtherPlayerIds() {

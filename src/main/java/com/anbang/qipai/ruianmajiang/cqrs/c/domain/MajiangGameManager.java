@@ -97,6 +97,7 @@ public class MajiangGameManager {
 		}
 		MajiangGame game = gameIdMajiangGameMap.get(gameId);
 		PanActionFrame panActionFrame = game.action(playerId, actionId);
+		// TODO 如果盘结束（胡或者流局）的话，还要拿panresult
 		MajiangActionResult result = new MajiangActionResult();
 		result.setGame(new GameValueObject(game.getGame()));
 		result.setPanActionFrame(panActionFrame);
