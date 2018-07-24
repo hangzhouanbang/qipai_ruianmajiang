@@ -1,6 +1,8 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
 public class RuianMajiangPanPlayerScore {
+
+	private String playerId;
 	private RuianMajiangPao pao;
 	private int paoScore;
 	private RuianMajiangHushu hushu;
@@ -17,13 +19,23 @@ public class RuianMajiangPanPlayerScore {
 
 	private int jiesuanScore;
 
-	public void jiesuan(int jiesuanHushu, int jiesuanPao) {
+	public void jiesuan() {
 		if (pao != null) {
 			paoScore = pao.getValue() * 10;
 		}
-		this.jiesuanHushu = jiesuanHushu;
-		this.jiesuanPao = jiesuanPao;
-		// TODO 通过jiesuanHushu和jiesuanPao计算jiesuanScore
+		jiesuanScore = jiesuanHushu + jiesuanPao * 10;
+	}
+
+	public void jiesuanHushu(int delta) {
+		jiesuanHushu += delta;
+	}
+
+	public String getPlayerId() {
+		return playerId;
+	}
+
+	public void setPlayerId(String playerId) {
+		this.playerId = playerId;
 	}
 
 	public RuianMajiangPao getPao() {

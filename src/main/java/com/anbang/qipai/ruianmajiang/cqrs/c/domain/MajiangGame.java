@@ -61,6 +61,7 @@ public class MajiangGame {
 			ju.setGangActionUpdater(new RuianMajiangGangActionUpdater());
 			ju.setGuoActionProcessor(new DoNothingGuoActionProcessor());
 			ju.setGuoActionUpdater(new RuianMajiangGuoActionUpdater());
+			ju.setHuActionProcessor(new RuianMajiangHuActionProcessor());
 
 			ju.addActionStatisticsListener(new CaizipaiListener());
 			ju.addActionStatisticsListener(new MoGuipaiCounter());
