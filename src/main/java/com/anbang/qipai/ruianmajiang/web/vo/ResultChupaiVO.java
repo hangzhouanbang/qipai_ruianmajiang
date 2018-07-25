@@ -7,6 +7,11 @@ public class ResultChupaiVO {
 	private MajiangPai pai;
 	private boolean hupai;
 
+	public ResultChupaiVO(MajiangPai pai, boolean hupai) {
+		this.pai = pai;
+		this.hupai = hupai;
+	}
+
 	public MajiangPai getPai() {
 		return pai;
 	}

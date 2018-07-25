@@ -11,9 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangActionResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.MajiangPlayCmdService;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.PlayerAuthService;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.GamePlayerDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.PanResultDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangPlayQueryService;
 import com.anbang.qipai.ruianmajiang.web.vo.CommonVO;
+import com.anbang.qipai.ruianmajiang.web.vo.PanResultVO;
 import com.anbang.qipai.ruianmajiang.websocket.GamePlayWsNotifier;
 import com.anbang.qipai.ruianmajiang.websocket.QueryScope;
 import com.dml.majiang.PanActionFrame;
@@ -78,10 +80,8 @@ public class MajiangController {
 		Map data = new HashMap();
 		vo.setData(data);
 		PanResultDbo panResultDbo = majiangPlayQueryService.findPanResultDbo(gameId, panNo);
-		// TODO vo
-		// Map<String, GamePlayerDbo> playerMap =
-		// majiangPlayQueryService.findGamePlayersAsMap(gameId);
-
+		Map<String, GamePlayerDbo> playerMap = majiangPlayQueryService.findGamePlayersAsMap(gameId);
+		data.put("panResult", new PanResultVO(panResultDbo, playerMap));
 		return vo;
 	}
 

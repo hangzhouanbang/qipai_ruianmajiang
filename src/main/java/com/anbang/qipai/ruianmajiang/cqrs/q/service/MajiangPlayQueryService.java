@@ -1,5 +1,9 @@
 package com.anbang.qipai.ruianmajiang.cqrs.q.service;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -87,6 +91,15 @@ public class MajiangPlayQueryService {
 
 	public PanResultDbo findPanResultDbo(String gameId, int panNo) {
 		return panResultDboDao.findByGameIdAndPanNo(gameId, panNo);
+	}
+
+	public Map<String, GamePlayerDbo> findGamePlayersAsMap(String gameId) {
+		List<GamePlayerDbo> gamePlayerDboList = gamePlayerDboDao.findByGameId(gameId);
+		Map<String, GamePlayerDbo> map = new HashMap<>();
+		for (GamePlayerDbo gamePlayerDbo : gamePlayerDboList) {
+			map.put(gamePlayerDbo.getPlayerId(), gamePlayerDbo);
+		}
+		return map;
 	}
 
 }
