@@ -23,40 +23,43 @@ public class RuianMajiangDaActionUpdater implements MajiangPlayerDaActionUpdater
 
 		MajiangPlayer xiajiaPlayer = currentPan.findXiajia(player);
 		xiajiaPlayer.clearActionCandidates();
-		// 下家可以吃碰杠胡
+		// 下家可以吃
 		xiajiaPlayer.tryChiAndGenerateCandidateActions(daAction.getActionPlayerId(), daAction.getPai());
-		xiajiaPlayer.tryPengAndGenerateCandidateAction(daAction.getActionPlayerId(), daAction.getPai());
-		xiajiaPlayer.tryGangdachuAndGenerateCandidateAction(daAction.getActionPlayerId(), daAction.getPai());
 
-		// 胡
-		RuianMajiangJuResultBuilder ruianMajiangJuResultBuilder = (RuianMajiangJuResultBuilder) ju.getJuResultBuilder();
-		int dihu = ruianMajiangJuResultBuilder.getDihu();
-		GouXingPanHu gouXingPanHu = ju.getGouXingPanHu();
-		RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestFeizimoHu(dihu, gouXingPanHu, player,
-				baibanIsGuipai, daAction.getPai());
-		if (bestHu != null) {
-			player.addActionCandidate(new MajiangHuAction(player.getId(), bestHu));
-		} else {
-			// // 非胡牌型特殊胡-三财神
-			// MoGuipaiCounter moGuipaiCounter =
-			// ju.getActionStatisticsListenerManager().findListener(MoGuipaiCounter.class);
-			// if (moGuipaiCounter.getCount() == 3) {
-			//
-			// }
-		}
-		player.checkAndGenerateGuoCandidateAction();
-
+		boolean anyPlayerHu = false;
 		while (true) {
-			xiajiaPlayer = currentPan.findXiajia(xiajiaPlayer);
 			if (!xiajiaPlayer.getId().equals(daAction.getActionPlayerId())) {
-				xiajiaPlayer.clearActionCandidates();
-				// 其他的可以碰杠
+				// 其他的可以碰杠胡
 				xiajiaPlayer.tryPengAndGenerateCandidateAction(daAction.getActionPlayerId(), daAction.getPai());
 				xiajiaPlayer.tryGangdachuAndGenerateCandidateAction(daAction.getActionPlayerId(), daAction.getPai());
+
+				if (!anyPlayerHu) {
+					// 点炮胡
+					RuianMajiangJuResultBuilder ruianMajiangJuResultBuilder = (RuianMajiangJuResultBuilder) ju
+							.getJuResultBuilder();
+					int dihu = ruianMajiangJuResultBuilder.getDihu();
+					GouXingPanHu gouXingPanHu = ju.getGouXingPanHu();
+					RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestDianpaoHu(dihu, gouXingPanHu,
+							player, baibanIsGuipai, daAction.getPai());
+					if (bestHu != null) {
+						player.addActionCandidate(new MajiangHuAction(player.getId(), bestHu));
+						anyPlayerHu = true;
+					} else {
+						// // 非胡牌型特殊胡-三财神
+						// MoGuipaiCounter moGuipaiCounter =
+						// ju.getActionStatisticsListenerManager().findListener(MoGuipaiCounter.class);
+						// if (moGuipaiCounter.getCount() == 3) {
+						//
+						// }
+					}
+				}
+
 				xiajiaPlayer.checkAndGenerateGuoCandidateAction();
 			} else {
 				break;
 			}
+			xiajiaPlayer = currentPan.findXiajia(xiajiaPlayer);
+			xiajiaPlayer.clearActionCandidates();
 		}
 
 		// 如果所有玩家啥也做不了,那就下家摸牌

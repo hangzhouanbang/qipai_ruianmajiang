@@ -23,9 +23,10 @@ public class RuianMajiangChiActionUpdater implements MajiangPlayerChiActionUpdat
 		RuianMajiangJuResultBuilder ruianMajiangJuResultBuilder = (RuianMajiangJuResultBuilder) ju.getJuResultBuilder();
 		int dihu = ruianMajiangJuResultBuilder.getDihu();
 		GouXingPanHu gouXingPanHu = ju.getGouXingPanHu();
-		RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestFeizimoHu(dihu, gouXingPanHu, player,
-				baibanIsGuipai, chiAction.getChijinPai());
+		RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestChipenggangHu(dihu, gouXingPanHu, player,
+				baibanIsGuipai);
 		if (bestHu != null) {
+			bestHu.setChipenggangAction(chiAction);
 			player.addActionCandidate(new MajiangHuAction(player.getId(), bestHu));
 		} else {
 			// // 非胡牌型特殊胡-三财神

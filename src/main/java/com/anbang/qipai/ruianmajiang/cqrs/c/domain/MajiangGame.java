@@ -11,6 +11,7 @@ import com.dml.majiang.NoDanpaiOneDuiziGouXingPanHu;
 import com.dml.majiang.NoHuapaiRandomAvaliablePaiFiller;
 import com.dml.majiang.Pan;
 import com.dml.majiang.PanActionFrame;
+import com.dml.majiang.PlayerHuPanFinishiDeterminer;
 import com.dml.majiang.RandomGuipaiDeterminer;
 import com.dml.majiang.RandomMustHasDongPlayersMenFengDeterminer;
 import com.dml.majiang.ShunziChiActionProcessor;
@@ -44,7 +45,9 @@ public class MajiangGame {
 			ju.setAvaliablePaiFiller(new NoHuapaiRandomAvaliablePaiFiller(currentTime + 1));
 			ju.setGuipaiDeterminer(new RandomGuipaiDeterminer(currentTime + 2));
 			ju.setFaPaiStrategy(new RuianMajiangFaPaiStrategy(16));
+			ju.setCurrentPanFinishiDeterminer(new PlayerHuPanFinishiDeterminer());
 			ju.setGouXingPanHu(new NoDanpaiOneDuiziGouXingPanHu());
+			ju.setCurrentPanResultBuilder(new RuianMajiangPanResultBuilder());
 			RuianMajiangJuResultBuilder ruianMajiangJuResultBuilder = new RuianMajiangJuResultBuilder();
 			ruianMajiangJuResultBuilder.setDihu(difen);
 			ju.setJuResultBuilder(ruianMajiangJuResultBuilder);
@@ -68,6 +71,7 @@ public class MajiangGame {
 
 			ju.setPanShu(panshu);
 			Pan firstPan = new Pan();
+			firstPan.setNo(1);
 			game.allPlayerIds().forEach((pid) -> firstPan.addPlayer(pid));
 			ju.setCurrentPan(firstPan);
 
@@ -98,6 +102,14 @@ public class MajiangGame {
 
 	public PanActionFrame action(String playerId, int actionId) throws Exception {
 		return ju.action(playerId, actionId);
+	}
+
+	public boolean shouldFinishCurrentPan() {
+		return ju.determineToFinishCurrentPan();
+	}
+
+	public RuianMajiangPanResult finishCurrentPan() {
+		return (RuianMajiangPanResult) ju.finishCurrentPan();
 	}
 
 	public Game getGame() {

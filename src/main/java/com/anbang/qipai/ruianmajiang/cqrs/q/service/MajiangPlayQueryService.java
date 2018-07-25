@@ -5,10 +5,13 @@ import org.springframework.stereotype.Component;
 
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangActionResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyForGameResult;
+import com.anbang.qipai.ruianmajiang.cqrs.c.domain.RuianMajiangPanResult;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dao.GamePlayerDboDao;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dao.MajiangGameDao;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dao.PanResultDboDao;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.GamePlayerDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameDbo;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.PanResultDbo;
 import com.dml.majiang.LiangangangPanActionFramePlayerViewFilter;
 import com.dml.majiang.PanActionFrame;
 import com.dml.mpgame.GamePlayerState;
@@ -23,6 +26,9 @@ public class MajiangPlayQueryService {
 
 	@Autowired
 	private MajiangGameDao majiangGameDao;
+
+	@Autowired
+	private PanResultDboDao panResultDboDao;
 
 	private LiangangangPanActionFramePlayerViewFilter pvFilter = new LiangangangPanActionFramePlayerViewFilter();
 
@@ -68,7 +74,19 @@ public class MajiangPlayQueryService {
 
 		PanActionFrame panActionFrame = majiangActionResult.getPanActionFrame();
 		majiangGameDao.update(gameValueObject.getId(), panActionFrame.toByteArray(1024 * 8));
+
+		// 盘出结果的话要记录结果
+		RuianMajiangPanResult ruianMajiangPanResult = majiangActionResult.getResult();
+		if (ruianMajiangPanResult != null) {
+			PanResultDbo panResultDbo = new PanResultDbo(gameValueObject.getId(), ruianMajiangPanResult);
+			panResultDboDao.save(panResultDbo);
+		}
+
 		// TODO 记录一条Frame，回放的时候要做
+	}
+
+	public PanResultDbo findPanResultDbo(String gameId, int panNo) {
+		return panResultDboDao.findByGameIdAndPanNo(gameId, panNo);
 	}
 
 }

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangActionResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.MajiangPlayCmdService;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.PlayerAuthService;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.PanResultDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangPlayQueryService;
 import com.anbang.qipai.ruianmajiang.web.vo.CommonVO;
 import com.anbang.qipai.ruianmajiang.websocket.GamePlayWsNotifier;
@@ -70,6 +71,20 @@ public class MajiangController {
 		return vo;
 	}
 
+	@RequestMapping(value = "/pan_result")
+	@ResponseBody
+	public CommonVO panresult(String gameId, int panNo) {
+		CommonVO vo = new CommonVO();
+		Map data = new HashMap();
+		vo.setData(data);
+		PanResultDbo panResultDbo = majiangPlayQueryService.findPanResultDbo(gameId, panNo);
+		// TODO vo
+		// Map<String, GamePlayerDbo> playerMap =
+		// majiangPlayQueryService.findGamePlayersAsMap(gameId);
+
+		return vo;
+	}
+
 	/**
 	 * 麻将行牌
 	 * 
@@ -106,12 +121,24 @@ public class MajiangController {
 			return vo;
 		}
 
-		// 通知其他人
-		for (String otherPlayerId : majiangActionResult.getOtherPlayerIds()) {
-			wsNotifier.notifyToQuery(otherPlayerId, QueryScope.panForMe.name());
+		if (majiangActionResult.getResult() == null) {// 盘没结束
+			// 通知其他人
+			for (String otherPlayerId : majiangActionResult.getOtherPlayerIds()) {
+				wsNotifier.notifyToQuery(otherPlayerId, QueryScope.panForMe.name());
+			}
+
+			data.put("queryScope", QueryScope.panForMe);
+
+		} else {// 盘结束了
+				// 通知其他人
+			for (String otherPlayerId : majiangActionResult.getOtherPlayerIds()) {
+				wsNotifier.notifyToQuery(otherPlayerId, QueryScope.panResult.name());
+			}
+
+			data.put("queryScope", QueryScope.panResult);
 		}
 
-		data.put("queryScope", QueryScope.panForMe);// TODO 盘结束，局结束
+		// TODO 局结束
 		return vo;
 	}
 
