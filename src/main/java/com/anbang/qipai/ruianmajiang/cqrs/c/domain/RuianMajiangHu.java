@@ -3,7 +3,6 @@ package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 import java.nio.ByteBuffer;
 
 import com.dml.majiang.Hu;
-import com.dml.majiang.MajiangPlayerAction;
 import com.dml.majiang.ShoupaiPaiXing;
 
 public class RuianMajiangHu implements Hu {
@@ -12,8 +11,9 @@ public class RuianMajiangHu implements Hu {
 
 	private RuianMajiangHushu hushu;
 
-	// 吃碰杠胡要保存action
-	private MajiangPlayerAction chipenggangAction;
+	private boolean zimo;
+
+	private String dianpaoPlayerId;
 
 	public RuianMajiangHu() {
 	}
@@ -39,12 +39,20 @@ public class RuianMajiangHu implements Hu {
 		this.hushu = hushu;
 	}
 
-	public MajiangPlayerAction getChipenggangAction() {
-		return chipenggangAction;
+	public boolean isZimo() {
+		return zimo;
 	}
 
-	public void setChipenggangAction(MajiangPlayerAction chipenggangAction) {
-		this.chipenggangAction = chipenggangAction;
+	public void setZimo(boolean zimo) {
+		this.zimo = zimo;
+	}
+
+	public String getDianpaoPlayerId() {
+		return dianpaoPlayerId;
+	}
+
+	public void setDianpaoPlayerId(String dianpaoPlayerId) {
+		this.dianpaoPlayerId = dianpaoPlayerId;
 	}
 
 	@Override

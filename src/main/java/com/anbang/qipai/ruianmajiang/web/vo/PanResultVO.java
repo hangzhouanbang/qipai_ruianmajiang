@@ -16,7 +16,8 @@ public class PanResultVO {
 		List<RuianMajiangPanPlayerResult> list = dbo.getPlayerResultList();
 		playerResultList = new ArrayList<>(list.size());
 		list.forEach((panPlayerResult) -> playerResultList
-				.add(new RuianMajiangPanPlayerResultVO(playerMap.get(panPlayerResult.getPlayerId()), panPlayerResult)));
+				.add(new RuianMajiangPanPlayerResultVO(playerMap.get(panPlayerResult.getPlayerId()),
+						dbo.getZhuangPlayerId(), dbo.isZimo(), dbo.getDianpaoPlayerId(), panPlayerResult)));
 	}
 
 	public List<RuianMajiangPanPlayerResultVO> getPlayerResultList() {

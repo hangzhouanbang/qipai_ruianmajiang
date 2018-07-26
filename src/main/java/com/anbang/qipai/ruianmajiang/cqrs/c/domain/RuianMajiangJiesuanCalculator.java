@@ -77,30 +77,6 @@ public class RuianMajiangJiesuanCalculator {
 		}
 	}
 
-	// 吃碰杠胡
-	public static RuianMajiangHu calculateBestChipenggangHu(int dihu, GouXingPanHu gouXingPanHu, MajiangPlayer player,
-			boolean baibanIsGuipai) {
-		ShoupaiCalculator shoupaiCalculator = player.getShoupaiCalculator();
-		List<MajiangPai> guipaiList = player.findGuipaiList();// TODO 也可以用统计器做
-
-		List<ShoupaiPaiXing> huPaiShoupaiPaiXingList = calculateFeizimoHuPaiShoupaiPaiXingList(guipaiList,
-				baibanIsGuipai, shoupaiCalculator, player, gouXingPanHu);
-
-		if (!huPaiShoupaiPaiXingList.isEmpty()) {// 有胡牌型
-
-			RuianMajiangHushu[] hushuArray = new RuianMajiangHushu[huPaiShoupaiPaiXingList.size()];
-			// 要选出分数最高的胡牌型
-			int bestHushuShoupaiPaiXingIdx = calculateBestHushuShoupaiPaiXingIdx(player, huPaiShoupaiPaiXingList,
-					hushuArray, true, false, false, dihu);
-			// 找到了最佳
-			ShoupaiPaiXing bestHuShoupaiPaiXing = huPaiShoupaiPaiXingList.get(bestHushuShoupaiPaiXingIdx);
-			RuianMajiangHushu bestHuHushu = hushuArray[bestHushuShoupaiPaiXingIdx];
-			return new RuianMajiangHu(bestHuShoupaiPaiXing, bestHuHushu);
-		} else {// 不成胡
-			return null;
-		}
-	}
-
 	public static RuianMajiangHushu calculateBestHushuForBuhuPlayer(int dihu, MajiangPlayer player,
 			boolean baibanIsGuipai) {
 		ShoupaiCalculator shoupaiCalculator = player.getShoupaiCalculator();
@@ -169,7 +145,7 @@ public class RuianMajiangJiesuanCalculator {
 				&& shoupaiGangziCount == 0);
 		boolean biandangHu = false;
 		boolean qiandangHu = false;
-		if (allShunzi) {
+		if (hu && allShunzi) {
 			ShoupaiDuiziZu shoupaiDuiziZu = huPaiShoupaiPaiXing.getDuiziList().get(0);
 			boolean hongzhongDuizi = shoupaiDuiziZu.getDuiziType().equals(MajiangPai.hongzhong);
 			boolean facaiDuizi = shoupaiDuiziZu.getDuiziType().equals(MajiangPai.facai);
@@ -348,17 +324,6 @@ public class RuianMajiangJiesuanCalculator {
 		}
 	}
 
-	private static List<ShoupaiPaiXing> calculateFeizimoHuPaiShoupaiPaiXingList(List<MajiangPai> guipaiList,
-			boolean baibanIsGuipai, ShoupaiCalculator shoupaiCalculator, MajiangPlayer player,
-			GouXingPanHu gouXingPanHu) {
-		if (!guipaiList.isEmpty()) {// 有财神
-			return calculateFeizimoHuPaiShoupaiPaiXingListWithCaishen(guipaiList, baibanIsGuipai, shoupaiCalculator,
-					player, gouXingPanHu);
-		} else {// 没财神
-			return calculateFeizimoHuPaiShoupaiPaiXingListWithoutCaishen(shoupaiCalculator, player, gouXingPanHu);
-		}
-	}
-
 	private static List<ShoupaiPaiXing> calculateBuhuShoupaiPaiXingList(List<MajiangPai> guipaiList,
 			boolean baibanIsGuipai, ShoupaiCalculator shoupaiCalculator) {
 		if (!guipaiList.isEmpty()) {// 有财神
@@ -388,29 +353,6 @@ public class RuianMajiangJiesuanCalculator {
 					List<ShoupaiPaiXing> shoupaiPaiXingListWithDifftentLastActionPaiInZu = shoupaiPaiXing
 							.differentiateShoupaiPaiXingByLastActionPai(huPai);
 					huPaiShoupaiPaiXingList.addAll(shoupaiPaiXingListWithDifftentLastActionPaiInZu);
-				}
-			}
-		}
-		return huPaiShoupaiPaiXingList;
-	}
-
-	private static List<ShoupaiPaiXing> calculateFeizimoHuPaiShoupaiPaiXingListWithoutCaishen(
-			ShoupaiCalculator shoupaiCalculator, MajiangPlayer player, GouXingPanHu gouXingPanHu) {
-		List<ShoupaiPaiXing> huPaiShoupaiPaiXingList = new ArrayList<>();
-		// 计算构型
-		List<GouXing> gouXingList = shoupaiCalculator.calculateAllGouXing();
-		int chichuShunziCount = player.countChichupaiZu();
-		int pengchuKeziCount = player.countPengchupaiZu();
-		int gangchuGangziCount = player.countGangchupaiZu();
-		for (GouXing gouXing : gouXingList) {
-			boolean hu = gouXingPanHu.panHu(gouXing.getGouXingCode(), chichuShunziCount, pengchuKeziCount,
-					gangchuGangziCount);
-			if (hu) {
-				// 计算牌型
-				List<PaiXing> paiXingList = shoupaiCalculator.calculateAllPaiXingFromGouXing(gouXing);
-				for (PaiXing paiXing : paiXingList) {
-					ShoupaiPaiXing shoupaiPaiXing = paiXing.generateAllBenPaiShoupaiPaiXing();
-					huPaiShoupaiPaiXingList.add(shoupaiPaiXing);
 				}
 			}
 		}
@@ -459,43 +401,6 @@ public class RuianMajiangJiesuanCalculator {
 					// 计算牌型
 					huPaiShoupaiPaiXingList.addAll(calculateAllShoupaiPaiXingForGouXingWithHupai(gouXing,
 							shoupaiCalculator, guipaiDangPaiArray, huPai));
-					// 再把所有当的鬼牌移出计算器
-					for (int i = 0; i < guipaiDangPaiArray.length; i++) {
-						shoupaiCalculator.removePai(guipaiDangPaiArray[i].getDangpai());
-					}
-				}
-
-			}
-		}
-		return huPaiShoupaiPaiXingList;
-	}
-
-	private static List<ShoupaiPaiXing> calculateFeizimoHuPaiShoupaiPaiXingListWithCaishen(List<MajiangPai> guipaiList,
-			boolean baibanIsGuipai, ShoupaiCalculator shoupaiCalculator, MajiangPlayer player,
-			GouXingPanHu gouXingPanHu) {
-		int chichuShunziCount = player.countChichupaiZu();
-		int pengchuKeziCount = player.countPengchupaiZu();
-		int gangchuGangziCount = player.countGangchupaiZu();
-		List<ShoupaiPaiXing> huPaiShoupaiPaiXingList = new ArrayList<>();
-		MajiangPai[] paiTypesForGuipaiAct = calculatePaiTypesForGuipaiAct(baibanIsGuipai);// 鬼牌可以扮演的牌类
-		// 开始循环财神各种当法，算构型
-		List<ShoupaiWithGuipaiDangGouXingZu> shoupaiWithGuipaiDangGouXingZuList = calculateShoupaiWithGuipaiDangGouXingZuList(
-				guipaiList, paiTypesForGuipaiAct, shoupaiCalculator);
-		// 对于可胡的构型，计算出所有牌型
-		for (ShoupaiWithGuipaiDangGouXingZu shoupaiWithGuipaiDangGouXingZu : shoupaiWithGuipaiDangGouXingZuList) {
-			GuipaiDangPai[] guipaiDangPaiArray = shoupaiWithGuipaiDangGouXingZu.getGuipaiDangPaiArray();
-			List<GouXing> gouXingList = shoupaiWithGuipaiDangGouXingZu.getGouXingList();
-			for (GouXing gouXing : gouXingList) {
-				boolean hu = gouXingPanHu.panHu(gouXing.getGouXingCode(), chichuShunziCount, pengchuKeziCount,
-						gangchuGangziCount);
-				if (hu) {
-					// 先把所有当的鬼牌加入计算器
-					for (int i = 0; i < guipaiDangPaiArray.length; i++) {
-						shoupaiCalculator.addPai(guipaiDangPaiArray[i].getDangpai());
-					}
-					// 计算牌型
-					huPaiShoupaiPaiXingList.addAll(calculateAllShoupaiPaiXingForGouXingWithoutHupai(gouXing,
-							shoupaiCalculator, guipaiDangPaiArray));
 					// 再把所有当的鬼牌移出计算器
 					for (int i = 0; i < guipaiDangPaiArray.length; i++) {
 						shoupaiCalculator.removePai(guipaiDangPaiArray[i].getDangpai());

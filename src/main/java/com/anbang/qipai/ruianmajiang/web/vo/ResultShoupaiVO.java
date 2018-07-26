@@ -13,12 +13,12 @@ public class ResultShoupaiVO {
 	public ResultShoupaiVO(ShoupaiJiesuanPai shoupaiJiesuanPai) {
 		pai = shoupaiJiesuanPai.getYuanPaiType();
 		hupai = shoupaiJiesuanPai.isLastActionPai();
-		caishen = shoupaiJiesuanPai.getDangType().equals(GuipaiDangPai.dangType);
+		caishen = shoupaiJiesuanPai.dangType().equals(GuipaiDangPai.dangType);
 	}
 
-	public ResultShoupaiVO(MajiangPai pai, boolean caishen) {
+	public ResultShoupaiVO(MajiangPai pai) {
 		this.pai = pai;
-		this.caishen = caishen;
+		caishen = false;
 		hupai = false;
 	}
 

@@ -6,7 +6,6 @@ import java.util.Set;
 import com.dml.majiang.ChichuPaiZu;
 import com.dml.majiang.GangchuPaiZu;
 import com.dml.majiang.MajiangPai;
-import com.dml.majiang.MajiangPlayerAction;
 import com.dml.majiang.PengchuPaiZu;
 import com.dml.majiang.ShoupaiPaiXing;
 
@@ -15,9 +14,6 @@ public class RuianMajiangPanPlayerResult {
 	private String playerId;
 
 	private boolean hu;
-
-	// 吃碰杠胡的吃碰杠action
-	private MajiangPlayerAction chipenggangAction;
 
 	private RuianMajiangPanPlayerScore score;
 
@@ -56,14 +52,6 @@ public class RuianMajiangPanPlayerResult {
 
 	public void setHu(boolean hu) {
 		this.hu = hu;
-	}
-
-	public MajiangPlayerAction getChipenggangAction() {
-		return chipenggangAction;
-	}
-
-	public void setChipenggangAction(MajiangPlayerAction chipenggangAction) {
-		this.chipenggangAction = chipenggangAction;
 	}
 
 	public RuianMajiangPanPlayerScore getScore() {

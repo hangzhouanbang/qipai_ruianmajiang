@@ -18,6 +18,7 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 	public PanResult buildCurrentPanResult(Ju ju) {
 		Pan currentPan = ju.getCurrentPan();
 		MajiangPlayer huPlayer = currentPan.findHuPlayer();
+		// TODO 要处理不胡,流局
 		RuianMajiangHu hu = (RuianMajiangHu) huPlayer.getHu();
 		RuianMajiangHushu huPlayerHushu = hu.getHushu();
 		ShoupaiPaiXing huShoupaiPaiXing = hu.getShoupaiPaiXing();
@@ -126,7 +127,6 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 			playerResult.setGangchupaiZuList(new ArrayList<>(player.getGangchupaiZuList()));
 			if (playerResult.getPlayerId().equals(huPlayer.getId())) {
 				playerResult.setHu(true);
-				playerResult.setChipenggangAction(hu.getChipenggangAction());
 				playerResult.setBestShoupaiPaiXing(huShoupaiPaiXing);
 			} else {
 				playerResult.setHu(false);
@@ -138,6 +138,9 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 		RuianMajiangPanResult ruianMajiangPanResult = new RuianMajiangPanResult();
 		ruianMajiangPanResult.setPanNo(currentPan.getNo());
 		ruianMajiangPanResult.setPlayerResultList(playerResultList);
+		ruianMajiangPanResult.setHu(true);
+		ruianMajiangPanResult.setZimo(hu.isZimo());
+		ruianMajiangPanResult.setDianpaoPlayerId(hu.getDianpaoPlayerId());
 		return ruianMajiangPanResult;
 	}
 

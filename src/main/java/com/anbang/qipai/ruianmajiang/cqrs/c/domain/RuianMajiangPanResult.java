@@ -8,6 +8,12 @@ public class RuianMajiangPanResult extends PanResult {
 
 	private String zhuangPlayerId;
 
+	private boolean hu;
+
+	private boolean zimo;
+
+	private String dianpaoPlayerId;
+
 	private List<RuianMajiangPanPlayerResult> playerResultList;
 
 	public String getZhuangPlayerId() {
@@ -16,6 +22,30 @@ public class RuianMajiangPanResult extends PanResult {
 
 	public void setZhuangPlayerId(String zhuangPlayerId) {
 		this.zhuangPlayerId = zhuangPlayerId;
+	}
+
+	public boolean isHu() {
+		return hu;
+	}
+
+	public void setHu(boolean hu) {
+		this.hu = hu;
+	}
+
+	public boolean isZimo() {
+		return zimo;
+	}
+
+	public void setZimo(boolean zimo) {
+		this.zimo = zimo;
+	}
+
+	public String getDianpaoPlayerId() {
+		return dianpaoPlayerId;
+	}
+
+	public void setDianpaoPlayerId(String dianpaoPlayerId) {
+		this.dianpaoPlayerId = dianpaoPlayerId;
 	}
 
 	public List<RuianMajiangPanPlayerResult> getPlayerResultList() {

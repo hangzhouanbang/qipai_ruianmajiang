@@ -97,11 +97,12 @@ public class MajiangGameManager {
 		}
 		MajiangGame game = gameIdMajiangGameMap.get(gameId);
 		PanActionFrame panActionFrame = game.action(playerId, actionId);
+		MajiangActionResult result = new MajiangActionResult();
 		// action之后要试探一盘是否结束
 		if (game.shouldFinishCurrentPan()) {
 			RuianMajiangPanResult ruianMajiangPanResult = game.finishCurrentPan();
+			result.setResult(ruianMajiangPanResult);
 		}
-		MajiangActionResult result = new MajiangActionResult();
 		result.setGame(new GameValueObject(game.getGame()));
 		result.setPanActionFrame(panActionFrame);
 		List<String> playerIds = game.getGame().allPlayerIds();

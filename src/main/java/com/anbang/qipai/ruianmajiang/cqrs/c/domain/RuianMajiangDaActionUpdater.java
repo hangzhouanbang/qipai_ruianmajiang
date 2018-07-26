@@ -39,10 +39,16 @@ public class RuianMajiangDaActionUpdater implements MajiangPlayerDaActionUpdater
 							.getJuResultBuilder();
 					int dihu = ruianMajiangJuResultBuilder.getDihu();
 					GouXingPanHu gouXingPanHu = ju.getGouXingPanHu();
+					// 先把这张牌放入计算器
+					xiajiaPlayer.getShoupaiCalculator().addPai(daAction.getPai());
 					RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestDianpaoHu(dihu, gouXingPanHu,
-							player, baibanIsGuipai, daAction.getPai());
+							xiajiaPlayer, baibanIsGuipai, daAction.getPai());
+					// 再把这张牌拿出计算器
+					xiajiaPlayer.getShoupaiCalculator().removePai(daAction.getPai());
 					if (bestHu != null) {
-						player.addActionCandidate(new MajiangHuAction(player.getId(), bestHu));
+						bestHu.setZimo(false);
+						bestHu.setDianpaoPlayerId(player.getId());
+						xiajiaPlayer.addActionCandidate(new MajiangHuAction(xiajiaPlayer.getId(), bestHu));
 						anyPlayerHu = true;
 					} else {
 						// // 非胡牌型特殊胡-三财神

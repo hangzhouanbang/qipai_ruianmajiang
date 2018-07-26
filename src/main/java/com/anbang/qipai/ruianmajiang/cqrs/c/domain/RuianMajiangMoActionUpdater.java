@@ -53,9 +53,10 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 		RuianMajiangJuResultBuilder ruianMajiangJuResultBuilder = (RuianMajiangJuResultBuilder) ju.getJuResultBuilder();
 		int dihu = ruianMajiangJuResultBuilder.getDihu();
 		GouXingPanHu gouXingPanHu = ju.getGouXingPanHu();
-		RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestZimoHu(dihu, gouXingPanHu, player,
-				moAction, baibanIsGuipai);
+		RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestZimoHu(dihu, gouXingPanHu, player, moAction,
+				baibanIsGuipai);
 		if (bestHu != null) {
+			bestHu.setZimo(true);
 			player.addActionCandidate(new MajiangHuAction(player.getId(), bestHu));
 		} else {
 			// // 非胡牌型特殊胡-三财神
