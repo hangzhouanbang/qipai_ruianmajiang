@@ -2,11 +2,15 @@ package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
 import com.dml.majiang.Ju;
 import com.dml.majiang.LundaoMopai;
+import com.dml.majiang.MajiangDaAction;
 import com.dml.majiang.MajiangGuoAction;
 import com.dml.majiang.MajiangMoAction;
 import com.dml.majiang.MajiangPlayer;
+import com.dml.majiang.MajiangPlayerAction;
+import com.dml.majiang.MajiangPlayerActionType;
 import com.dml.majiang.MajiangPlayerGuoActionUpdater;
 import com.dml.majiang.Pan;
+import com.dml.majiang.PanActionFrame;
 
 public class RuianMajiangGuoActionUpdater implements MajiangPlayerGuoActionUpdater {
 
@@ -16,17 +20,21 @@ public class RuianMajiangGuoActionUpdater implements MajiangPlayerGuoActionUpdat
 		currentPan.playerClearActionCandidates(guoAction.getActionPlayerId());
 		MajiangPlayer player = currentPan.findPlayerById(guoAction.getActionPlayerId());
 
-		if (currentPan.allPlayerHasNoActionCandidates()) {// 如果所有玩家啥也干不了
-
-			// 那我说话
-			// 首先看一下我是不是有摸进待处理的牌了
-			if (player.getGangmoShoupai() != null) {
-				// 有的话那要我打牌
-				player.generateDaActions();
-			} else {
-				// 没有的话那就我摸牌
-				player.addActionCandidate(new MajiangMoAction(player.getId(), new LundaoMopai()));
+		// 首先看一下,我过的是什么? 是我摸牌之后的胡,杠? 还是别人打出牌之后我可以吃碰杠胡
+		PanActionFrame latestPanActionFrame = currentPan.findLatestActionFrame();
+		MajiangPlayerAction action = latestPanActionFrame.getAction();
+		if (action.getType().equals(MajiangPlayerActionType.mo)) {// 过的是我摸牌之后的胡,杠
+			// 那要我打牌
+			player.generateDaActions();
+		} else if (action.getType().equals(MajiangPlayerActionType.da)) {// 过的是别人打出牌之后我可以吃碰杠胡
+			if (currentPan.allPlayerHasNoActionCandidates()) {// 如果所有玩家啥也干不了
+				// 打牌那家的下家摸牌
+				MajiangDaAction daAction = (MajiangDaAction) action;
+				MajiangPlayer xiajiaPlayer = currentPan
+						.findXiajia(currentPan.findPlayerById(daAction.getActionPlayerId()));
+				xiajiaPlayer.addActionCandidate(new MajiangMoAction(xiajiaPlayer.getId(), new LundaoMopai()));
 			}
+		} else {
 		}
 	}
 

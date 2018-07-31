@@ -7,12 +7,14 @@ public class GamePlayerVO {
 	private String nickname;
 	private String headimgurl;
 	private String state;
+	private String onlineState;
 
 	public GamePlayerVO(GamePlayerDbo dbo) {
 		playerId = dbo.getPlayerId();
 		nickname = dbo.getNickname();
 		headimgurl = dbo.getHeadimgurl();
 		state = dbo.getState().name();
+		onlineState = dbo.getOnlineState().name();
 	}
 
 	public String getPlayerId() {
@@ -45,6 +47,14 @@ public class GamePlayerVO {
 
 	public void setState(String state) {
 		this.state = state;
+	}
+
+	public String getOnlineState() {
+		return onlineState;
+	}
+
+	public void setOnlineState(String onlineState) {
+		this.onlineState = onlineState;
 	}
 
 }

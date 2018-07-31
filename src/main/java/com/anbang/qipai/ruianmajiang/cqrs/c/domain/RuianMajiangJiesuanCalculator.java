@@ -104,7 +104,7 @@ public class RuianMajiangJiesuanCalculator {
 		int[] hushuArrayValueIdxArray = new int[hushuArray.length];// 低16位scoreArray的idx,高16位分数值
 		for (int i = 0; i < hushuArray.length; i++) {
 			ShoupaiPaiXing huPaiShoupaiPaiXing = huPaiShoupaiPaiXingList.get(i);
-			RuianMajiangHushu hushu = calculateHushu(true, gangkaiHu, true, dihu, shoupaixingWuguanJiesuancanshu,
+			RuianMajiangHushu hushu = calculateHushu(hu, gangkaiHu, zimoHu, dihu, shoupaixingWuguanJiesuancanshu,
 					huPaiShoupaiPaiXing);
 			// 牌型变化和炮无关，所以不用考虑炮
 			hushuArray[i] = hushu;

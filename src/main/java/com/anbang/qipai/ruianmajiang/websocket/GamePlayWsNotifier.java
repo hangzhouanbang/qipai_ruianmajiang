@@ -121,7 +121,7 @@ public class GamePlayWsNotifier {
 	}
 
 	@Scheduled(cron = "0/10 * * * * ?")
-	public void closeAndRemoveOTSessions() {
+	public void closeOTSessions() {
 		sessionIdActivetimeMap.forEach((id, time) -> {
 			if ((System.currentTimeMillis() - time) > (30 * 1000)) {
 				WebSocketSession sessionToClose = idSessionMap.get(id);
@@ -134,6 +134,20 @@ public class GamePlayWsNotifier {
 				}
 			}
 		});
+	}
+
+	public void closeSessionForPlayer(String playerId) {
+		String sessionId = playerIdSessionIdMap.get(playerId);
+		if (sessionId != null) {
+			WebSocketSession session = idSessionMap.get(sessionId);
+			if (session != null) {
+				try {
+					session.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 }

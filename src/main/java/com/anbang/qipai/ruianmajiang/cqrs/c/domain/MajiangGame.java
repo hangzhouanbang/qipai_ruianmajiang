@@ -2,23 +2,25 @@ package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
 import com.dml.majiang.DachushoupaiDaActionProcessor;
 import com.dml.majiang.DoNothingGuoActionProcessor;
+import com.dml.majiang.FixedPanNumbersJuFinishiDeterminer;
 import com.dml.majiang.HuFirstGangActionProcessor;
-import com.dml.majiang.Ju;
 import com.dml.majiang.HuFirstPengActionProcessor;
+import com.dml.majiang.Ju;
 import com.dml.majiang.MenFengDongZhuangDeterminer;
 import com.dml.majiang.MoGuipaiCounter;
 import com.dml.majiang.NoDanpaiOneDuiziGouXingPanHu;
 import com.dml.majiang.NoHuapaiRandomAvaliablePaiFiller;
 import com.dml.majiang.Pan;
 import com.dml.majiang.PanActionFrame;
+import com.dml.majiang.PengganghuFirstChiActionProcessor;
 import com.dml.majiang.PlayerHuOrNoPaiLeftPanFinishiDeterminer;
 import com.dml.majiang.RandomGuipaiDeterminer;
 import com.dml.majiang.RandomMustHasDongPlayersMenFengDeterminer;
-import com.dml.majiang.PengganghuFirstChiActionProcessor;
 import com.dml.majiang.WaitDaPlayerPanPublicWaitingPlayerDeterminer;
 import com.dml.majiang.ZhuangMoPaiInitialActionUpdater;
 import com.dml.mpgame.Game;
 import com.dml.mpgame.GameState;
+import com.dml.mpgame.GameValueObject;
 
 public class MajiangGame {
 	private Game game;
@@ -33,8 +35,12 @@ public class MajiangGame {
 		game.join(playerId);
 	}
 
-	public void leave(String playerId) throws Exception {
-		game.leave(playerId);
+	public GameValueObject leave(String playerId) throws Exception {
+		return game.leave(playerId);
+	}
+
+	public void back(String playerId) throws Exception {
+		game.back(playerId);
 	}
 
 	public PanActionFrame ready(String playerId, long currentTime) throws Exception {
@@ -50,6 +56,7 @@ public class MajiangGame {
 			ju.setGouXingPanHu(new NoDanpaiOneDuiziGouXingPanHu());
 			ju.setCurrentPanPublicWaitingPlayerDeterminer(new WaitDaPlayerPanPublicWaitingPlayerDeterminer());
 			ju.setCurrentPanResultBuilder(new RuianMajiangPanResultBuilder());
+			ju.setJuFinishiDeterminer(new FixedPanNumbersJuFinishiDeterminer(panshu));
 			RuianMajiangJuResultBuilder ruianMajiangJuResultBuilder = new RuianMajiangJuResultBuilder();
 			ruianMajiangJuResultBuilder.setDihu(difen);
 			ju.setJuResultBuilder(ruianMajiangJuResultBuilder);
@@ -71,7 +78,6 @@ public class MajiangGame {
 			ju.addActionStatisticsListener(new CaizipaiListener());
 			ju.addActionStatisticsListener(new MoGuipaiCounter());
 
-			ju.setPanShu(panshu);
 			Pan firstPan = new Pan();
 			firstPan.setNo(1);
 			game.allPlayerIds().forEach((pid) -> firstPan.addPlayer(pid));
@@ -96,14 +102,14 @@ public class MajiangGame {
 			ju.updateInitialAction();
 
 			// 庄家摸第一张牌,进入正式行牌流程
-			return action(ju.getCurrentPan().getZhuangPlayerId(), 1);
+			return action(ju.getCurrentPan().getZhuangPlayerId(), 1, currentTime);
 		} else {
 			return null;
 		}
 	}
 
-	public PanActionFrame action(String playerId, int actionId) throws Exception {
-		return ju.action(playerId, actionId);
+	public PanActionFrame action(String playerId, int actionId, long actionTime) throws Exception {
+		return ju.action(playerId, actionId, actionTime);
 	}
 
 	public boolean shouldFinishCurrentPan() {
@@ -112,6 +118,10 @@ public class MajiangGame {
 
 	public RuianMajiangPanResult finishCurrentPan() {
 		return (RuianMajiangPanResult) ju.finishCurrentPan();
+	}
+
+	public boolean shouldFinishJu() {
+		return ju.determineToFinishJu();
 	}
 
 	public Game getGame() {

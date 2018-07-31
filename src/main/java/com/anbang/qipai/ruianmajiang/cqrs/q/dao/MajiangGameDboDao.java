@@ -3,7 +3,7 @@ package com.anbang.qipai.ruianmajiang.cqrs.q.dao;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameDbo;
 import com.dml.mpgame.GameState;
 
-public interface MajiangGameDao {
+public interface MajiangGameDboDao {
 
 	MajiangGameDbo findById(String id);
 

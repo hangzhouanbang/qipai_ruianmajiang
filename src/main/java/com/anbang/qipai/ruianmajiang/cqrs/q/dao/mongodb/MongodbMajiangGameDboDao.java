@@ -7,13 +7,13 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
 
-import com.anbang.qipai.ruianmajiang.cqrs.q.dao.MajiangGameDao;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dao.MajiangGameDboDao;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dao.mongodb.repository.MajiangGameDboRepository;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameDbo;
 import com.dml.mpgame.GameState;
 
 @Component
-public class MongodbMajiangGameDao implements MajiangGameDao {
+public class MongodbMajiangGameDboDao implements MajiangGameDboDao {
 
 	@Autowired
 	private MongoTemplate mongoTemplate;

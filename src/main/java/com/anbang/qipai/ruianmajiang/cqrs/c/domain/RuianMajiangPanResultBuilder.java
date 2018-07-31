@@ -137,6 +137,7 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 
 		RuianMajiangPanResult ruianMajiangPanResult = new RuianMajiangPanResult();
 		ruianMajiangPanResult.setPanNo(currentPan.getNo());
+		ruianMajiangPanResult.setZhuangPlayerId(currentPan.getZhuangPlayerId());
 		ruianMajiangPanResult.setPlayerResultList(playerResultList);
 		ruianMajiangPanResult.setHu(true);
 		ruianMajiangPanResult.setZimo(hu.isZimo());

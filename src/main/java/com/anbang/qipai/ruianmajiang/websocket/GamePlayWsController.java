@@ -16,7 +16,11 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.GameCmdService;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.PlayerAuthService;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.GamePlayerDbo;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangGameQueryService;
+import com.anbang.qipai.ruianmajiang.msg.service.RuianMajiangGameMsgService;
+import com.dml.mpgame.GameState;
+import com.dml.mpgame.GameValueObject;
 import com.google.gson.Gson;
 
 @Component
@@ -32,6 +36,9 @@ public class GamePlayWsController extends TextWebSocketHandler {
 
 	@Autowired
 	private MajiangGameQueryService majiangGameQueryService;
+
+	@Autowired
+	private RuianMajiangGameMsgService gameMsgService;
 
 	private ExecutorService executorService = Executors.newCachedThreadPool();
 
@@ -60,8 +67,6 @@ public class GamePlayWsController extends TextWebSocketHandler {
 		CommonMO mo = new CommonMO();
 		mo.setMsg("bindPlayer");
 		sendMessage(session, gson.toJson(mo));
-		// TODO 测试代码
-		System.out.println("有新连接" + session.toString() + ",bindPlayer已发送");
 	}
 
 	@Override
@@ -70,10 +75,12 @@ public class GamePlayWsController extends TextWebSocketHandler {
 		// TODO 测试代码
 		System.out.println("连接断了 <" + closedPlayerId + "> (" + System.currentTimeMillis() + ")");
 		wsNotifier.removeSession(session.getId());
-		String gameId = gameCmdService.leaveGame(closedPlayerId);
-		majiangGameQueryService.leaveGame(closedPlayerId, gameId);
+		GameValueObject gameValueObject = gameCmdService.leaveGame(closedPlayerId);
+		majiangGameQueryService.leaveGame(gameValueObject);
+		gameMsgService.gamePlayerLeave(gameValueObject, closedPlayerId);
 		// 通知其他玩家
-		List<GamePlayerDbo> gamePlayerDboList = majiangGameQueryService.findGamePlayerDbosForGame(gameId);
+		List<GamePlayerDbo> gamePlayerDboList = majiangGameQueryService
+				.findGamePlayerDbosForGame(gameValueObject.getId());
 		gamePlayerDboList.forEach((gamePlayerDbo) -> {
 			String playerId = gamePlayerDbo.getPlayerId();
 			if (!playerId.equals(closedPlayerId)) {
@@ -123,9 +130,17 @@ public class GamePlayWsController extends TextWebSocketHandler {
 			return;
 		}
 		wsNotifier.bindPlayer(session.getId(), playerId);
-
-		// TODO 测试代码
-		System.out.println("绑定玩家 <" + playerId + "> (" + System.currentTimeMillis() + ")");
+		// 给用户安排query scope
+		String gameId = gameCmdService.findGameIdForPlayer(playerId);
+		MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
+		if (majiangGameDbo != null) {
+			if (!majiangGameDbo.getState().equals(GameState.finished)) {
+				wsNotifier.notifyToQuery(playerId, QueryScope.gameInfo.name());
+				if (majiangGameDbo.getState().equals(GameState.playing)) {
+					wsNotifier.notifyToQuery(playerId, QueryScope.panForMe.name());
+				}
+			}
+		}
 	}
 
 	/**

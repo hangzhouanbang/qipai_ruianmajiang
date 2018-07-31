@@ -53,19 +53,23 @@ public class MajiangGameManager {
 		playerIds.remove(playerId);
 		result.setOtherPlayerIds(playerIds);
 		return result;
-		// TODO 最好要和ready一样，返回GameValueObject。
 	}
 
-	public String leave(String playerId) throws Exception {
+	public GameValueObject leave(String playerId) throws Exception {
 		String gameId = playerIdGameIdMap.get(playerId);
 		if (gameId == null) {
 			throw new PlayerNotInGameException();
 		}
 		MajiangGame game = gameIdMajiangGameMap.get(gameId);
-		game.leave(playerId);
+		GameValueObject gameValueObject = game.leave(playerId);
 		playerIdGameIdMap.remove(playerId);
-		return gameId;
-		// TODO 要和ready一样，返回GameValueObject。否则q端有bug
+		return gameValueObject;
+	}
+
+	public void back(String playerId, String gameId) throws Exception {
+		MajiangGame game = gameIdMajiangGameMap.get(gameId);
+		game.back(playerId);
+		playerIdGameIdMap.put(playerId, gameId);
 	}
 
 	public ReadyForGameResult ready(String playerId, long currentTime) throws Exception {
@@ -90,18 +94,23 @@ public class MajiangGameManager {
 		return gameIdMajiangGameMap.get(gameId);
 	}
 
-	public MajiangActionResult majiangAction(String playerId, int actionId) throws Exception {
+	public MajiangActionResult majiangAction(String playerId, int actionId, long actionTime) throws Exception {
 		String gameId = playerIdGameIdMap.get(playerId);
 		if (gameId == null) {
 			throw new PlayerNotInGameException();
 		}
 		MajiangGame game = gameIdMajiangGameMap.get(gameId);
-		PanActionFrame panActionFrame = game.action(playerId, actionId);
+		PanActionFrame panActionFrame = game.action(playerId, actionId, actionTime);
 		MajiangActionResult result = new MajiangActionResult();
 		// action之后要试探一盘是否结束
 		if (game.shouldFinishCurrentPan()) {
 			RuianMajiangPanResult ruianMajiangPanResult = game.finishCurrentPan();
+			ruianMajiangPanResult.setFinishTime(actionTime);
 			result.setResult(ruianMajiangPanResult);
+			// 试探一局是否结束
+			if (game.shouldFinishJu()) {
+				// TODO
+			}
 		}
 		result.setGame(new GameValueObject(game.getGame()));
 		result.setPanActionFrame(panActionFrame);
@@ -109,6 +118,10 @@ public class MajiangGameManager {
 		playerIds.remove(playerId);
 		result.setOtherPlayerIds(playerIds);
 		return result;
+	}
+
+	public String findGameIdForPlayer(String playerId) {
+		return playerIdGameIdMap.get(playerId);
 	}
 
 }

@@ -30,6 +30,15 @@
 			<artifactId>spring-cloud-starter-feign</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-stream</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-stream-kafka</artifactId>
+		</dependency>
+
 		<!-- dml依赖 -->
 		<dependency>
 			<groupId>users.dml</groupId>

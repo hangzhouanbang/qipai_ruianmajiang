@@ -16,6 +16,8 @@ public class RuianMajiangPanResult extends PanResult {
 
 	private List<RuianMajiangPanPlayerResult> playerResultList;
 
+	private long finishTime;
+
 	public String getZhuangPlayerId() {
 		return zhuangPlayerId;
 	}
@@ -54,6 +56,14 @@ public class RuianMajiangPanResult extends PanResult {
 
 	public void setPlayerResultList(List<RuianMajiangPanPlayerResult> playerResultList) {
 		this.playerResultList = playerResultList;
+	}
+
+	public long getFinishTime() {
+		return finishTime;
+	}
+
+	public void setFinishTime(long finishTime) {
+		this.finishTime = finishTime;
 	}
 
 }

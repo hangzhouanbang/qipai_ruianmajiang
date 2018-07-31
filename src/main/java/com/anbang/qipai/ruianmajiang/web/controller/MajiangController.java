@@ -107,7 +107,7 @@ public class MajiangController {
 
 		MajiangActionResult majiangActionResult;
 		try {
-			majiangActionResult = majiangPlayCmdService.action(playerId, id);
+			majiangActionResult = majiangPlayCmdService.action(playerId, id, System.currentTimeMillis());
 		} catch (Exception e) {
 			vo.setSuccess(false);
 			vo.setMsg(e.getClass().getName());

@@ -1,5 +1,6 @@
 package com.anbang.qipai.ruianmajiang.cqrs.q.dbo;
 
+import com.dml.mpgame.GamePlayerOnlineState;
 import com.dml.mpgame.GamePlayerState;
 
 public class GamePlayerDbo {
@@ -10,6 +11,7 @@ public class GamePlayerDbo {
 	private String nickname;
 	private String headimgurl;
 	private GamePlayerState state;
+	private GamePlayerOnlineState onlineState;
 
 	public String getId() {
 		return id;
@@ -57,6 +59,14 @@ public class GamePlayerDbo {
 
 	public void setState(GamePlayerState state) {
 		this.state = state;
+	}
+
+	public GamePlayerOnlineState getOnlineState() {
+		return onlineState;
+	}
+
+	public void setOnlineState(GamePlayerOnlineState onlineState) {
+		this.onlineState = onlineState;
 	}
 
 }

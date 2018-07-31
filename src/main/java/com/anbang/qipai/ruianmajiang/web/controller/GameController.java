@@ -19,11 +19,13 @@ import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.GamePlayerDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangGameQueryService;
 import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangPlayQueryService;
+import com.anbang.qipai.ruianmajiang.msg.service.RuianMajiangGameMsgService;
 import com.anbang.qipai.ruianmajiang.web.vo.CommonVO;
 import com.anbang.qipai.ruianmajiang.web.vo.GameVO;
 import com.anbang.qipai.ruianmajiang.websocket.GamePlayWsNotifier;
 import com.anbang.qipai.ruianmajiang.websocket.QueryScope;
 import com.dml.mpgame.GameState;
+import com.dml.mpgame.GameValueObject;
 
 /**
  * 游戏框架相关
@@ -49,6 +51,9 @@ public class GameController {
 
 	@Autowired
 	private GamePlayWsNotifier wsNotifier;
+
+	@Autowired
+	private RuianMajiangGameMsgService gameMsgService;
 
 	/**
 	 * 新一局游戏
@@ -87,8 +92,6 @@ public class GameController {
 		// 通知其他人
 		for (String otherPlayerId : joinGameResult.getOtherPlayerIds()) {
 			wsNotifier.notifyToQuery(otherPlayerId, QueryScope.gameInfo.name());
-			// TODO 测试代码
-			System.out.println("通知 joingame <" + otherPlayerId + "> (" + System.currentTimeMillis() + ")");
 		}
 
 		String token = playerAuthService.newSessionForPlayer(playerId);
@@ -97,6 +100,76 @@ public class GameController {
 
 		vo.setData(data);
 		return vo;
+	}
+
+	/**
+	 * 离开游戏(非退出,还会回来的)
+	 */
+	@RequestMapping(value = "/leavegame")
+	@ResponseBody
+	public CommonVO leavegame(String token) {
+		CommonVO vo = new CommonVO();
+		String playerId = playerAuthService.getPlayerIdByToken(token);
+		if (playerId == null) {
+			vo.setSuccess(false);
+			vo.setMsg("invalid token");
+			return vo;
+		}
+		// 断开玩家的socket
+		wsNotifier.closeSessionForPlayer(playerId);
+		GameValueObject gameValueObject;
+		try {
+			gameValueObject = gameCmdService.leaveGame(playerId);
+		} catch (Exception e) {
+			e.printStackTrace();
+			vo.setSuccess(true);
+			return vo;
+		}
+		majiangGameQueryService.leaveGame(gameValueObject);
+		gameMsgService.gamePlayerLeave(gameValueObject, playerId);
+		// 通知其他玩家
+		List<GamePlayerDbo> gamePlayerDboList = majiangGameQueryService
+				.findGamePlayerDbosForGame(gameValueObject.getId());
+		gamePlayerDboList.forEach((gamePlayerDbo) -> {
+			String otherPlayerId = gamePlayerDbo.getPlayerId();
+			if (!otherPlayerId.equals(playerId)) {
+				wsNotifier.notifyToQuery(otherPlayerId, QueryScope.gameInfo.name());
+			}
+		});
+		return vo;
+	}
+
+	/**
+	 * 返回游戏
+	 */
+	@RequestMapping(value = "/backtogame")
+	@ResponseBody
+	public CommonVO backtogame(String playerId, String gameId) {
+		CommonVO vo = new CommonVO();
+		try {
+			gameCmdService.backToGame(playerId, gameId);
+		} catch (Exception e) {
+			vo.setSuccess(false);
+			vo.setMsg(e.getClass().toString());
+			return vo;
+		}
+
+		majiangGameQueryService.backToGame(playerId, gameId);
+		// 通知其他玩家
+		List<GamePlayerDbo> gamePlayerDboList = majiangGameQueryService.findGamePlayerDbosForGame(gameId);
+		gamePlayerDboList.forEach((gamePlayerDbo) -> {
+			String otherPlayerId = gamePlayerDbo.getPlayerId();
+			if (!otherPlayerId.equals(playerId)) {
+				wsNotifier.notifyToQuery(otherPlayerId, QueryScope.gameInfo.name());
+			}
+		});
+
+		String token = playerAuthService.newSessionForPlayer(playerId);
+		Map data = new HashMap();
+		data.put("token", token);
+		vo.setData(data);
+		return vo;
+
 	}
 
 	/**
@@ -147,7 +220,7 @@ public class GameController {
 		}
 
 		try {
-			majiangPlayQueryService.readyForGame(readyForGameResult);
+			majiangPlayQueryService.readyForGame(readyForGameResult);// TODO 一起点准备的时候可能有同步问题.要靠框架解决
 		} catch (Throwable e) {
 			vo.setSuccess(false);
 			vo.setMsg(e.getMessage());

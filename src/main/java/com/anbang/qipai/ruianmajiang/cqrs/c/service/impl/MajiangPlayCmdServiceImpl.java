@@ -10,9 +10,9 @@ import com.anbang.qipai.ruianmajiang.cqrs.c.service.MajiangPlayCmdService;
 public class MajiangPlayCmdServiceImpl extends CmdServiceBase implements MajiangPlayCmdService {
 
 	@Override
-	public MajiangActionResult action(String playerId, Integer actionId) throws Exception {
+	public MajiangActionResult action(String playerId, Integer actionId, Long actionTime) throws Exception {
 		MajiangGameManager majiangGameManager = singletonEntityRepository.getEntity(MajiangGameManager.class);
-		return majiangGameManager.majiangAction(playerId, actionId);
+		return majiangGameManager.majiangAction(playerId, actionId, actionTime);
 	}
 
 }

@@ -11,7 +11,7 @@ import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangActionResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyForGameResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.RuianMajiangPanResult;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dao.GamePlayerDboDao;
-import com.anbang.qipai.ruianmajiang.cqrs.q.dao.MajiangGameDao;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dao.MajiangGameDboDao;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dao.PanResultDboDao;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.GamePlayerDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameDbo;
@@ -29,7 +29,7 @@ public class MajiangPlayQueryService {
 	private GamePlayerDboDao gamePlayerDboDao;
 
 	@Autowired
-	private MajiangGameDao majiangGameDao;
+	private MajiangGameDboDao majiangGameDao;
 
 	@Autowired
 	private PanResultDboDao panResultDboDao;

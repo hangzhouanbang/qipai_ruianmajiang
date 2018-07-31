@@ -7,6 +7,7 @@ import com.anbang.qipai.ruianmajiang.cqrs.c.domain.JoinGameResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyForGameResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.GameCmdService;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.impl.GameCmdServiceImpl;
+import com.dml.mpgame.GameValueObject;
 import com.highto.framework.concurrent.DeferredResult;
 import com.highto.framework.ddd.CommonCommand;
 
@@ -48,11 +49,11 @@ public class DisruptorGameCmdService extends DisruptorCmdServiceBase implements 
 	}
 
 	@Override
-	public String leaveGame(String playerId) throws Exception {
+	public GameValueObject leaveGame(String playerId) throws Exception {
 		CommonCommand cmd = new CommonCommand(GameCmdServiceImpl.class.getName(), "leaveGame", playerId);
-		DeferredResult<String> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd, () -> {
-			String gameId = gameCmdServiceImpl.leaveGame(cmd.getParameter());
-			return gameId;
+		DeferredResult<GameValueObject> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd, () -> {
+			GameValueObject gameValueObject = gameCmdServiceImpl.leaveGame(cmd.getParameter());
+			return gameValueObject;
 		});
 		try {
 			return result.getResult();
@@ -75,6 +76,25 @@ public class DisruptorGameCmdService extends DisruptorCmdServiceBase implements 
 		} catch (Exception e) {
 			throw e;
 		}
+	}
+
+	@Override
+	public void backToGame(String playerId, String gameId) throws Exception {
+		CommonCommand cmd = new CommonCommand(GameCmdServiceImpl.class.getName(), "backToGame", playerId, gameId);
+		DeferredResult<Object> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd, () -> {
+			gameCmdServiceImpl.backToGame(cmd.getParameter(), cmd.getParameter());
+			return null;
+		});
+		try {
+			result.getResult();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public String findGameIdForPlayer(String playerId) {
+		return gameCmdServiceImpl.findGameIdForPlayer(playerId);
 	}
 
 }

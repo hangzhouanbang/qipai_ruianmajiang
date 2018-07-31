@@ -6,6 +6,7 @@ import com.anbang.qipai.ruianmajiang.cqrs.c.domain.JoinGameResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangGameManager;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyForGameResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.GameCmdService;
+import com.dml.mpgame.GameValueObject;
 
 @Component
 public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService {
@@ -18,7 +19,7 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
 	}
 
 	@Override
-	public String leaveGame(String playerId) throws Exception {
+	public GameValueObject leaveGame(String playerId) throws Exception {
 		MajiangGameManager majiangGameManager = singletonEntityRepository.getEntity(MajiangGameManager.class);
 		return majiangGameManager.leave(playerId);
 	}
@@ -33,6 +34,18 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
 	public JoinGameResult joinGame(String playerId, String gameId) throws Exception {
 		MajiangGameManager majiangGameManager = singletonEntityRepository.getEntity(MajiangGameManager.class);
 		return majiangGameManager.join(playerId, gameId);
+	}
+
+	@Override
+	public void backToGame(String playerId, String gameId) throws Exception {
+		MajiangGameManager majiangGameManager = singletonEntityRepository.getEntity(MajiangGameManager.class);
+		majiangGameManager.back(playerId, gameId);
+	}
+
+	@Override
+	public String findGameIdForPlayer(String playerId) {
+		MajiangGameManager majiangGameManager = singletonEntityRepository.getEntity(MajiangGameManager.class);
+		return majiangGameManager.findGameIdForPlayer(playerId);
 	}
 
 }

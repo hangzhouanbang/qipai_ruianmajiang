@@ -17,6 +17,7 @@ import com.dml.majiang.ShoupaiGangziZu;
 import com.dml.majiang.ShoupaiKeziZu;
 import com.dml.majiang.ShoupaiPaiXing;
 import com.dml.majiang.ShoupaiShunziZu;
+import com.dml.majiang.Shunzi;
 
 public class RuianMajiangPanPlayerResultVO {
 
@@ -30,7 +31,9 @@ public class RuianMajiangPanPlayerResultVO {
 	private List<MajiangPai> publicPaiList;
 	private List<MajiangPai> caishenList;
 	private List<List<ResultShoupaiVO>> resultShoupaiZuList = new ArrayList<>();
-	private List<MajiangPai[]> resultChupaiZuList = new ArrayList<>();
+	private List<Shunzi> shunziList = new ArrayList<>();
+	private List<MajiangPai> keziTypeList = new ArrayList<>();
+	private List<GangchuPaiZuVO> gangchuList = new ArrayList<>();
 
 	/**
 	 * 这个是打了几炮
@@ -41,6 +44,8 @@ public class RuianMajiangPanPlayerResultVO {
 	 * 这个是非结算的胡数
 	 */
 	private int hushu;
+
+	private RuianMajiangTaishuVO taishu;
 
 	/**
 	 * 这个是结算分
@@ -63,21 +68,22 @@ public class RuianMajiangPanPlayerResultVO {
 			pao = ruianMajiangPao.getValue();
 		}
 		hushu = ruianMajiangPanPlayerScore.getHushu().getValue();
+		taishu = new RuianMajiangTaishuVO(ruianMajiangPanPlayerScore.getHushu().getTaishu());
 		score = ruianMajiangPanPlayerScore.getJiesuanScore();
 
 		List<ChichuPaiZu> chichuPaiZuList = panPlayerResult.getChichupaiZuList();
 		for (ChichuPaiZu chichuPaiZu : chichuPaiZuList) {
-			resultChupaiZuList.add(chichuPaiZu.getShunzi().toPaiArray());
+			shunziList.add(chichuPaiZu.getShunzi());
 		}
 
 		List<PengchuPaiZu> pengchupaiZuList = panPlayerResult.getPengchupaiZuList();
 		for (PengchuPaiZu pengchuPaiZu : pengchupaiZuList) {
-			resultChupaiZuList.add(pengchuPaiZu.getKezi().toPaiArray());
+			keziTypeList.add(pengchuPaiZu.getKezi().getPaiType());
 		}
 
 		List<GangchuPaiZu> gangchupaiZuList = panPlayerResult.getGangchupaiZuList();
 		for (GangchuPaiZu gangchuPaiZu : gangchupaiZuList) {
-			resultChupaiZuList.add(gangchuPaiZu.getGangzi().toPaiArray());
+			gangchuList.add(new GangchuPaiZuVO(gangchuPaiZu));
 		}
 
 		if (hu) {
@@ -181,8 +187,16 @@ public class RuianMajiangPanPlayerResultVO {
 		return resultShoupaiZuList;
 	}
 
-	public List<MajiangPai[]> getResultChupaiZuList() {
-		return resultChupaiZuList;
+	public List<Shunzi> getShunziList() {
+		return shunziList;
+	}
+
+	public List<MajiangPai> getKeziTypeList() {
+		return keziTypeList;
+	}
+
+	public List<GangchuPaiZuVO> getGangchuList() {
+		return gangchuList;
 	}
 
 	public int getPao() {
@@ -191,6 +205,10 @@ public class RuianMajiangPanPlayerResultVO {
 
 	public int getHushu() {
 		return hushu;
+	}
+
+	public RuianMajiangTaishuVO getTaishu() {
+		return taishu;
 	}
 
 	public int getScore() {
