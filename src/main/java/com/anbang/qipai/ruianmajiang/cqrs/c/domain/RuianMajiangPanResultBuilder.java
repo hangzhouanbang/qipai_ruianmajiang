@@ -6,11 +6,11 @@ import java.util.List;
 
 import com.dml.majiang.ju.Ju;
 import com.dml.majiang.pai.MajiangPai;
-import com.dml.majiang.pai.ShoupaiPaiXing;
-import com.dml.majiang.pan.CurrentPanResultBuilder;
 import com.dml.majiang.pan.Pan;
-import com.dml.majiang.pan.PanResult;
+import com.dml.majiang.pan.result.CurrentPanResultBuilder;
+import com.dml.majiang.pan.result.PanResult;
 import com.dml.majiang.player.MajiangPlayer;
+import com.dml.majiang.player.shoupai.ShoupaiPaiXing;
 
 public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 

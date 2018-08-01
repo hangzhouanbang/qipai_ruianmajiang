@@ -1,8 +1,8 @@
 package com.anbang.qipai.ruianmajiang.web.vo;
 
-import com.dml.majiang.pai.GangType;
-import com.dml.majiang.pai.GangchuPaiZu;
 import com.dml.majiang.pai.MajiangPai;
+import com.dml.majiang.pai.fenzu.GangType;
+import com.dml.majiang.player.chupaizu.GangchuPaiZu;
 
 public class GangchuPaiZuVO {
 

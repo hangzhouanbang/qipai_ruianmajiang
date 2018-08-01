@@ -2,8 +2,8 @@ package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
 import java.nio.ByteBuffer;
 
-import com.dml.majiang.pai.ShoupaiPaiXing;
 import com.dml.majiang.player.Hu;
+import com.dml.majiang.player.shoupai.ShoupaiPaiXing;
 
 public class RuianMajiangHu implements Hu {
 

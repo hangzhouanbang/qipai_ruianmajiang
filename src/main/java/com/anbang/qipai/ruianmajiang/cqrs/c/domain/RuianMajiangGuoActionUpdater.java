@@ -1,16 +1,16 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
-import com.dml.majiang.action.LundaoMopai;
-import com.dml.majiang.action.MajiangDaAction;
-import com.dml.majiang.action.MajiangGuoAction;
-import com.dml.majiang.action.MajiangMoAction;
-import com.dml.majiang.action.MajiangPlayerAction;
-import com.dml.majiang.action.MajiangPlayerActionType;
-import com.dml.majiang.action.MajiangPlayerGuoActionUpdater;
 import com.dml.majiang.ju.Ju;
 import com.dml.majiang.pan.Pan;
-import com.dml.majiang.pan.PanActionFrame;
+import com.dml.majiang.pan.frame.PanActionFrame;
 import com.dml.majiang.player.MajiangPlayer;
+import com.dml.majiang.player.action.MajiangPlayerAction;
+import com.dml.majiang.player.action.MajiangPlayerActionType;
+import com.dml.majiang.player.action.da.MajiangDaAction;
+import com.dml.majiang.player.action.guo.MajiangGuoAction;
+import com.dml.majiang.player.action.guo.MajiangPlayerGuoActionUpdater;
+import com.dml.majiang.player.action.mo.LundaoMopai;
+import com.dml.majiang.player.action.mo.MajiangMoAction;
 
 public class RuianMajiangGuoActionUpdater implements MajiangPlayerGuoActionUpdater {
 

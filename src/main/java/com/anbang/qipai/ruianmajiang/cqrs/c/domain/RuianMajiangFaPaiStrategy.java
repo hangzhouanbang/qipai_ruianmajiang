@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.dml.majiang.ju.Ju;
 import com.dml.majiang.pai.MajiangPai;
-import com.dml.majiang.pan.FaPaiStrategy;
 import com.dml.majiang.pan.Pan;
+import com.dml.majiang.pan.fapai.FaPaiStrategy;
 import com.dml.majiang.player.MajiangPlayer;
 import com.dml.majiang.position.MajiangPosition;
 import com.dml.majiang.position.MajiangPositionUtil;

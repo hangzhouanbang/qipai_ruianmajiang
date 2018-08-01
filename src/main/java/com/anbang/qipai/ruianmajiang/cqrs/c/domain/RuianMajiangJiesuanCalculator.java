@@ -5,21 +5,21 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import com.dml.majiang.action.MajiangMoAction;
-import com.dml.majiang.pai.GanghouBupai;
-import com.dml.majiang.pai.GouXing;
-import com.dml.majiang.pai.GouXingPanHu;
-import com.dml.majiang.pai.GuipaiDangPai;
 import com.dml.majiang.pai.MajiangPai;
-import com.dml.majiang.pai.PaiXing;
-import com.dml.majiang.pai.ShoupaiCalculator;
-import com.dml.majiang.pai.ShoupaiDuiziZu;
-import com.dml.majiang.pai.ShoupaiGangziZu;
-import com.dml.majiang.pai.ShoupaiKeziZu;
-import com.dml.majiang.pai.ShoupaiPaiXing;
-import com.dml.majiang.pai.ShoupaiShunziZu;
-import com.dml.majiang.pai.ShoupaiWithGuipaiDangGouXingZu;
 import com.dml.majiang.player.MajiangPlayer;
+import com.dml.majiang.player.action.mo.GanghouBupai;
+import com.dml.majiang.player.action.mo.MajiangMoAction;
+import com.dml.majiang.player.shoupai.GuipaiDangPai;
+import com.dml.majiang.player.shoupai.PaiXing;
+import com.dml.majiang.player.shoupai.ShoupaiCalculator;
+import com.dml.majiang.player.shoupai.ShoupaiDuiziZu;
+import com.dml.majiang.player.shoupai.ShoupaiGangziZu;
+import com.dml.majiang.player.shoupai.ShoupaiKeziZu;
+import com.dml.majiang.player.shoupai.ShoupaiPaiXing;
+import com.dml.majiang.player.shoupai.ShoupaiShunziZu;
+import com.dml.majiang.player.shoupai.ShoupaiWithGuipaiDangGouXingZu;
+import com.dml.majiang.player.shoupai.gouxing.GouXing;
+import com.dml.majiang.player.shoupai.gouxing.GouXingPanHu;
 
 public class RuianMajiangJiesuanCalculator {
 

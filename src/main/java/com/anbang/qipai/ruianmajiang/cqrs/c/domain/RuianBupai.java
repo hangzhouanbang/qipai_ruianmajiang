@@ -2,7 +2,7 @@ package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
 import java.nio.ByteBuffer;
 
-import com.dml.majiang.action.MopaiReason;
+import com.dml.majiang.player.action.mo.MopaiReason;
 
 public class RuianBupai implements MopaiReason {
 

@@ -18,7 +18,7 @@ import com.anbang.qipai.ruianmajiang.web.vo.CommonVO;
 import com.anbang.qipai.ruianmajiang.web.vo.PanResultVO;
 import com.anbang.qipai.ruianmajiang.websocket.GamePlayWsNotifier;
 import com.anbang.qipai.ruianmajiang.websocket.QueryScope;
-import com.dml.majiang.pan.PanActionFrame;
+import com.dml.majiang.pan.frame.PanActionFrame;
 
 /**
  * 打麻将相关

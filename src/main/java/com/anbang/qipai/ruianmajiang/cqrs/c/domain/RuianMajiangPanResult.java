@@ -2,7 +2,7 @@ package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
 import java.util.List;
 
-import com.dml.majiang.pan.PanResult;
+import com.dml.majiang.pan.result.PanResult;
 
 public class RuianMajiangPanResult extends PanResult {
 

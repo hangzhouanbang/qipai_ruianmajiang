@@ -8,16 +8,16 @@ import com.anbang.qipai.ruianmajiang.cqrs.c.domain.RuianMajiangPanPlayerResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.RuianMajiangPanPlayerScore;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.RuianMajiangPao;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.GamePlayerDbo;
-import com.dml.majiang.pai.GangchuPaiZu;
 import com.dml.majiang.pai.MajiangPai;
-import com.dml.majiang.pai.PengchuPaiZu;
-import com.dml.majiang.pai.ShoupaiDuiziZu;
-import com.dml.majiang.pai.ShoupaiGangziZu;
-import com.dml.majiang.pai.ShoupaiKeziZu;
-import com.dml.majiang.pai.ShoupaiPaiXing;
-import com.dml.majiang.pai.ShoupaiShunziZu;
-import com.dml.majiang.pai.Shunzi;
+import com.dml.majiang.pai.fenzu.Shunzi;
 import com.dml.majiang.player.chupaizu.ChichuPaiZu;
+import com.dml.majiang.player.chupaizu.GangchuPaiZu;
+import com.dml.majiang.player.chupaizu.PengchuPaiZu;
+import com.dml.majiang.player.shoupai.ShoupaiDuiziZu;
+import com.dml.majiang.player.shoupai.ShoupaiGangziZu;
+import com.dml.majiang.player.shoupai.ShoupaiKeziZu;
+import com.dml.majiang.player.shoupai.ShoupaiPaiXing;
+import com.dml.majiang.player.shoupai.ShoupaiShunziZu;
 
 public class RuianMajiangPanPlayerResultVO {
 

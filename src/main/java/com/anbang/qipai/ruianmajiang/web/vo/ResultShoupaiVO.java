@@ -1,8 +1,8 @@
 package com.anbang.qipai.ruianmajiang.web.vo;
 
-import com.dml.majiang.pai.GuipaiDangPai;
 import com.dml.majiang.pai.MajiangPai;
-import com.dml.majiang.pai.ShoupaiJiesuanPai;
+import com.dml.majiang.player.shoupai.GuipaiDangPai;
+import com.dml.majiang.player.shoupai.ShoupaiJiesuanPai;
 
 public class ResultShoupaiVO {
 
