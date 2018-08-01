@@ -4,18 +4,18 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import com.dml.majiang.CurrentPanResultBuilder;
-import com.dml.majiang.Ju;
-import com.dml.majiang.MajiangPai;
-import com.dml.majiang.MajiangPlayer;
-import com.dml.majiang.Pan;
-import com.dml.majiang.PanResult;
-import com.dml.majiang.ShoupaiPaiXing;
+import com.dml.majiang.ju.Ju;
+import com.dml.majiang.pai.MajiangPai;
+import com.dml.majiang.pai.ShoupaiPaiXing;
+import com.dml.majiang.pan.CurrentPanResultBuilder;
+import com.dml.majiang.pan.Pan;
+import com.dml.majiang.pan.PanResult;
+import com.dml.majiang.player.MajiangPlayer;
 
 public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 
 	@Override
-	public PanResult buildCurrentPanResult(Ju ju) {
+	public PanResult buildCurrentPanResult(Ju ju, long panFinishTime) {
 		Pan currentPan = ju.getCurrentPan();
 		MajiangPlayer huPlayer = currentPan.findHuPlayer();
 		// TODO 要处理不胡,流局
@@ -137,6 +137,7 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 
 		RuianMajiangPanResult ruianMajiangPanResult = new RuianMajiangPanResult();
 		ruianMajiangPanResult.setPanNo(currentPan.getNo());
+		ruianMajiangPanResult.setPanFinishTime(panFinishTime);
 		ruianMajiangPanResult.setZhuangPlayerId(currentPan.getZhuangPlayerId());
 		ruianMajiangPanResult.setPlayerResultList(playerResultList);
 		ruianMajiangPanResult.setHu(true);

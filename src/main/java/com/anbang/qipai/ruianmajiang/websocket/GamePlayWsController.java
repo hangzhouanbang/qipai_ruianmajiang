@@ -76,19 +76,21 @@ public class GamePlayWsController extends TextWebSocketHandler {
 		System.out.println("连接断了 <" + closedPlayerId + "> (" + System.currentTimeMillis() + ")");
 		wsNotifier.removeSession(session.getId());
 		GameValueObject gameValueObject = gameCmdService.leaveGame(closedPlayerId);
-		majiangGameQueryService.leaveGame(gameValueObject);
-		gameMsgService.gamePlayerLeave(gameValueObject, closedPlayerId);
-		// 通知其他玩家
-		List<GamePlayerDbo> gamePlayerDboList = majiangGameQueryService
-				.findGamePlayerDbosForGame(gameValueObject.getId());
-		gamePlayerDboList.forEach((gamePlayerDbo) -> {
-			String playerId = gamePlayerDbo.getPlayerId();
-			if (!playerId.equals(closedPlayerId)) {
-				wsNotifier.notifyToQuery(playerId, QueryScope.gameInfo.name());
-				// TODO 测试代码
-				System.out.println("通知 ConnectionClosed <" + playerId + "> (" + System.currentTimeMillis() + ")");
-			}
-		});
+		if (gameValueObject != null) {
+			majiangGameQueryService.leaveGame(gameValueObject);
+			gameMsgService.gamePlayerLeave(gameValueObject, closedPlayerId);
+			// 通知其他玩家
+			List<GamePlayerDbo> gamePlayerDboList = majiangGameQueryService
+					.findGamePlayerDbosForGame(gameValueObject.getId());
+			gamePlayerDboList.forEach((gamePlayerDbo) -> {
+				String playerId = gamePlayerDbo.getPlayerId();
+				if (!playerId.equals(closedPlayerId)) {
+					wsNotifier.notifyToQuery(playerId, QueryScope.gameInfo.name());
+					// TODO 测试代码
+					System.out.println("通知 ConnectionClosed <" + playerId + "> (" + System.currentTimeMillis() + ")");
+				}
+			});
+		}
 	}
 
 	@Override
@@ -112,6 +114,7 @@ public class GamePlayWsController extends TextWebSocketHandler {
 	private void processBindPlayer(WebSocketSession session, Object data) {
 		Map map = (Map) data;
 		String token = (String) map.get("token");
+		String gameId = (String) map.get("gameId");
 		if (token == null) {// 非法访问
 			try {
 				session.close();
@@ -130,13 +133,14 @@ public class GamePlayWsController extends TextWebSocketHandler {
 			return;
 		}
 		wsNotifier.bindPlayer(session.getId(), playerId);
+		gameCmdService.bindPlayer(playerId, gameId);
 		// 给用户安排query scope
-		String gameId = gameCmdService.findGameIdForPlayer(playerId);
 		MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
 		if (majiangGameDbo != null) {
 			if (!majiangGameDbo.getState().equals(GameState.finished)) {
 				wsNotifier.notifyToQuery(playerId, QueryScope.gameInfo.name());
 				if (majiangGameDbo.getState().equals(GameState.playing)) {
+					// TODO 需判断是否在等下一盘开始
 					wsNotifier.notifyToQuery(playerId, QueryScope.panForMe.name());
 				}
 			}

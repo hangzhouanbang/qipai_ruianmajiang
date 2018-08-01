@@ -8,16 +8,16 @@ import com.anbang.qipai.ruianmajiang.cqrs.c.domain.RuianMajiangPanPlayerResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.RuianMajiangPanPlayerScore;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.RuianMajiangPao;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.GamePlayerDbo;
-import com.dml.majiang.ChichuPaiZu;
-import com.dml.majiang.GangchuPaiZu;
-import com.dml.majiang.MajiangPai;
-import com.dml.majiang.PengchuPaiZu;
-import com.dml.majiang.ShoupaiDuiziZu;
-import com.dml.majiang.ShoupaiGangziZu;
-import com.dml.majiang.ShoupaiKeziZu;
-import com.dml.majiang.ShoupaiPaiXing;
-import com.dml.majiang.ShoupaiShunziZu;
-import com.dml.majiang.Shunzi;
+import com.dml.majiang.pai.GangchuPaiZu;
+import com.dml.majiang.pai.MajiangPai;
+import com.dml.majiang.pai.PengchuPaiZu;
+import com.dml.majiang.pai.ShoupaiDuiziZu;
+import com.dml.majiang.pai.ShoupaiGangziZu;
+import com.dml.majiang.pai.ShoupaiKeziZu;
+import com.dml.majiang.pai.ShoupaiPaiXing;
+import com.dml.majiang.pai.ShoupaiShunziZu;
+import com.dml.majiang.pai.Shunzi;
+import com.dml.majiang.player.chupaizu.ChichuPaiZu;
 
 public class RuianMajiangPanPlayerResultVO {
 

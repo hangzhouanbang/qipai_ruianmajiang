@@ -3,13 +3,13 @@ package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.dml.majiang.PanActionFrame;
+import com.dml.majiang.pan.PanActionFrame;
 import com.dml.mpgame.GameValueObject;
 
 public class MajiangActionResult {
 	private GameValueObject game;
 	private PanActionFrame panActionFrame;
-	private RuianMajiangPanResult result;
+	private RuianMajiangPanResult panResult;
 	private List<String> otherPlayerIds = new ArrayList<>();
 
 	public GameValueObject getGame() {
@@ -28,12 +28,12 @@ public class MajiangActionResult {
 		this.panActionFrame = panActionFrame;
 	}
 
-	public RuianMajiangPanResult getResult() {
-		return result;
+	public RuianMajiangPanResult getPanResult() {
+		return panResult;
 	}
 
-	public void setResult(RuianMajiangPanResult result) {
-		this.result = result;
+	public void setPanResult(RuianMajiangPanResult panResult) {
+		this.panResult = panResult;
 	}
 
 	public List<String> getOtherPlayerIds() {

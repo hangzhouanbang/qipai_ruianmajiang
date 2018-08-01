@@ -1,23 +1,25 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
-import com.dml.majiang.DachushoupaiDaActionProcessor;
-import com.dml.majiang.DoNothingGuoActionProcessor;
-import com.dml.majiang.FixedPanNumbersJuFinishiDeterminer;
-import com.dml.majiang.HuFirstGangActionProcessor;
-import com.dml.majiang.HuFirstPengActionProcessor;
-import com.dml.majiang.Ju;
-import com.dml.majiang.MenFengDongZhuangDeterminer;
-import com.dml.majiang.MoGuipaiCounter;
-import com.dml.majiang.NoDanpaiOneDuiziGouXingPanHu;
-import com.dml.majiang.NoHuapaiRandomAvaliablePaiFiller;
-import com.dml.majiang.Pan;
-import com.dml.majiang.PanActionFrame;
-import com.dml.majiang.PengganghuFirstChiActionProcessor;
-import com.dml.majiang.PlayerHuOrNoPaiLeftPanFinishiDeterminer;
-import com.dml.majiang.RandomGuipaiDeterminer;
-import com.dml.majiang.RandomMustHasDongPlayersMenFengDeterminer;
-import com.dml.majiang.WaitDaPlayerPanPublicWaitingPlayerDeterminer;
-import com.dml.majiang.ZhuangMoPaiInitialActionUpdater;
+import java.util.List;
+
+import com.dml.majiang.custom.DachushoupaiDaActionProcessor;
+import com.dml.majiang.custom.DoNothingGuoActionProcessor;
+import com.dml.majiang.custom.FixedPanNumbersJuFinishiDeterminer;
+import com.dml.majiang.custom.HuFirstGangActionProcessor;
+import com.dml.majiang.custom.HuFirstPengActionProcessor;
+import com.dml.majiang.custom.MenFengDongZhuangDeterminer;
+import com.dml.majiang.custom.MoGuipaiCounter;
+import com.dml.majiang.custom.PengganghuFirstChiActionProcessor;
+import com.dml.majiang.custom.PlayerHuOrNoPaiLeftPanFinishiDeterminer;
+import com.dml.majiang.custom.RandomGuipaiDeterminer;
+import com.dml.majiang.custom.RandomMustHasDongPlayersMenFengDeterminer;
+import com.dml.majiang.custom.WaitDaPlayerPanPublicWaitingPlayerDeterminer;
+import com.dml.majiang.custom.ZhuangMoPaiInitialActionUpdater;
+import com.dml.majiang.ju.Ju;
+import com.dml.majiang.pai.NoDanpaiOneDuiziGouXingPanHu;
+import com.dml.majiang.pan.NoHuapaiRandomAvaliablePaiFiller;
+import com.dml.majiang.pan.Pan;
+import com.dml.majiang.pan.PanActionFrame;
 import com.dml.mpgame.Game;
 import com.dml.mpgame.GameState;
 import com.dml.mpgame.GameValueObject;
@@ -31,8 +33,14 @@ public class MajiangGame {
 	private boolean dapao;
 	private Ju ju;
 
-	public void join(String playerId) throws Exception {
+	public JoinGameResult join(String playerId) throws Exception {
+		JoinGameResult result = new JoinGameResult();
 		game.join(playerId);
+		result.setGameId(game.getId());
+		List<String> playerIds = game.allPlayerIds();
+		playerIds.remove(playerId);
+		result.setOtherPlayerIds(playerIds);
+		return result;
 	}
 
 	public GameValueObject leave(String playerId) throws Exception {
@@ -43,8 +51,10 @@ public class MajiangGame {
 		game.back(playerId);
 	}
 
-	public PanActionFrame ready(String playerId, long currentTime) throws Exception {
+	public ReadyForGameResult ready(String playerId, long currentTime) throws Exception {
 		game.ready(playerId);
+
+		MajiangActionResult firstActionResult = null;
 		if (game.getState().equals(GameState.playing)) {// 游戏开始了，那么要创建新的局
 			ju = new Ju();
 			ju.setPlayersMenFengDeterminerForFirstPan(new RandomMustHasDongPlayersMenFengDeterminer(currentTime));
@@ -102,26 +112,35 @@ public class MajiangGame {
 			ju.updateInitialAction();
 
 			// 庄家摸第一张牌,进入正式行牌流程
-			return action(ju.getCurrentPan().getZhuangPlayerId(), 1, currentTime);
-		} else {
-			return null;
+			firstActionResult = action(ju.getCurrentPan().getZhuangPlayerId(), 1, currentTime);
 		}
+
+		ReadyForGameResult result = new ReadyForGameResult();
+		result.setGame(new GameValueObject(game));
+		if (firstActionResult != null) {
+			result.setFirstActionFrame(firstActionResult.getPanActionFrame());
+		}
+		List<String> playerIds = game.allPlayerIds();
+		playerIds.remove(playerId);
+		result.setOtherPlayerIds(playerIds);
+
+		return result;
+
 	}
 
-	public PanActionFrame action(String playerId, int actionId, long actionTime) throws Exception {
-		return ju.action(playerId, actionId, actionTime);
-	}
-
-	public boolean shouldFinishCurrentPan() {
-		return ju.determineToFinishCurrentPan();
-	}
-
-	public RuianMajiangPanResult finishCurrentPan() {
-		return (RuianMajiangPanResult) ju.finishCurrentPan();
-	}
-
-	public boolean shouldFinishJu() {
-		return ju.determineToFinishJu();
+	public MajiangActionResult action(String playerId, int actionId, long actionTime) throws Exception {
+		PanActionFrame panActionFrame = ju.action(playerId, actionId, actionTime);
+		MajiangActionResult result = new MajiangActionResult();
+		result.setPanActionFrame(panActionFrame);
+		if (ju.getCurrentPan() == null) {// 盘结束了
+			result.setPanResult((RuianMajiangPanResult) ju.findLatestFinishedPanResult());
+		}
+		// TODO 局是否结束?局结果
+		result.setGame(new GameValueObject(game));
+		List<String> playerIds = game.allPlayerIds();
+		playerIds.remove(playerId);
+		result.setOtherPlayerIds(playerIds);
+		return result;
 	}
 
 	public Game getGame() {

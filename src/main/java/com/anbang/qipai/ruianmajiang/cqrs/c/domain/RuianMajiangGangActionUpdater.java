@@ -1,12 +1,12 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
-import com.dml.majiang.GanghouBupai;
-import com.dml.majiang.Ju;
-import com.dml.majiang.MajiangGangAction;
-import com.dml.majiang.MajiangMoAction;
-import com.dml.majiang.MajiangPlayer;
-import com.dml.majiang.MajiangPlayerGangActionUpdater;
-import com.dml.majiang.Pan;
+import com.dml.majiang.action.MajiangGangAction;
+import com.dml.majiang.action.MajiangMoAction;
+import com.dml.majiang.action.MajiangPlayerGangActionUpdater;
+import com.dml.majiang.ju.Ju;
+import com.dml.majiang.pai.GanghouBupai;
+import com.dml.majiang.pan.Pan;
+import com.dml.majiang.player.MajiangPlayer;
 
 public class RuianMajiangGangActionUpdater implements MajiangPlayerGangActionUpdater {// TODO 改成通用GangActionUpdater
 

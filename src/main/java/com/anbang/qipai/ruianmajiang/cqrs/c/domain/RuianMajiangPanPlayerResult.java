@@ -3,11 +3,11 @@ package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 import java.util.List;
 import java.util.Set;
 
-import com.dml.majiang.ChichuPaiZu;
-import com.dml.majiang.GangchuPaiZu;
-import com.dml.majiang.MajiangPai;
-import com.dml.majiang.PengchuPaiZu;
-import com.dml.majiang.ShoupaiPaiXing;
+import com.dml.majiang.pai.GangchuPaiZu;
+import com.dml.majiang.pai.MajiangPai;
+import com.dml.majiang.pai.PengchuPaiZu;
+import com.dml.majiang.pai.ShoupaiPaiXing;
+import com.dml.majiang.player.chupaizu.ChichuPaiZu;
 
 public class RuianMajiangPanPlayerResult {
 

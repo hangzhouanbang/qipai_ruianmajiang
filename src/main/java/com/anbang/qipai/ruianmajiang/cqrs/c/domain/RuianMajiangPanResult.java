@@ -2,7 +2,7 @@ package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
 import java.util.List;
 
-import com.dml.majiang.PanResult;
+import com.dml.majiang.pan.PanResult;
 
 public class RuianMajiangPanResult extends PanResult {
 
@@ -15,8 +15,6 @@ public class RuianMajiangPanResult extends PanResult {
 	private String dianpaoPlayerId;
 
 	private List<RuianMajiangPanPlayerResult> playerResultList;
-
-	private long finishTime;
 
 	public String getZhuangPlayerId() {
 		return zhuangPlayerId;
@@ -56,14 +54,6 @@ public class RuianMajiangPanResult extends PanResult {
 
 	public void setPlayerResultList(List<RuianMajiangPanPlayerResult> playerResultList) {
 		this.playerResultList = playerResultList;
-	}
-
-	public long getFinishTime() {
-		return finishTime;
-	}
-
-	public void setFinishTime(long finishTime) {
-		this.finishTime = finishTime;
 	}
 
 }

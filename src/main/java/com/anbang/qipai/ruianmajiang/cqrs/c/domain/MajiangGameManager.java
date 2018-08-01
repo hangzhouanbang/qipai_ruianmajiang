@@ -1,10 +1,8 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import com.dml.majiang.PanActionFrame;
 import com.dml.mpgame.FixedNumberOfPlayersGameJoinStrategy;
 import com.dml.mpgame.FixedNumberOfPlayersGameReadyStrategy;
 import com.dml.mpgame.Game;
@@ -45,20 +43,20 @@ public class MajiangGameManager {
 		if (game == null) {
 			throw new MajinagGameNotFoundException();
 		}
-		game.join(playerId);
+		JoinGameResult joinGameResult = game.join(playerId);
 		playerIdGameIdMap.put(playerId, gameId);
-		JoinGameResult result = new JoinGameResult();
-		result.setGameId(gameId);
-		List<String> playerIds = game.getGame().allPlayerIds();
-		playerIds.remove(playerId);
-		result.setOtherPlayerIds(playerIds);
-		return result;
+		return joinGameResult;
 	}
 
+	/**
+	 * @param playerId
+	 * @return 无效操作返回null
+	 * @throws Exception
+	 */
 	public GameValueObject leave(String playerId) throws Exception {
 		String gameId = playerIdGameIdMap.get(playerId);
 		if (gameId == null) {
-			throw new PlayerNotInGameException();
+			return null;
 		}
 		MajiangGame game = gameIdMajiangGameMap.get(gameId);
 		GameValueObject gameValueObject = game.leave(playerId);
@@ -78,16 +76,7 @@ public class MajiangGameManager {
 			throw new PlayerNotInGameException();
 		}
 		MajiangGame game = gameIdMajiangGameMap.get(gameId);
-		PanActionFrame panActionFrame = game.ready(playerId, currentTime);
-		ReadyForGameResult result = new ReadyForGameResult();
-		result.setGame(new GameValueObject(game.getGame()));
-		result.setFirstActionFrame(panActionFrame);
-
-		List<String> playerIds = game.getGame().allPlayerIds();
-		playerIds.remove(playerId);
-		result.setOtherPlayerIds(playerIds);
-
-		return result;
+		return game.ready(playerId, currentTime);
 	}
 
 	public MajiangGame findGameById(String gameId) {
@@ -100,28 +89,13 @@ public class MajiangGameManager {
 			throw new PlayerNotInGameException();
 		}
 		MajiangGame game = gameIdMajiangGameMap.get(gameId);
-		PanActionFrame panActionFrame = game.action(playerId, actionId, actionTime);
-		MajiangActionResult result = new MajiangActionResult();
-		// action之后要试探一盘是否结束
-		if (game.shouldFinishCurrentPan()) {
-			RuianMajiangPanResult ruianMajiangPanResult = game.finishCurrentPan();
-			ruianMajiangPanResult.setFinishTime(actionTime);
-			result.setResult(ruianMajiangPanResult);
-			// 试探一局是否结束
-			if (game.shouldFinishJu()) {
-				// TODO
-			}
-		}
-		result.setGame(new GameValueObject(game.getGame()));
-		result.setPanActionFrame(panActionFrame);
-		List<String> playerIds = game.getGame().allPlayerIds();
-		playerIds.remove(playerId);
-		result.setOtherPlayerIds(playerIds);
-		return result;
+		return game.action(playerId, actionId, actionTime);
+
+		// TODO 彻底结束之后要清理内存
 	}
 
-	public String findGameIdForPlayer(String playerId) {
-		return playerIdGameIdMap.get(playerId);
+	public void bindPlayer(String playerId, String gameId) {
+		playerIdGameIdMap.put(playerId, gameId);
 	}
 
 }

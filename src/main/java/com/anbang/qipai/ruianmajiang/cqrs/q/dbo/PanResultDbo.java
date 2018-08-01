@@ -15,6 +15,7 @@ public class PanResultDbo {
 	private boolean zimo;
 	private String dianpaoPlayerId;
 	private List<RuianMajiangPanPlayerResult> playerResultList;
+	private long finishTime;
 
 	public PanResultDbo() {
 	}
@@ -27,6 +28,7 @@ public class PanResultDbo {
 		zimo = ruianMajiangPanResult.isZimo();
 		dianpaoPlayerId = ruianMajiangPanResult.getDianpaoPlayerId();
 		playerResultList = new ArrayList<>(ruianMajiangPanResult.getPlayerResultList());
+		finishTime = ruianMajiangPanResult.getPanFinishTime();
 	}
 
 	public String getId() {
@@ -91,6 +93,14 @@ public class PanResultDbo {
 
 	public void setPlayerResultList(List<RuianMajiangPanPlayerResult> playerResultList) {
 		this.playerResultList = playerResultList;
+	}
+
+	public long getFinishTime() {
+		return finishTime;
+	}
+
+	public void setFinishTime(long finishTime) {
+		this.finishTime = finishTime;
 	}
 
 }

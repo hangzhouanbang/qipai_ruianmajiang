@@ -1,7 +1,7 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
-import com.dml.majiang.MajiangPai;
-import com.dml.majiang.MajiangPlayer;
+import com.dml.majiang.pai.MajiangPai;
+import com.dml.majiang.player.MajiangPlayer;
 
 /**
  * 手牌型无关结算参数

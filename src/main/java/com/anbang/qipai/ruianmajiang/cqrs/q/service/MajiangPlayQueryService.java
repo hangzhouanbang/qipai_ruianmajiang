@@ -16,8 +16,8 @@ import com.anbang.qipai.ruianmajiang.cqrs.q.dao.PanResultDboDao;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.GamePlayerDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.PanResultDbo;
-import com.dml.majiang.LiangangangPanActionFramePlayerViewFilter;
-import com.dml.majiang.PanActionFrame;
+import com.dml.majiang.pan.PanActionFrame;
+import com.dml.majiang.player.LiangangangPanActionFramePlayerViewFilter;
 import com.dml.mpgame.GamePlayerState;
 import com.dml.mpgame.GameState;
 import com.dml.mpgame.GameValueObject;
@@ -80,7 +80,7 @@ public class MajiangPlayQueryService {
 		majiangGameDao.update(gameValueObject.getId(), panActionFrame.toByteArray(1024 * 8));
 
 		// 盘出结果的话要记录结果
-		RuianMajiangPanResult ruianMajiangPanResult = majiangActionResult.getResult();
+		RuianMajiangPanResult ruianMajiangPanResult = majiangActionResult.getPanResult();
 		if (ruianMajiangPanResult != null) {
 			PanResultDbo panResultDbo = new PanResultDbo(gameValueObject.getId(), ruianMajiangPanResult);
 			panResultDboDao.save(panResultDbo);

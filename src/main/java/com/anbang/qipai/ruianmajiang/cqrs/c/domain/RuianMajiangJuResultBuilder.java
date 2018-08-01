@@ -1,6 +1,6 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
-import com.dml.majiang.JuResultBuilder;
+import com.dml.majiang.ju.JuResultBuilder;
 
 public class RuianMajiangJuResultBuilder implements JuResultBuilder {
 

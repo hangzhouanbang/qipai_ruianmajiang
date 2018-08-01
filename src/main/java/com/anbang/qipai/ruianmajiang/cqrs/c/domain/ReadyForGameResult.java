@@ -3,7 +3,7 @@ package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.dml.majiang.PanActionFrame;
+import com.dml.majiang.pan.PanActionFrame;
 import com.dml.mpgame.GameValueObject;
 
 public class ReadyForGameResult {

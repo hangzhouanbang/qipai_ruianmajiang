@@ -120,9 +120,13 @@ public class GameController {
 		GameValueObject gameValueObject;
 		try {
 			gameValueObject = gameCmdService.leaveGame(playerId);
+			if (gameValueObject == null) {
+				vo.setSuccess(true);
+				return vo;
+			}
 		} catch (Exception e) {
-			e.printStackTrace();
-			vo.setSuccess(true);
+			vo.setSuccess(false);
+			vo.setMsg(e.getClass().getName());
 			return vo;
 		}
 		majiangGameQueryService.leaveGame(gameValueObject);

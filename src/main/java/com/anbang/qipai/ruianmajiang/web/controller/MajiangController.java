@@ -18,7 +18,7 @@ import com.anbang.qipai.ruianmajiang.web.vo.CommonVO;
 import com.anbang.qipai.ruianmajiang.web.vo.PanResultVO;
 import com.anbang.qipai.ruianmajiang.websocket.GamePlayWsNotifier;
 import com.anbang.qipai.ruianmajiang.websocket.QueryScope;
-import com.dml.majiang.PanActionFrame;
+import com.dml.majiang.pan.PanActionFrame;
 
 /**
  * 打麻将相关
@@ -121,7 +121,7 @@ public class MajiangController {
 			return vo;
 		}
 
-		if (majiangActionResult.getResult() == null) {// 盘没结束
+		if (majiangActionResult.getPanResult() == null) {// 盘没结束
 			// 通知其他人
 			for (String otherPlayerId : majiangActionResult.getOtherPlayerIds()) {
 				wsNotifier.notifyToQuery(otherPlayerId, QueryScope.panForMe.name());

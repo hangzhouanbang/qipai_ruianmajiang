@@ -43,9 +43,9 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
 	}
 
 	@Override
-	public String findGameIdForPlayer(String playerId) {
+	public void bindPlayer(String playerId, String gameId) {
 		MajiangGameManager majiangGameManager = singletonEntityRepository.getEntity(MajiangGameManager.class);
-		return majiangGameManager.findGameIdForPlayer(playerId);
+		majiangGameManager.bindPlayer(playerId, gameId);
 	}
 
 }

@@ -2,13 +2,13 @@ package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
 import java.util.List;
 
-import com.dml.majiang.FaPaiStrategy;
-import com.dml.majiang.Ju;
-import com.dml.majiang.MajiangPai;
-import com.dml.majiang.MajiangPlayer;
-import com.dml.majiang.MajiangPosition;
-import com.dml.majiang.MajiangPositionUtil;
-import com.dml.majiang.Pan;
+import com.dml.majiang.ju.Ju;
+import com.dml.majiang.pai.MajiangPai;
+import com.dml.majiang.pan.FaPaiStrategy;
+import com.dml.majiang.pan.Pan;
+import com.dml.majiang.player.MajiangPlayer;
+import com.dml.majiang.position.MajiangPosition;
+import com.dml.majiang.position.MajiangPositionUtil;
 
 /**
  * 顺序发牌。白板如果不是鬼牌的话，拿出公示。白板是鬼牌那改为红中公示

@@ -1,10 +1,10 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
-import com.dml.majiang.Ju;
-import com.dml.majiang.MajiangPengAction;
-import com.dml.majiang.MajiangPlayer;
-import com.dml.majiang.MajiangPlayerPengActionUpdater;
-import com.dml.majiang.Pan;
+import com.dml.majiang.action.MajiangPengAction;
+import com.dml.majiang.action.MajiangPlayerPengActionUpdater;
+import com.dml.majiang.ju.Ju;
+import com.dml.majiang.pan.Pan;
+import com.dml.majiang.player.MajiangPlayer;
 
 public class RuianMajiangPengActionUpdater implements MajiangPlayerPengActionUpdater {// TODO 改成通用PengActionUpdater
 

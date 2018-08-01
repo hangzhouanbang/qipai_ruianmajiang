@@ -93,8 +93,17 @@ public class DisruptorGameCmdService extends DisruptorCmdServiceBase implements 
 	}
 
 	@Override
-	public String findGameIdForPlayer(String playerId) {
-		return gameCmdServiceImpl.findGameIdForPlayer(playerId);
+	public void bindPlayer(String playerId, String gameId) {
+		CommonCommand cmd = new CommonCommand(GameCmdServiceImpl.class.getName(), "bindPlayer", playerId, gameId);
+		DeferredResult<Object> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd, () -> {
+			gameCmdServiceImpl.bindPlayer(cmd.getParameter(), cmd.getParameter());
+			return null;
+		});
+		try {
+			result.getResult();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }

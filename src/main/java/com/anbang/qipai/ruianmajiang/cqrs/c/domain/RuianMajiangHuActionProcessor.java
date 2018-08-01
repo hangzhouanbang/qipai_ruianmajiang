@@ -1,10 +1,10 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
-import com.dml.majiang.Ju;
-import com.dml.majiang.MajiangHuAction;
-import com.dml.majiang.MajiangPlayer;
-import com.dml.majiang.MajiangPlayerHuActionProcessor;
-import com.dml.majiang.Pan;
+import com.dml.majiang.action.MajiangHuAction;
+import com.dml.majiang.action.MajiangPlayerHuActionProcessor;
+import com.dml.majiang.ju.Ju;
+import com.dml.majiang.pan.Pan;
+import com.dml.majiang.player.MajiangPlayer;
 
 public class RuianMajiangHuActionProcessor implements MajiangPlayerHuActionProcessor {
 

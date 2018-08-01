@@ -17,6 +17,6 @@ public interface GameCmdService {
 
 	void backToGame(String playerId, String gameId) throws Exception;
 
-	String findGameIdForPlayer(String playerId);
+	void bindPlayer(String playerId, String gameId);
 
 }
