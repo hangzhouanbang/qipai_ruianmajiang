@@ -140,8 +140,11 @@ public class GamePlayWsController extends TextWebSocketHandler {
 			if (!majiangGameDbo.getState().equals(GameState.finished)) {
 				wsNotifier.notifyToQuery(playerId, QueryScope.gameInfo.name());
 				if (majiangGameDbo.getState().equals(GameState.playing)) {
-					// TODO 需判断是否在等下一盘开始
-					wsNotifier.notifyToQuery(playerId, QueryScope.panForMe.name());
+					if (majiangGameDbo.getNextPanPlayerReadyObj() != null) {
+						wsNotifier.notifyToQuery(playerId, QueryScope.readyForNextPan.name());
+					} else {
+						wsNotifier.notifyToQuery(playerId, QueryScope.panForMe.name());
+					}
 				}
 			}
 		}

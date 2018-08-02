@@ -1,5 +1,7 @@
 package com.anbang.qipai.ruianmajiang.cqrs.q.dbo;
 
+import java.util.Map;
+
 import com.dml.mpgame.GameState;
 
 public class MajiangGameDbo {
@@ -11,6 +13,7 @@ public class MajiangGameDbo {
 	private boolean dapao;
 	private GameState state;
 	private byte[] latestPanActionFrameData;
+	private Map<String, Boolean> nextPanPlayerReadyObj;
 
 	public String getId() {
 		return id;
@@ -74,6 +77,14 @@ public class MajiangGameDbo {
 
 	public void setLatestPanActionFrameData(byte[] latestPanActionFrameData) {
 		this.latestPanActionFrameData = latestPanActionFrameData;
+	}
+
+	public Map<String, Boolean> getNextPanPlayerReadyObj() {
+		return nextPanPlayerReadyObj;
+	}
+
+	public void setNextPanPlayerReadyObj(Map<String, Boolean> nextPanPlayerReadyObj) {
+		this.nextPanPlayerReadyObj = nextPanPlayerReadyObj;
 	}
 
 }

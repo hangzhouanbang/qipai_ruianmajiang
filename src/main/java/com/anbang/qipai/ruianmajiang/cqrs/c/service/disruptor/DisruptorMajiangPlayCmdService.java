@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangActionResult;
+import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyToNextPanResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.MajiangPlayCmdService;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.impl.MajiangPlayCmdServiceImpl;
 import com.highto.framework.concurrent.DeferredResult;
@@ -23,6 +24,20 @@ public class DisruptorMajiangPlayCmdService extends DisruptorCmdServiceBase impl
 			MajiangActionResult majiangActionResult = majiangPlayCmdServiceImpl.action(cmd.getParameter(),
 					cmd.getParameter(), cmd.getParameter());
 			return majiangActionResult;
+		});
+		try {
+			return result.getResult();
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+
+	@Override
+	public ReadyToNextPanResult readyToNextPan(String playerId) throws Exception {
+		CommonCommand cmd = new CommonCommand(MajiangPlayCmdServiceImpl.class.getName(), "readyToNextPan", playerId);
+		DeferredResult<ReadyToNextPanResult> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd, () -> {
+			ReadyToNextPanResult readyToNextPanResult = majiangPlayCmdServiceImpl.readyToNextPan(cmd.getParameter());
+			return readyToNextPanResult;
 		});
 		try {
 			return result.getResult();

@@ -9,10 +9,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangActionResult;
+import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyToNextPanResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.MajiangPlayCmdService;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.PlayerAuthService;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.GamePlayerDbo;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.PanResultDbo;
+import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangGameQueryService;
 import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangPlayQueryService;
 import com.anbang.qipai.ruianmajiang.web.vo.CommonVO;
 import com.anbang.qipai.ruianmajiang.web.vo.PanResultVO;
@@ -35,6 +38,9 @@ public class MajiangController {
 
 	@Autowired
 	private MajiangPlayQueryService majiangPlayQueryService;
+
+	@Autowired
+	private MajiangGameQueryService majiangGameQueryService;
 
 	@Autowired
 	private PlayerAuthService playerAuthService;
@@ -139,6 +145,64 @@ public class MajiangController {
 		}
 
 		// TODO 局结束
+		return vo;
+	}
+
+	@RequestMapping(value = "/ready_to_next_pan")
+	@ResponseBody
+	public CommonVO readytonextpan(String token) {
+		CommonVO vo = new CommonVO();
+		Map data = new HashMap();
+		vo.setData(data);
+		String playerId = playerAuthService.getPlayerIdByToken(token);
+		if (playerId == null) {
+			vo.setSuccess(false);
+			vo.setMsg("invalid token");
+			return vo;
+		}
+
+		ReadyToNextPanResult readyToNextPanResult;
+		try {
+			readyToNextPanResult = majiangPlayCmdService.readyToNextPan(playerId);
+		} catch (Exception e) {
+			vo.setSuccess(false);
+			vo.setMsg(e.getClass().getName());
+			return vo;
+		}
+
+		try {
+			majiangPlayQueryService.readyToNextPan(readyToNextPanResult);
+		} catch (Throwable e) {
+			vo.setSuccess(false);
+			vo.setMsg(e.getMessage());
+			return vo;
+		}
+
+		// 通知其他人
+		PanActionFrame firstActionFrame = readyToNextPanResult.getFirstActionFrame();
+		if (firstActionFrame != null) {
+			for (String otherPlayerId : readyToNextPanResult.getOtherPlayerIds()) {
+				wsNotifier.notifyToQuery(otherPlayerId, QueryScope.panForMe.name());
+			}
+			data.put("queryScope", QueryScope.panForMe);
+		} else {
+			for (String otherPlayerId : readyToNextPanResult.getOtherPlayerIds()) {
+				wsNotifier.notifyToQuery(otherPlayerId, QueryScope.readyForNextPan.name());
+			}
+			data.put("queryScope", QueryScope.readyForNextPan);
+		}
+
+		return vo;
+	}
+
+	@RequestMapping(value = "/player_ready_info_for_next_pan")
+	@ResponseBody
+	public CommonVO playerreadyinfofornextpan(String gameId) {
+		CommonVO vo = new CommonVO();
+		Map data = new HashMap();
+		vo.setData(data);
+		MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
+		data.put("nextPanPlayersReady", majiangGameDbo.getNextPanPlayerReadyObj());
 		return vo;
 	}
 

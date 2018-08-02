@@ -1,5 +1,7 @@
 package com.anbang.qipai.ruianmajiang.cqrs.q.dao.mongodb;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -41,6 +43,18 @@ public class MongodbMajiangGameDboDao implements MajiangGameDboDao {
 	public void update(String id, GameState state) {
 		mongoTemplate.updateFirst(new Query(Criteria.where("id").is(id)), new Update().set("state", state),
 				MajiangGameDbo.class);
+	}
+
+	@Override
+	public void update(String id, Map<String, Boolean> nextPanPlayerReadyObj) {
+		mongoTemplate.updateFirst(new Query(Criteria.where("id").is(id)),
+				new Update().set("nextPanPlayerReadyObj", nextPanPlayerReadyObj), MajiangGameDbo.class);
+	}
+
+	@Override
+	public void clearNextPanPlayerReadyObj(String id) {
+		mongoTemplate.updateFirst(new Query(Criteria.where("id").is(id)),
+				new Update().set("nextPanPlayerReadyObj", null), MajiangGameDbo.class);
 	}
 
 }

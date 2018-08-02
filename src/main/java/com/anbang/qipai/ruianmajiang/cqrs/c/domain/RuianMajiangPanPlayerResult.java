@@ -8,10 +8,13 @@ import com.dml.majiang.player.chupaizu.ChichuPaiZu;
 import com.dml.majiang.player.chupaizu.GangchuPaiZu;
 import com.dml.majiang.player.chupaizu.PengchuPaiZu;
 import com.dml.majiang.player.shoupai.ShoupaiPaiXing;
+import com.dml.majiang.position.MajiangPosition;
 
 public class RuianMajiangPanPlayerResult {
 
 	private String playerId;
+
+	private MajiangPosition menFeng;
 
 	private boolean hu;
 
@@ -44,6 +47,14 @@ public class RuianMajiangPanPlayerResult {
 
 	public void setPlayerId(String playerId) {
 		this.playerId = playerId;
+	}
+
+	public MajiangPosition getMenFeng() {
+		return menFeng;
+	}
+
+	public void setMenFeng(MajiangPosition menFeng) {
+		this.menFeng = menFeng;
 	}
 
 	public boolean isHu() {

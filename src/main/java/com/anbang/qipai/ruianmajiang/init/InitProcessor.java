@@ -64,7 +64,7 @@ public class InitProcessor {
 		}
 
 		try {
-			Class.forName("com.dml.majiang.GouXingCalculator");
+			Class.forName("com.dml.majiang.player.shoupai.gouxing.GouXingCalculator");
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}

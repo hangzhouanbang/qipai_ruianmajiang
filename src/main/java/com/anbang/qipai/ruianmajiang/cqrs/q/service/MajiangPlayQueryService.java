@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangActionResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyForGameResult;
+import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyToNextPanResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.RuianMajiangPanResult;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dao.GamePlayerDboDao;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dao.MajiangGameDboDao;
@@ -67,6 +68,20 @@ public class MajiangPlayQueryService {
 			majiangGameDao.update(gameValueObject.getId(), panActionFrame.toByteArray(1024 * 8));
 			// TODO 记录一条Frame，回放的时候要做
 		}
+	}
+
+	public void readyToNextPan(ReadyToNextPanResult readyToNextPanResult) throws Throwable {
+
+		if (readyToNextPanResult.getFirstActionFrame() != null) {
+			majiangGameDao.clearNextPanPlayerReadyObj(readyToNextPanResult.getGameId());
+			majiangGameDao.update(readyToNextPanResult.getGameId(),
+					readyToNextPanResult.getFirstActionFrame().toByteArray(1024 * 8));
+			// TODO 记录一条Frame，回放的时候要做
+		} else {
+			Map<String, Boolean> playerReadyMap = readyToNextPanResult.getPlayerReadyMap();
+			majiangGameDao.update(readyToNextPanResult.getGameId(), playerReadyMap);
+		}
+
 	}
 
 	public void action(MajiangActionResult majiangActionResult) throws Throwable {

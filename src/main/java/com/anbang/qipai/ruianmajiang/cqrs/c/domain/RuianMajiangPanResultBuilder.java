@@ -120,6 +120,7 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 		playerResultList.forEach((playerResult) -> {
 			MajiangPlayer player = currentPan.findPlayerById(playerResult.getPlayerId());
 			playerResult.getScore().jiesuan();
+			playerResult.setMenFeng(player.getMenFeng());
 			// 吃碰杠出去的要加到结果
 			playerResult.setPublicPaiList(new ArrayList<>(player.getPublicPaiList()));
 			playerResult.setChichupaiZuList(new ArrayList<>(player.getChichupaiZuList()));

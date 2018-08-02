@@ -1,10 +1,12 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
+import java.util.HashMap;
 import java.util.List;
 
 import com.dml.majiang.ju.Ju;
 import com.dml.majiang.ju.finish.FixedPanNumbersJuFinishiDeterminer;
-import com.dml.majiang.pan.Pan;
+import com.dml.majiang.ju.firstpan.ClassicStartFirstPanProcess;
+import com.dml.majiang.ju.nextpan.AllPlayersReadyCreateNextPanDeterminer;
 import com.dml.majiang.pan.avaliablepai.NoHuapaiRandomAvaliablePaiFiller;
 import com.dml.majiang.pan.finish.PlayerHuOrNoPaiLeftPanFinishiDeterminer;
 import com.dml.majiang.pan.frame.PanActionFrame;
@@ -18,6 +20,7 @@ import com.dml.majiang.player.action.initial.ZhuangMoPaiInitialActionUpdater;
 import com.dml.majiang.player.action.mo.MoGuipaiCounter;
 import com.dml.majiang.player.action.peng.HuFirstPengActionProcessor;
 import com.dml.majiang.player.menfeng.RandomMustHasDongPlayersMenFengDeterminer;
+import com.dml.majiang.player.menfeng.ZhuangXiajiaIsDongIfZhuangNotHuPlayersMenFengDeterminer;
 import com.dml.majiang.player.shoupai.gouxing.NoDanpaiOneDuiziGouXingPanHu;
 import com.dml.majiang.player.zhuang.MenFengDongZhuangDeterminer;
 import com.dml.mpgame.Game;
@@ -52,13 +55,16 @@ public class MajiangGame {
 	}
 
 	public ReadyForGameResult ready(String playerId, long currentTime) throws Exception {
+		ReadyForGameResult result = new ReadyForGameResult();
 		game.ready(playerId);
-
-		MajiangActionResult firstActionResult = null;
+		result.setGame(new GameValueObject(game));
 		if (game.getState().equals(GameState.playing)) {// 游戏开始了，那么要创建新的局
 			ju = new Ju();
+			ju.setStartFirstPanProcess(new ClassicStartFirstPanProcess());
 			ju.setPlayersMenFengDeterminerForFirstPan(new RandomMustHasDongPlayersMenFengDeterminer(currentTime));
+			ju.setPlayersMenFengDeterminerForNextPan(new ZhuangXiajiaIsDongIfZhuangNotHuPlayersMenFengDeterminer());
 			ju.setZhuangDeterminerForFirstPan(new MenFengDongZhuangDeterminer());
+			ju.setZhuangDeterminerForNextPan(new MenFengDongZhuangDeterminer());
 			ju.setAvaliablePaiFiller(new NoHuapaiRandomAvaliablePaiFiller(currentTime + 1));
 			ju.setGuipaiDeterminer(new RandomGuipaiDeterminer(currentTime + 2));
 			ju.setFaPaiStrategy(new RuianMajiangFaPaiStrategy(16));
@@ -66,6 +72,9 @@ public class MajiangGame {
 			ju.setGouXingPanHu(new NoDanpaiOneDuiziGouXingPanHu());
 			ju.setCurrentPanPublicWaitingPlayerDeterminer(new WaitDaPlayerPanPublicWaitingPlayerDeterminer());
 			ju.setCurrentPanResultBuilder(new RuianMajiangPanResultBuilder());
+			AllPlayersReadyCreateNextPanDeterminer createNextPanDeterminer = new AllPlayersReadyCreateNextPanDeterminer();
+			game.allPlayerIds().forEach((pid) -> createNextPanDeterminer.addPlayer(pid));
+			ju.setCreateNextPanDeterminer(createNextPanDeterminer);
 			ju.setJuFinishiDeterminer(new FixedPanNumbersJuFinishiDeterminer(panshu));
 			RuianMajiangJuResultBuilder ruianMajiangJuResultBuilder = new RuianMajiangJuResultBuilder();
 			ruianMajiangJuResultBuilder.setDihu(difen);
@@ -88,37 +97,11 @@ public class MajiangGame {
 			ju.addActionStatisticsListener(new CaizipaiListener());
 			ju.addActionStatisticsListener(new MoGuipaiCounter());
 
-			Pan firstPan = new Pan();
-			firstPan.setNo(1);
-			game.allPlayerIds().forEach((pid) -> firstPan.addPlayer(pid));
-			ju.setCurrentPan(firstPan);
+			// 开始第一盘
+			ju.startFirstPan(game.allPlayerIds());
 
-			// 开始定第一盘的门风
-			ju.determinePlayersMenFengForFirstPan();
-
-			// 开始定第一盘庄家
-			ju.determineZhuangForFirstPan();
-
-			// 开始填充可用的牌
-			ju.fillAvaliablePai();
-
-			// 开始定财神
-			ju.determineGuipai();
-
-			// 开始发牌
-			ju.faPai();
-
-			// 庄家可以摸第一张牌
-			ju.updateInitialAction();
-
-			// 庄家摸第一张牌,进入正式行牌流程
-			firstActionResult = action(ju.getCurrentPan().getZhuangPlayerId(), 1, currentTime);
-		}
-
-		ReadyForGameResult result = new ReadyForGameResult();
-		result.setGame(new GameValueObject(game));
-		if (firstActionResult != null) {
-			result.setFirstActionFrame(firstActionResult.getPanActionFrame());
+			// 必然庄家已经先摸了一张牌了
+			result.setFirstActionFrame(ju.getCurrentPan().findLatestActionFrame());
 		}
 		List<String> playerIds = game.allPlayerIds();
 		playerIds.remove(playerId);
@@ -141,6 +124,26 @@ public class MajiangGame {
 		playerIds.remove(playerId);
 		result.setOtherPlayerIds(playerIds);
 		return result;
+	}
+
+	public ReadyToNextPanResult readyToNextPan(String playerId) throws Exception {
+		ReadyToNextPanResult readyToNextPanResult = new ReadyToNextPanResult();
+		AllPlayersReadyCreateNextPanDeterminer createNextPanDeterminer = (AllPlayersReadyCreateNextPanDeterminer) ju
+				.getCreateNextPanDeterminer();
+		createNextPanDeterminer.playerReady(playerId);
+		readyToNextPanResult.setPlayerReadyMap(new HashMap<>(createNextPanDeterminer.getPlayerReadyMap()));
+		// 如果可以创建下一盘,那就创建下一盘
+		if (ju.determineToCreateNextPan()) {
+			ju.startNextPan();
+			// 必然庄家已经先摸了一张牌了
+			readyToNextPanResult.setFirstActionFrame(ju.getCurrentPan().findLatestActionFrame());
+		}
+
+		List<String> playerIds = game.allPlayerIds();
+		playerIds.remove(playerId);
+		readyToNextPanResult.setOtherPlayerIds(playerIds);
+
+		return readyToNextPanResult;
 	}
 
 	public Game getGame() {

@@ -98,4 +98,13 @@ public class MajiangGameManager {
 		playerIdGameIdMap.put(playerId, gameId);
 	}
 
+	public ReadyToNextPanResult readyToNextPan(String playerId) throws Exception {
+		String gameId = playerIdGameIdMap.get(playerId);
+		if (gameId == null) {
+			throw new PlayerNotInGameException();
+		}
+		MajiangGame game = gameIdMajiangGameMap.get(gameId);
+		return game.readyToNextPan(playerId);
+	}
+
 }
