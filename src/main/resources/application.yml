@@ -28,6 +28,13 @@ spring:
           contentType: application/json
           producer:
             partitionCount: 1
+        members:
+          destination: members
+          group: qipai_members
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
       
 server:
   port: 2001

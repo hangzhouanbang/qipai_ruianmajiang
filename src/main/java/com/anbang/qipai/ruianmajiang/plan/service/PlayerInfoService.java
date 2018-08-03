@@ -16,4 +16,7 @@ public class PlayerInfoService {
 		return playerInfoDao.findById(playerId);
 	}
 
+	public void save(PlayerInfo playerInfo) {
+		playerInfoDao.save(playerInfo);
+	}
 }

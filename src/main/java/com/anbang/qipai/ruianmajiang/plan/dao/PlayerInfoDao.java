@@ -6,4 +6,5 @@ public interface PlayerInfoDao {
 
 	PlayerInfo findById(String playerId);
 
+	void save(PlayerInfo playerInfo);
 }
