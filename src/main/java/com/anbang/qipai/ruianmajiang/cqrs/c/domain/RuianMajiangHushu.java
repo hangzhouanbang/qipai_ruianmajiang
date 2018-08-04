@@ -71,6 +71,23 @@ public class RuianMajiangHushu {
 			}
 		} else {
 			value = (int) (hu * Math.pow(2, taishu.getValue()));
+			if (value > 500) {
+				value = 500;
+			}
+		}
+	}
+
+	public int quzhengValue() {
+		return quzheng(value);
+	}
+
+	private int quzheng(int value) {
+		int shang = value / 10;
+		int yu = value % 10;
+		if (yu > 0) {
+			return (shang + 1) * 10;
+		} else {
+			return shang * 10;
 		}
 	}
 

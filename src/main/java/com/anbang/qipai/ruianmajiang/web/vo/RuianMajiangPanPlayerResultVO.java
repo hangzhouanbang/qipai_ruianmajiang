@@ -67,9 +67,9 @@ public class RuianMajiangPanPlayerResultVO {
 		if (ruianMajiangPao != null) {
 			pao = ruianMajiangPao.getValue();
 		}
-		hushu = ruianMajiangPanPlayerScore.getHushu().getValue();
+		hushu = ruianMajiangPanPlayerScore.getHushu().quzhengValue();
 		taishu = new RuianMajiangTaishuVO(ruianMajiangPanPlayerScore.getHushu().getTaishu());
-		score = ruianMajiangPanPlayerScore.getJiesuanScore();
+		score = ruianMajiangPanPlayerScore.quzhengJiesuanScore() / 10;
 
 		List<ChichuPaiZu> chichuPaiZuList = panPlayerResult.getChichupaiZuList();
 		for (ChichuPaiZu chichuPaiZu : chichuPaiZuList) {

@@ -124,7 +124,9 @@ public class RuianMajiangJiesuanCalculator {
 		taishu.setDanzhangdiaoHu(shoupaixingWuguanJiesuancanshu.getFangruShoupaiCount() == 1);
 		taishu.setDiHu(false);// TODO 地胡
 		int shoupaiShunziCount = huPaiShoupaiPaiXing.countShunzi();
-		taishu.setDuiduiHu(shoupaixingWuguanJiesuancanshu.getChichupaiZuCount() == 0 && shoupaiShunziCount == 0);
+		if (hu) {
+			taishu.setDuiduiHu(shoupaixingWuguanJiesuancanshu.getChichupaiZuCount() == 0 && shoupaiShunziCount == 0);
+		}
 		boolean facaiAnke = huPaiShoupaiPaiXing.hasKeziForPaiType(MajiangPai.facai);
 		taishu.setFacaiAnke(facaiAnke);
 		boolean facaiAngang = huPaiShoupaiPaiXing.hasGangziForPaiType(MajiangPai.facai);

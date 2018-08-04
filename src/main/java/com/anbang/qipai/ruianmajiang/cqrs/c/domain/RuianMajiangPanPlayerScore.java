@@ -29,6 +29,20 @@ public class RuianMajiangPanPlayerScore {
 		jiesuanHushu += delta;
 	}
 
+	public int quzhengJiesuanScore() {
+		return quzheng(jiesuanScore);
+	}
+
+	private int quzheng(int value) {
+		int shang = value / 10;
+		int yu = value % 10;
+		if (yu > 0) {
+			return (shang + 1) * 10;
+		} else {
+			return shang * 10;
+		}
+	}
+
 	public RuianMajiangPao getPao() {
 		return pao;
 	}
