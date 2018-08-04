@@ -26,4 +26,36 @@ public class JuResultVO {
 				.add(new RuianMajiangJuPlayerResultVO(juPlayerResult, playerMap.get(juPlayerResult.getPlayerId()))));
 	}
 
+	public String getDayingjiaId() {
+		return dayingjiaId;
+	}
+
+	public void setDayingjiaId(String dayingjiaId) {
+		this.dayingjiaId = dayingjiaId;
+	}
+
+	public String getDatuhaoId() {
+		return datuhaoId;
+	}
+
+	public void setDatuhaoId(String datuhaoId) {
+		this.datuhaoId = datuhaoId;
+	}
+
+	public List<RuianMajiangJuPlayerResultVO> getPlayerResultList() {
+		return playerResultList;
+	}
+
+	public void setPlayerResultList(List<RuianMajiangJuPlayerResultVO> playerResultList) {
+		this.playerResultList = playerResultList;
+	}
+
+	public PanResultVO getLastPanResult() {
+		return lastPanResult;
+	}
+
+	public void setLastPanResult(PanResultVO lastPanResult) {
+		this.lastPanResult = lastPanResult;
+	}
+
 }
