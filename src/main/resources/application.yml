@@ -22,9 +22,24 @@ spring:
                   ms: 5
                 batch:
                   size: 16384
+          ruianMajiangJuResult:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
       bindings:
         ruianMajiangGame:
           destination: ruianMajiangGame
+          contentType: application/json
+          producer:
+            partitionCount: 1
+        ruianMajiangJuResult:
+          destination: ruianMajiangJuResult
           contentType: application/json
           producer:
             partitionCount: 1
