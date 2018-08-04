@@ -15,7 +15,7 @@ import com.anbang.qipai.ruianmajiang.cqrs.c.domain.JoinGameResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyForGameResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.GameCmdService;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.PlayerAuthService;
-import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.GamePlayerDbo;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGamePlayerDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangGameQueryService;
 import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangPlayQueryService;
@@ -132,7 +132,7 @@ public class GameController {
 		majiangGameQueryService.leaveGame(gameValueObject);
 		gameMsgService.gamePlayerLeave(gameValueObject, playerId);
 		// 通知其他玩家
-		List<GamePlayerDbo> gamePlayerDboList = majiangGameQueryService
+		List<MajiangGamePlayerDbo> gamePlayerDboList = majiangGameQueryService
 				.findGamePlayerDbosForGame(gameValueObject.getId());
 		gamePlayerDboList.forEach((gamePlayerDbo) -> {
 			String otherPlayerId = gamePlayerDbo.getPlayerId();
@@ -160,7 +160,7 @@ public class GameController {
 
 		majiangGameQueryService.backToGame(playerId, gameId);
 		// 通知其他玩家
-		List<GamePlayerDbo> gamePlayerDboList = majiangGameQueryService.findGamePlayerDbosForGame(gameId);
+		List<MajiangGamePlayerDbo> gamePlayerDboList = majiangGameQueryService.findGamePlayerDbosForGame(gameId);
 		gamePlayerDboList.forEach((gamePlayerDbo) -> {
 			String otherPlayerId = gamePlayerDbo.getPlayerId();
 			if (!otherPlayerId.equals(playerId)) {
@@ -187,7 +187,7 @@ public class GameController {
 	public CommonVO info(String gameId) {
 		CommonVO vo = new CommonVO();
 		MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
-		List<GamePlayerDbo> gamePlayerDboListForGameId = majiangGameQueryService.findGamePlayerDbosForGame(gameId);
+		List<MajiangGamePlayerDbo> gamePlayerDboListForGameId = majiangGameQueryService.findGamePlayerDbosForGame(gameId);
 		GameVO gameVO = new GameVO(majiangGameDbo, gamePlayerDboListForGameId);
 		Map data = new HashMap();
 		data.put("game", gameVO);

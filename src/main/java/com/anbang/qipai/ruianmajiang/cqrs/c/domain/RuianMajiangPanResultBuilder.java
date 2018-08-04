@@ -1,8 +1,10 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import com.dml.majiang.ju.Ju;
 import com.dml.majiang.pai.MajiangPai;
@@ -17,6 +19,14 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 	@Override
 	public PanResult buildCurrentPanResult(Ju ju, long panFinishTime) {
 		Pan currentPan = ju.getCurrentPan();
+		RuianMajiangPanResult latestFinishedPanResult = (RuianMajiangPanResult) ju.findLatestFinishedPanResult();
+		Map<String, Integer> playerTotalScoreMap = new HashMap<>();
+		if (latestFinishedPanResult != null) {
+			for (RuianMajiangPanPlayerResult panPlayerResult : latestFinishedPanResult.getPlayerResultList()) {
+				playerTotalScoreMap.put(panPlayerResult.getPlayerId(), panPlayerResult.getTotalScore());
+			}
+		}
+
 		MajiangPlayer huPlayer = currentPan.findHuPlayer();
 		// TODO 要处理不胡,流局
 		RuianMajiangHu hu = (RuianMajiangHu) huPlayer.getHu();
@@ -120,19 +130,26 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 		playerResultList.forEach((playerResult) -> {
 			MajiangPlayer player = currentPan.findPlayerById(playerResult.getPlayerId());
 			playerResult.getScore().jiesuan();
+			// 计算累计总分
+			if (latestFinishedPanResult != null) {
+				playerResult.setTotalScore(playerTotalScoreMap.get(playerResult.getPlayerId())
+						+ playerResult.getScore().getJiesuanScore());
+			} else {
+				playerResult.setTotalScore(playerResult.getScore().getJiesuanScore());
+			}
 			playerResult.setMenFeng(player.getMenFeng());
 			// 吃碰杠出去的要加到结果
 			playerResult.setPublicPaiList(new ArrayList<>(player.getPublicPaiList()));
 			playerResult.setChichupaiZuList(new ArrayList<>(player.getChichupaiZuList()));
 			playerResult.setPengchupaiZuList(new ArrayList<>(player.getPengchupaiZuList()));
 			playerResult.setGangchupaiZuList(new ArrayList<>(player.getGangchupaiZuList()));
+			playerResult.setGuipaiTypeSet(new HashSet<>(player.getGuipaiTypeSet()));
+			playerResult.setShoupaiList(new ArrayList<>(player.getFangruShoupaiList()));
 			if (playerResult.getPlayerId().equals(huPlayer.getId())) {
 				playerResult.setHu(true);
 				playerResult.setBestShoupaiPaiXing(huShoupaiPaiXing);
 			} else {
 				playerResult.setHu(false);
-				playerResult.setGuipaiTypeSet(new HashSet<>(player.getGuipaiTypeSet()));
-				playerResult.setShoupaiList(new ArrayList<>(player.getFangruShoupaiList()));
 			}
 		});
 

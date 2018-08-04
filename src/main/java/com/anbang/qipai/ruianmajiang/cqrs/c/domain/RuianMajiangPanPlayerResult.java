@@ -20,6 +20,8 @@ public class RuianMajiangPanPlayerResult {
 
 	private RuianMajiangPanPlayerScore score;
 
+	private int totalScore;
+
 	private ShoupaiPaiXing bestShoupaiPaiXing;
 
 	/**
@@ -40,6 +42,16 @@ public class RuianMajiangPanPlayerResult {
 	private List<ChichuPaiZu> chichupaiZuList;
 	private List<PengchuPaiZu> pengchupaiZuList;
 	private List<GangchuPaiZu> gangchupaiZuList;
+
+	public int countCaishen() {
+		int count = 0;
+		for (MajiangPai pai : shoupaiList) {
+			if (guipaiTypeSet.contains(pai)) {
+				count++;
+			}
+		}
+		return count;
+	}
 
 	public String getPlayerId() {
 		return playerId;
@@ -71,6 +83,14 @@ public class RuianMajiangPanPlayerResult {
 
 	public void setScore(RuianMajiangPanPlayerScore score) {
 		this.score = score;
+	}
+
+	public int getTotalScore() {
+		return totalScore;
+	}
+
+	public void setTotalScore(int totalScore) {
+		this.totalScore = totalScore;
 	}
 
 	public ShoupaiPaiXing getBestShoupaiPaiXing() {

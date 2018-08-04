@@ -1,17 +1,17 @@
 package com.anbang.qipai.ruianmajiang.cqrs.q.dbo;
 
 import com.dml.mpgame.GamePlayerOnlineState;
-import com.dml.mpgame.GamePlayerState;
 
-public class GamePlayerDbo {
+public class MajiangGamePlayerDbo {
 
 	private String id;
 	private String playerId;
 	private String gameId;
 	private String nickname;
 	private String headimgurl;
-	private GamePlayerState state;
+	private MajiangGamePlayerState state;
 	private GamePlayerOnlineState onlineState;
+	private int totalScore;
 
 	public String getId() {
 		return id;
@@ -53,11 +53,11 @@ public class GamePlayerDbo {
 		this.headimgurl = headimgurl;
 	}
 
-	public GamePlayerState getState() {
+	public MajiangGamePlayerState getState() {
 		return state;
 	}
 
-	public void setState(GamePlayerState state) {
+	public void setState(MajiangGamePlayerState state) {
 		this.state = state;
 	}
 
@@ -67,6 +67,14 @@ public class GamePlayerDbo {
 
 	public void setOnlineState(GamePlayerOnlineState onlineState) {
 		this.onlineState = onlineState;
+	}
+
+	public int getTotalScore() {
+		return totalScore;
+	}
+
+	public void setTotalScore(int totalScore) {
+		this.totalScore = totalScore;
 	}
 
 }

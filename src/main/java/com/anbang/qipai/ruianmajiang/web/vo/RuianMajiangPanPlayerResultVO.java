@@ -7,7 +7,7 @@ import java.util.Set;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.RuianMajiangPanPlayerResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.RuianMajiangPanPlayerScore;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.RuianMajiangPao;
-import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.GamePlayerDbo;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGamePlayerDbo;
 import com.dml.majiang.pai.MajiangPai;
 import com.dml.majiang.pai.fenzu.Shunzi;
 import com.dml.majiang.player.chupaizu.ChichuPaiZu;
@@ -52,7 +52,7 @@ public class RuianMajiangPanPlayerResultVO {
 	 */
 	private int score;
 
-	public RuianMajiangPanPlayerResultVO(GamePlayerDbo gamePlayerDbo, String zhuangPlayerId, boolean zimo,
+	public RuianMajiangPanPlayerResultVO(MajiangGamePlayerDbo gamePlayerDbo, String zhuangPlayerId, boolean zimo,
 			String dianpaoPlayerId, RuianMajiangPanPlayerResult panPlayerResult) {
 		playerId = gamePlayerDbo.getPlayerId();
 		nickname = gamePlayerDbo.getNickname();

@@ -15,11 +15,11 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.GameCmdService;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.PlayerAuthService;
-import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.GamePlayerDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameDbo;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGamePlayerDbo;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameState;
 import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangGameQueryService;
 import com.anbang.qipai.ruianmajiang.msg.service.RuianMajiangGameMsgService;
-import com.dml.mpgame.GameState;
 import com.dml.mpgame.GameValueObject;
 import com.google.gson.Gson;
 
@@ -80,7 +80,7 @@ public class GamePlayWsController extends TextWebSocketHandler {
 			majiangGameQueryService.leaveGame(gameValueObject);
 			gameMsgService.gamePlayerLeave(gameValueObject, closedPlayerId);
 			// 通知其他玩家
-			List<GamePlayerDbo> gamePlayerDboList = majiangGameQueryService
+			List<MajiangGamePlayerDbo> gamePlayerDboList = majiangGameQueryService
 					.findGamePlayerDbosForGame(gameValueObject.getId());
 			gamePlayerDboList.forEach((gamePlayerDbo) -> {
 				String playerId = gamePlayerDbo.getPlayerId();
@@ -137,14 +137,10 @@ public class GamePlayWsController extends TextWebSocketHandler {
 		// 给用户安排query scope
 		MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
 		if (majiangGameDbo != null) {
-			if (!majiangGameDbo.getState().equals(GameState.finished)) {
+			if (!majiangGameDbo.getState().equals(MajiangGameState.finished)) {
 				wsNotifier.notifyToQuery(playerId, QueryScope.gameInfo.name());
-				if (majiangGameDbo.getState().equals(GameState.playing)) {
-					if (majiangGameDbo.getNextPanPlayerReadyObj() != null) {
-						wsNotifier.notifyToQuery(playerId, QueryScope.readyForNextPan.name());
-					} else {
-						wsNotifier.notifyToQuery(playerId, QueryScope.panForMe.name());
-					}
+				if (majiangGameDbo.getState().equals(MajiangGameState.playing)) {
+					wsNotifier.notifyToQuery(playerId, QueryScope.panForMe.name());
 				}
 			}
 		}

@@ -1,6 +1,8 @@
 package com.anbang.qipai.ruianmajiang.web.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,12 +14,13 @@ import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangActionResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyToNextPanResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.MajiangPlayCmdService;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.PlayerAuthService;
-import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.GamePlayerDbo;
-import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameDbo;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.JuResultDbo;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGamePlayerDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.PanResultDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangGameQueryService;
 import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangPlayQueryService;
 import com.anbang.qipai.ruianmajiang.web.vo.CommonVO;
+import com.anbang.qipai.ruianmajiang.web.vo.JuResultVO;
 import com.anbang.qipai.ruianmajiang.web.vo.PanResultVO;
 import com.anbang.qipai.ruianmajiang.websocket.GamePlayWsNotifier;
 import com.anbang.qipai.ruianmajiang.websocket.QueryScope;
@@ -86,8 +89,20 @@ public class MajiangController {
 		Map data = new HashMap();
 		vo.setData(data);
 		PanResultDbo panResultDbo = majiangPlayQueryService.findPanResultDbo(gameId, panNo);
-		Map<String, GamePlayerDbo> playerMap = majiangPlayQueryService.findGamePlayersAsMap(gameId);
+		Map<String, MajiangGamePlayerDbo> playerMap = majiangPlayQueryService.findGamePlayersAsMap(gameId);
 		data.put("panResult", new PanResultVO(panResultDbo, playerMap));
+		return vo;
+	}
+
+	@RequestMapping(value = "/ju_result")
+	@ResponseBody
+	public CommonVO juresult(String gameId) {
+		CommonVO vo = new CommonVO();
+		Map data = new HashMap();
+		vo.setData(data);
+		JuResultDbo juResultDbo = majiangPlayQueryService.findJuResultDbo(gameId);
+		Map<String, MajiangGamePlayerDbo> playerMap = majiangPlayQueryService.findGamePlayersAsMap(gameId);
+		data.put("juResult", new JuResultVO(juResultDbo, playerMap));
 		return vo;
 	}
 
@@ -136,15 +151,21 @@ public class MajiangController {
 			data.put("queryScope", QueryScope.panForMe);
 
 		} else {// 盘结束了
-				// 通知其他人
-			for (String otherPlayerId : majiangActionResult.getOtherPlayerIds()) {
-				wsNotifier.notifyToQuery(otherPlayerId, QueryScope.panResult.name());
+
+			if (majiangActionResult.getJuResult() != null) {// 局也结束了
+				for (String otherPlayerId : majiangActionResult.getOtherPlayerIds()) {
+					wsNotifier.notifyToQuery(otherPlayerId, QueryScope.juResult.name());
+				}
+				data.put("queryScope", QueryScope.juResult);
+			} else {
+				for (String otherPlayerId : majiangActionResult.getOtherPlayerIds()) {
+					wsNotifier.notifyToQuery(otherPlayerId, QueryScope.panResult.name());
+				}
+				data.put("queryScope", QueryScope.panResult);
 			}
 
-			data.put("queryScope", QueryScope.panResult);
 		}
 
-		// TODO 局结束
 		return vo;
 	}
 
@@ -171,7 +192,7 @@ public class MajiangController {
 		}
 
 		try {
-			majiangPlayQueryService.readyToNextPan(readyToNextPanResult);
+			majiangPlayQueryService.readyToNextPan(playerId, readyToNextPanResult);
 		} catch (Throwable e) {
 			vo.setSuccess(false);
 			vo.setMsg(e.getMessage());
@@ -180,29 +201,15 @@ public class MajiangController {
 
 		// 通知其他人
 		PanActionFrame firstActionFrame = readyToNextPanResult.getFirstActionFrame();
+		List<QueryScope> queryScopes = new ArrayList<>();
+		queryScopes.add(QueryScope.gameInfo);
 		if (firstActionFrame != null) {
-			for (String otherPlayerId : readyToNextPanResult.getOtherPlayerIds()) {
-				wsNotifier.notifyToQuery(otherPlayerId, QueryScope.panForMe.name());
-			}
-			data.put("queryScope", QueryScope.panForMe);
-		} else {
-			for (String otherPlayerId : readyToNextPanResult.getOtherPlayerIds()) {
-				wsNotifier.notifyToQuery(otherPlayerId, QueryScope.readyForNextPan.name());
-			}
-			data.put("queryScope", QueryScope.readyForNextPan);
+			queryScopes.add(QueryScope.panForMe);
 		}
-
-		return vo;
-	}
-
-	@RequestMapping(value = "/player_ready_info_for_next_pan")
-	@ResponseBody
-	public CommonVO playerreadyinfofornextpan(String gameId) {
-		CommonVO vo = new CommonVO();
-		Map data = new HashMap();
-		vo.setData(data);
-		MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
-		data.put("nextPanPlayersReady", majiangGameDbo.getNextPanPlayerReadyObj());
+		for (String otherPlayerId : readyToNextPanResult.getOtherPlayerIds()) {
+			queryScopes.forEach((scope) -> wsNotifier.notifyToQuery(otherPlayerId, scope.name()));
+		}
+		data.put("queryScopes", queryScopes);
 		return vo;
 	}
 

@@ -4,16 +4,16 @@ import java.util.List;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.GamePlayerDbo;
-import com.dml.mpgame.GamePlayerState;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGamePlayerDbo;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGamePlayerState;
 
-public interface GamePlayerDboRepository extends MongoRepository<GamePlayerDbo, String> {
+public interface GamePlayerDboRepository extends MongoRepository<MajiangGamePlayerDbo, String> {
 
-	List<GamePlayerDbo> findByGameId(String gameId);
+	List<MajiangGamePlayerDbo> findByGameId(String gameId);
 
-	GamePlayerDbo findByPlayerIdAndGameId(String playerId, String gameId);
+	MajiangGamePlayerDbo findByPlayerIdAndGameId(String playerId, String gameId);
 
-	GamePlayerDbo findByPlayerIdAndStateIsNot(String playerId, GamePlayerState state);
+	MajiangGamePlayerDbo findByPlayerIdAndStateIsNot(String playerId, MajiangGamePlayerState state);
 
 	void deleteByPlayerIdAndGameId(String playerId, String gameId);
 

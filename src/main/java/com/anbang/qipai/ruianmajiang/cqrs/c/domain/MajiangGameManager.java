@@ -6,6 +6,7 @@ import java.util.Map;
 import com.dml.mpgame.FixedNumberOfPlayersGameJoinStrategy;
 import com.dml.mpgame.FixedNumberOfPlayersGameReadyStrategy;
 import com.dml.mpgame.Game;
+import com.dml.mpgame.GameState;
 import com.dml.mpgame.GameValueObject;
 import com.dml.mpgame.HostGameLeaveStrategy;
 
@@ -89,9 +90,12 @@ public class MajiangGameManager {
 			throw new PlayerNotInGameException();
 		}
 		MajiangGame game = gameIdMajiangGameMap.get(gameId);
-		return game.action(playerId, actionId, actionTime);
-
-		// TODO 彻底结束之后要清理内存
+		MajiangActionResult majiangActionResult = game.action(playerId, actionId, actionTime);
+		if (game.getGame().getState().equals(GameState.finished)) {
+			gameIdMajiangGameMap.remove(gameId);
+			game.getGame().allPlayerIds().forEach((pid) -> playerIdGameIdMap.remove(pid));
+		}
+		return majiangActionResult;
 	}
 
 	public void bindPlayer(String playerId, String gameId) {

@@ -1,20 +1,22 @@
 package com.anbang.qipai.ruianmajiang.web.vo;
 
-import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.GamePlayerDbo;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGamePlayerDbo;
 
-public class GamePlayerVO {
+public class MajiangGamePlayerVO {
 	private String playerId;
 	private String nickname;
 	private String headimgurl;
 	private String state;
 	private String onlineState;
+	private int totalScore;
 
-	public GamePlayerVO(GamePlayerDbo dbo) {
+	public MajiangGamePlayerVO(MajiangGamePlayerDbo dbo) {
 		playerId = dbo.getPlayerId();
 		nickname = dbo.getNickname();
 		headimgurl = dbo.getHeadimgurl();
 		state = dbo.getState().name();
 		onlineState = dbo.getOnlineState().name();
+		totalScore = dbo.getTotalScore();
 	}
 
 	public String getPlayerId() {
@@ -55,6 +57,14 @@ public class GamePlayerVO {
 
 	public void setOnlineState(String onlineState) {
 		this.onlineState = onlineState;
+	}
+
+	public int getTotalScore() {
+		return totalScore;
+	}
+
+	public void setTotalScore(int totalScore) {
+		this.totalScore = totalScore;
 	}
 
 }

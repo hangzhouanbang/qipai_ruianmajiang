@@ -1,5 +1,5 @@
 package com.anbang.qipai.ruianmajiang.websocket;
 
 public enum QueryScope {
-	gameInfo, panForMe, panResult, readyForNextPan
+	gameInfo, panForMe, panResult, juResult
 }

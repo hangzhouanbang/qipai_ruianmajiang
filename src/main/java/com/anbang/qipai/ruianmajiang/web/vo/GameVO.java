@@ -3,7 +3,7 @@ package com.anbang.qipai.ruianmajiang.web.vo;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.GamePlayerDbo;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGamePlayerDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameDbo;
 
 public class GameVO {
@@ -13,9 +13,9 @@ public class GameVO {
 	private int panshu;
 	private int renshu;
 	private boolean dapao;
-	private List<GamePlayerVO> playerList;
+	private List<MajiangGamePlayerVO> playerList;
 
-	public GameVO(MajiangGameDbo majiangGameDbo, List<GamePlayerDbo> gamePlayerDboListForGame) {
+	public GameVO(MajiangGameDbo majiangGameDbo, List<MajiangGamePlayerDbo> gamePlayerDboListForGame) {
 		id = majiangGameDbo.getId();
 		difen = majiangGameDbo.getDifen();
 		taishu = majiangGameDbo.getTaishu();
@@ -23,7 +23,7 @@ public class GameVO {
 		renshu = majiangGameDbo.getRenshu();
 		dapao = majiangGameDbo.isDapao();
 		playerList = new ArrayList<>();
-		gamePlayerDboListForGame.forEach((dbo) -> playerList.add(new GamePlayerVO(dbo)));
+		gamePlayerDboListForGame.forEach((dbo) -> playerList.add(new MajiangGamePlayerVO(dbo)));
 	}
 
 	public String getId() {
@@ -74,11 +74,11 @@ public class GameVO {
 		this.dapao = dapao;
 	}
 
-	public List<GamePlayerVO> getPlayerList() {
+	public List<MajiangGamePlayerVO> getPlayerList() {
 		return playerList;
 	}
 
-	public void setPlayerList(List<GamePlayerVO> playerList) {
+	public void setPlayerList(List<MajiangGamePlayerVO> playerList) {
 		this.playerList = playerList;
 	}
 

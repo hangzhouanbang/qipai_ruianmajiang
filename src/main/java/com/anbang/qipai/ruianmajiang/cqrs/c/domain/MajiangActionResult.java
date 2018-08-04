@@ -4,20 +4,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.dml.majiang.pan.frame.PanActionFrame;
-import com.dml.mpgame.GameValueObject;
 
 public class MajiangActionResult {
-	private GameValueObject game;
+
+	private String gameId;
 	private PanActionFrame panActionFrame;
 	private RuianMajiangPanResult panResult;
+	private RuianMajiangJuResult juResult;
 	private List<String> otherPlayerIds = new ArrayList<>();
 
-	public GameValueObject getGame() {
-		return game;
+	public String getGameId() {
+		return gameId;
 	}
 
-	public void setGame(GameValueObject game) {
-		this.game = game;
+	public void setGameId(String gameId) {
+		this.gameId = gameId;
 	}
 
 	public PanActionFrame getPanActionFrame() {
@@ -34,6 +35,14 @@ public class MajiangActionResult {
 
 	public void setPanResult(RuianMajiangPanResult panResult) {
 		this.panResult = panResult;
+	}
+
+	public RuianMajiangJuResult getJuResult() {
+		return juResult;
+	}
+
+	public void setJuResult(RuianMajiangJuResult juResult) {
+		this.juResult = juResult;
 	}
 
 	public List<String> getOtherPlayerIds() {

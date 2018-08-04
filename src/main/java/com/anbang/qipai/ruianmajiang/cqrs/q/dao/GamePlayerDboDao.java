@@ -2,24 +2,28 @@ package com.anbang.qipai.ruianmajiang.cqrs.q.dao;
 
 import java.util.List;
 
-import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.GamePlayerDbo;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGamePlayerDbo;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGamePlayerState;
 import com.dml.mpgame.GamePlayerOnlineState;
-import com.dml.mpgame.GamePlayerState;
 
 public interface GamePlayerDboDao {
 
-	void save(GamePlayerDbo gamePlayerDbo);
+	void save(MajiangGamePlayerDbo gamePlayerDbo);
 
-	List<GamePlayerDbo> findByGameId(String gameId);
+	List<MajiangGamePlayerDbo> findByGameId(String gameId);
 
-	GamePlayerDbo findByPlayerIdAndGameId(String playerId, String gameId);
+	MajiangGamePlayerDbo findByPlayerIdAndGameId(String playerId, String gameId);
 
-	void update(String playerId, String gameId, GamePlayerState state);
+	void update(String playerId, String gameId, MajiangGamePlayerState state);
 
-	GamePlayerDbo findNotFinished(String playerId);
+	MajiangGamePlayerDbo findNotFinished(String playerId);
 
 	void update(String playerId, String gameId, GamePlayerOnlineState gamePlayerOnlineState);
 
 	void removeByPlayerIdAndGameId(String playerId, String gameId);
+
+	void updatePlayersStateForGame(String gameId, MajiangGamePlayerState state);
+
+	void updateTotalScore(String gameId, String playerId, int totalScore);
 
 }

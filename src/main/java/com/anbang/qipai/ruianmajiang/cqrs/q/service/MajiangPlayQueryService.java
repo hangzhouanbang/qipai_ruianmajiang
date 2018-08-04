@@ -10,12 +10,17 @@ import org.springframework.stereotype.Component;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangActionResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyForGameResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyToNextPanResult;
+import com.anbang.qipai.ruianmajiang.cqrs.c.domain.RuianMajiangPanPlayerResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.RuianMajiangPanResult;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dao.GamePlayerDboDao;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dao.JuResultDboDao;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dao.MajiangGameDboDao;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dao.PanResultDboDao;
-import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.GamePlayerDbo;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.JuResultDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameDbo;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGamePlayerDbo;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGamePlayerState;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameState;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.PanResultDbo;
 import com.dml.majiang.pan.frame.LiangangangPanActionFramePlayerViewFilter;
 import com.dml.majiang.pan.frame.PanActionFrame;
@@ -35,20 +40,23 @@ public class MajiangPlayQueryService {
 	@Autowired
 	private PanResultDboDao panResultDboDao;
 
+	@Autowired
+	private JuResultDboDao juResultDboDao;
+
 	private LiangangangPanActionFramePlayerViewFilter pvFilter = new LiangangangPanActionFramePlayerViewFilter();
 
 	public PanActionFrame findAndFilterCurrentPanValueObjectForPlayer(String gameId, String playerId) throws Exception {
-		GamePlayerDbo gamePlayerDbo = gamePlayerDboDao.findByPlayerIdAndGameId(playerId, gameId);
+		MajiangGamePlayerDbo gamePlayerDbo = gamePlayerDboDao.findByPlayerIdAndGameId(playerId, gameId);
 		if (gamePlayerDbo == null) {
 			throw new Exception("player dont play game");
 		}
 
-		if (!gamePlayerDbo.getState().equals(GamePlayerState.playing)) {
+		if (!gamePlayerDbo.getState().equals(MajiangGamePlayerState.playing)) {
 			throw new Exception("player dont play game");
 		}
 
 		MajiangGameDbo majiangGameDbo = majiangGameDao.findById(gamePlayerDbo.getGameId());
-		if (!majiangGameDbo.getState().equals(GameState.playing)) {
+		if (!majiangGameDbo.getState().equals(MajiangGameState.playing)) {
 			throw new Exception("game not playing");
 		}
 		byte[] frameData = majiangGameDbo.getLatestPanActionFrameData();
@@ -59,46 +67,66 @@ public class MajiangPlayQueryService {
 
 	public void readyForGame(ReadyForGameResult readyForGameResult) throws Throwable {
 		GameValueObject gameValueObject = readyForGameResult.getGame();
-		majiangGameDao.update(gameValueObject.getId(), gameValueObject.getState());
 		gameValueObject.getPlayers().forEach((player) -> {
-			gamePlayerDboDao.update(player.getId(), gameValueObject.getId(), player.getState());
+			if (player.getState().equals(GamePlayerState.readyToStart)) {
+				gamePlayerDboDao.update(player.getId(), gameValueObject.getId(), MajiangGamePlayerState.readyToStart);
+			}
 		});
 		if (gameValueObject.getState().equals(GameState.playing)) {
+			majiangGameDao.update(gameValueObject.getId(), MajiangGameState.playing);
+			gamePlayerDboDao.updatePlayersStateForGame(gameValueObject.getId(), MajiangGamePlayerState.playing);
 			PanActionFrame panActionFrame = readyForGameResult.getFirstActionFrame();
 			majiangGameDao.update(gameValueObject.getId(), panActionFrame.toByteArray(1024 * 8));
 			// TODO 记录一条Frame，回放的时候要做
 		}
 	}
 
-	public void readyToNextPan(ReadyToNextPanResult readyToNextPanResult) throws Throwable {
+	public void readyToNextPan(String playerId, ReadyToNextPanResult readyToNextPanResult) throws Throwable {
 
 		if (readyToNextPanResult.getFirstActionFrame() != null) {
-			majiangGameDao.clearNextPanPlayerReadyObj(readyToNextPanResult.getGameId());
+			gamePlayerDboDao.updatePlayersStateForGame(readyToNextPanResult.getGameId(),
+					MajiangGamePlayerState.playing);
+			majiangGameDao.update(readyToNextPanResult.getGameId(), MajiangGameState.playing);
 			majiangGameDao.update(readyToNextPanResult.getGameId(),
 					readyToNextPanResult.getFirstActionFrame().toByteArray(1024 * 8));
 			// TODO 记录一条Frame，回放的时候要做
 		} else {
-			Map<String, Boolean> playerReadyMap = readyToNextPanResult.getPlayerReadyMap();
-			majiangGameDao.update(readyToNextPanResult.getGameId(), playerReadyMap);
+			gamePlayerDboDao.update(playerId, readyToNextPanResult.getGameId(), MajiangGamePlayerState.readyToStart);
 		}
 
 	}
 
 	public void action(MajiangActionResult majiangActionResult) throws Throwable {
-		GameValueObject gameValueObject = majiangActionResult.getGame();
-		majiangGameDao.update(gameValueObject.getId(), gameValueObject.getState());
-		gameValueObject.getPlayers().forEach((player) -> {
-			gamePlayerDboDao.update(player.getId(), gameValueObject.getId(), player.getState());
-		});
 
 		PanActionFrame panActionFrame = majiangActionResult.getPanActionFrame();
-		majiangGameDao.update(gameValueObject.getId(), panActionFrame.toByteArray(1024 * 8));
+		majiangGameDao.update(majiangActionResult.getGameId(), panActionFrame.toByteArray(1024 * 8));
 
 		// 盘出结果的话要记录结果
 		RuianMajiangPanResult ruianMajiangPanResult = majiangActionResult.getPanResult();
 		if (ruianMajiangPanResult != null) {
-			PanResultDbo panResultDbo = new PanResultDbo(gameValueObject.getId(), ruianMajiangPanResult);
+			PanResultDbo panResultDbo = new PanResultDbo(majiangActionResult.getGameId(), ruianMajiangPanResult);
 			panResultDboDao.save(panResultDbo);
+			// 所有人的状态要改变
+			if (majiangActionResult.getJuResult() == null) {// 局没结束，还有下一盘
+				gamePlayerDboDao.updatePlayersStateForGame(majiangActionResult.getGameId(),
+						MajiangGamePlayerState.panFinished);
+				majiangGameDao.update(majiangActionResult.getGameId(), MajiangGameState.waitingNextPan);
+			} else {// 一切都结束了
+				// 要记录局结果 TODO
+				JuResultDbo juResultDbo = new JuResultDbo(majiangActionResult.getGameId(), panResultDbo,
+						majiangActionResult.getJuResult());
+				juResultDboDao.save(juResultDbo);
+				majiangGameDao.update(majiangActionResult.getGameId(), MajiangGameState.finished);
+				gamePlayerDboDao.updatePlayersStateForGame(majiangActionResult.getGameId(),
+						MajiangGamePlayerState.finished);
+			}
+
+			// 更新每个玩家的总分
+			for (RuianMajiangPanPlayerResult panPlayerResult : ruianMajiangPanResult.getPlayerResultList()) {
+				gamePlayerDboDao.updateTotalScore(majiangActionResult.getGameId(), panPlayerResult.getPlayerId(),
+						panPlayerResult.getTotalScore());
+			}
+
 		}
 
 		// TODO 记录一条Frame，回放的时候要做
@@ -108,13 +136,17 @@ public class MajiangPlayQueryService {
 		return panResultDboDao.findByGameIdAndPanNo(gameId, panNo);
 	}
 
-	public Map<String, GamePlayerDbo> findGamePlayersAsMap(String gameId) {
-		List<GamePlayerDbo> gamePlayerDboList = gamePlayerDboDao.findByGameId(gameId);
-		Map<String, GamePlayerDbo> map = new HashMap<>();
-		for (GamePlayerDbo gamePlayerDbo : gamePlayerDboList) {
+	public Map<String, MajiangGamePlayerDbo> findGamePlayersAsMap(String gameId) {
+		List<MajiangGamePlayerDbo> gamePlayerDboList = gamePlayerDboDao.findByGameId(gameId);
+		Map<String, MajiangGamePlayerDbo> map = new HashMap<>();
+		for (MajiangGamePlayerDbo gamePlayerDbo : gamePlayerDboList) {
 			map.put(gamePlayerDbo.getPlayerId(), gamePlayerDbo);
 		}
 		return map;
+	}
+
+	public JuResultDbo findJuResultDbo(String gameId) {
+		return juResultDboDao.findByGameId(gameId);
 	}
 
 }

@@ -2,15 +2,12 @@ package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import com.dml.majiang.pan.frame.PanActionFrame;
 
 public class ReadyToNextPanResult {
 
 	private String gameId;
-
-	private Map<String, Boolean> playerReadyMap;
 
 	private PanActionFrame firstActionFrame;
 
@@ -22,14 +19,6 @@ public class ReadyToNextPanResult {
 
 	public void setGameId(String gameId) {
 		this.gameId = gameId;
-	}
-
-	public Map<String, Boolean> getPlayerReadyMap() {
-		return playerReadyMap;
-	}
-
-	public void setPlayerReadyMap(Map<String, Boolean> playerReadyMap) {
-		this.playerReadyMap = playerReadyMap;
 	}
 
 	public PanActionFrame getFirstActionFrame() {

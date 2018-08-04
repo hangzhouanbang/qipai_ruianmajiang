@@ -1,9 +1,7 @@
 package com.anbang.qipai.ruianmajiang.cqrs.q.dao;
 
-import java.util.Map;
-
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameDbo;
-import com.dml.mpgame.GameState;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameState;
 
 public interface MajiangGameDboDao {
 
@@ -13,10 +11,6 @@ public interface MajiangGameDboDao {
 
 	void update(String id, byte[] latestPanActionFrameData);
 
-	void update(String id, GameState state);
-
-	void update(String id, Map<String, Boolean> nextPanPlayerReadyObj);
-
-	void clearNextPanPlayerReadyObj(String id);
+	void update(String id, MajiangGameState state);
 
 }

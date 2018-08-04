@@ -1,12 +1,12 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
-import java.util.HashMap;
 import java.util.List;
 
 import com.dml.majiang.ju.Ju;
 import com.dml.majiang.ju.finish.FixedPanNumbersJuFinishiDeterminer;
 import com.dml.majiang.ju.firstpan.ClassicStartFirstPanProcess;
 import com.dml.majiang.ju.nextpan.AllPlayersReadyCreateNextPanDeterminer;
+import com.dml.majiang.ju.nextpan.ClassicStartNextPanProcess;
 import com.dml.majiang.pan.avaliablepai.NoHuapaiRandomAvaliablePaiFiller;
 import com.dml.majiang.pan.finish.PlayerHuOrNoPaiLeftPanFinishiDeterminer;
 import com.dml.majiang.pan.frame.PanActionFrame;
@@ -61,6 +61,7 @@ public class MajiangGame {
 		if (game.getState().equals(GameState.playing)) {// 游戏开始了，那么要创建新的局
 			ju = new Ju();
 			ju.setStartFirstPanProcess(new ClassicStartFirstPanProcess());
+			ju.setStartNextPanProcess(new ClassicStartNextPanProcess());
 			ju.setPlayersMenFengDeterminerForFirstPan(new RandomMustHasDongPlayersMenFengDeterminer(currentTime));
 			ju.setPlayersMenFengDeterminerForNextPan(new ZhuangXiajiaIsDongIfZhuangNotHuPlayersMenFengDeterminer());
 			ju.setZhuangDeterminerForFirstPan(new MenFengDongZhuangDeterminer());
@@ -114,12 +115,15 @@ public class MajiangGame {
 	public MajiangActionResult action(String playerId, int actionId, long actionTime) throws Exception {
 		PanActionFrame panActionFrame = ju.action(playerId, actionId, actionTime);
 		MajiangActionResult result = new MajiangActionResult();
+		result.setGameId(game.getId());
 		result.setPanActionFrame(panActionFrame);
 		if (ju.getCurrentPan() == null) {// 盘结束了
 			result.setPanResult((RuianMajiangPanResult) ju.findLatestFinishedPanResult());
 		}
-		// TODO 局是否结束?局结果
-		result.setGame(new GameValueObject(game));
+		if (ju.getJuResult() != null) {// 局结束了
+			game.finish();
+			result.setJuResult((RuianMajiangJuResult) ju.getJuResult());
+		}
 		List<String> playerIds = game.allPlayerIds();
 		playerIds.remove(playerId);
 		result.setOtherPlayerIds(playerIds);
@@ -128,10 +132,10 @@ public class MajiangGame {
 
 	public ReadyToNextPanResult readyToNextPan(String playerId) throws Exception {
 		ReadyToNextPanResult readyToNextPanResult = new ReadyToNextPanResult();
+		readyToNextPanResult.setGameId(game.getId());
 		AllPlayersReadyCreateNextPanDeterminer createNextPanDeterminer = (AllPlayersReadyCreateNextPanDeterminer) ju
 				.getCreateNextPanDeterminer();
 		createNextPanDeterminer.playerReady(playerId);
-		readyToNextPanResult.setPlayerReadyMap(new HashMap<>(createNextPanDeterminer.getPlayerReadyMap()));
 		// 如果可以创建下一盘,那就创建下一盘
 		if (ju.determineToCreateNextPan()) {
 			ju.startNextPan();
