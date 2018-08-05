@@ -49,8 +49,6 @@ public class MajiangController {
 	@Autowired
 	private GamePlayWsNotifier wsNotifier;
 
-	@Autowired
-	private RuianMajiangJuResultMsgService ruianMajiangJuResultMsgService;
 
 	/**
 	 * 当前盘我应该看到的所有信息
@@ -102,7 +100,6 @@ public class MajiangController {
 		Map data = new HashMap();
 		vo.setData(data);
 		JuResultDbo juResultDbo = majiangPlayQueryService.findJuResultDbo(gameId);
-		ruianMajiangJuResultMsgService.recordJuResult(juResultDbo);
 		Map<String, MajiangGamePlayerDbo> playerMap = majiangPlayQueryService.findGamePlayersAsMap(gameId);
 		data.put("juResult", new JuResultVO(juResultDbo, playerMap));
 		return vo;
