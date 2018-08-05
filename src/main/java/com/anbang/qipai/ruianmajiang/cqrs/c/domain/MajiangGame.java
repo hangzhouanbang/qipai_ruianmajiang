@@ -12,13 +12,18 @@ import com.dml.majiang.pan.finish.PlayerHuOrNoPaiLeftPanFinishiDeterminer;
 import com.dml.majiang.pan.frame.PanActionFrame;
 import com.dml.majiang.pan.guipai.RandomGuipaiDeterminer;
 import com.dml.majiang.pan.publicwaitingplayer.WaitDaPlayerPanPublicWaitingPlayerDeterminer;
+import com.dml.majiang.player.action.chi.ChiPlayerDaPaiChiActionUpdater;
 import com.dml.majiang.player.action.chi.PengganghuFirstChiActionProcessor;
 import com.dml.majiang.player.action.da.DachushoupaiDaActionProcessor;
+import com.dml.majiang.player.action.gang.GangPlayerMoPaiGangActionUpdater;
 import com.dml.majiang.player.action.gang.HuFirstGangActionProcessor;
 import com.dml.majiang.player.action.guo.DoNothingGuoActionProcessor;
+import com.dml.majiang.player.action.guo.PlayerDaPaiOrXiajiaMoPaiGuoActionUpdater;
+import com.dml.majiang.player.action.hu.PlayerSetHuHuActionProcessor;
 import com.dml.majiang.player.action.initial.ZhuangMoPaiInitialActionUpdater;
 import com.dml.majiang.player.action.mo.MoGuipaiCounter;
 import com.dml.majiang.player.action.peng.HuFirstPengActionProcessor;
+import com.dml.majiang.player.action.peng.RuianMajiangPengActionUpdater;
 import com.dml.majiang.player.menfeng.RandomMustHasDongPlayersMenFengDeterminer;
 import com.dml.majiang.player.menfeng.ZhuangXiajiaIsDongIfZhuangNotHuPlayersMenFengDeterminer;
 import com.dml.majiang.player.shoupai.gouxing.NoDanpaiOneDuiziGouXingPanHu;
@@ -28,7 +33,7 @@ import com.dml.mpgame.GameState;
 import com.dml.mpgame.GameValueObject;
 
 public class MajiangGame {
-	private Game game;
+	private Game game;// TODO 把他移出去
 	private int difen;
 	private int taishu;
 	private int panshu;
@@ -86,14 +91,14 @@ public class MajiangGame {
 			ju.setDaActionProcessor(new DachushoupaiDaActionProcessor());
 			ju.setDaActionUpdater(new RuianMajiangDaActionUpdater());
 			ju.setChiActionProcessor(new PengganghuFirstChiActionProcessor());
-			ju.setChiActionUpdater(new RuianMajiangChiActionUpdater());
+			ju.setChiActionUpdater(new ChiPlayerDaPaiChiActionUpdater());
 			ju.setPengActionProcessor(new HuFirstPengActionProcessor());
 			ju.setPengActionUpdater(new RuianMajiangPengActionUpdater());
 			ju.setGangActionProcessor(new HuFirstGangActionProcessor());
-			ju.setGangActionUpdater(new RuianMajiangGangActionUpdater());
+			ju.setGangActionUpdater(new GangPlayerMoPaiGangActionUpdater());
 			ju.setGuoActionProcessor(new DoNothingGuoActionProcessor());
-			ju.setGuoActionUpdater(new RuianMajiangGuoActionUpdater());
-			ju.setHuActionProcessor(new RuianMajiangHuActionProcessor());
+			ju.setGuoActionUpdater(new PlayerDaPaiOrXiajiaMoPaiGuoActionUpdater());
+			ju.setHuActionProcessor(new PlayerSetHuHuActionProcessor());
 
 			ju.addActionStatisticsListener(new CaizipaiListener());
 			ju.addActionStatisticsListener(new MoGuipaiCounter());
