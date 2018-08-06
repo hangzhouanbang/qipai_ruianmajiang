@@ -1,12 +1,19 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.service.impl;
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
-import com.anbang.qipai.ruianmajiang.cqrs.c.domain.JoinGameResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangGameManager;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyForGameResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.GameCmdService;
+import com.dml.majiang.pan.frame.PanActionFrame;
+import com.dml.mpgame.FixedNumberOfPlayersGameJoinStrategy;
+import com.dml.mpgame.FixedNumberOfPlayersGameReadyStrategy;
+import com.dml.mpgame.GameServer;
+import com.dml.mpgame.GameState;
 import com.dml.mpgame.GameValueObject;
+import com.dml.mpgame.HostGameLeaveStrategy;
 
 @Component
 public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService {
@@ -14,38 +21,54 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
 	@Override
 	public void newMajiangGame(String gameId, String playerId, Integer difen, Integer taishu, Integer panshu,
 			Integer renshu, Boolean dapao) {
+		GameServer gameServer = singletonEntityRepository.getEntity(GameServer.class);
+		gameServer.playerCreateGame(gameId, new FixedNumberOfPlayersGameJoinStrategy(renshu),
+				new FixedNumberOfPlayersGameReadyStrategy(renshu), new HostGameLeaveStrategy(playerId), playerId);
 		MajiangGameManager majiangGameManager = singletonEntityRepository.getEntity(MajiangGameManager.class);
-		majiangGameManager.newMajiangGame(gameId, playerId, difen, taishu, panshu, renshu, dapao);
+		majiangGameManager.newMajiangGame(gameId, difen, taishu, panshu, renshu, dapao);
 	}
 
 	@Override
 	public GameValueObject leaveGame(String playerId) throws Exception {
-		MajiangGameManager majiangGameManager = singletonEntityRepository.getEntity(MajiangGameManager.class);
-		return majiangGameManager.leave(playerId);
+		GameServer gameServer = singletonEntityRepository.getEntity(GameServer.class);
+		return gameServer.leave(playerId);
 	}
 
 	@Override
 	public ReadyForGameResult readyForGame(String playerId, Long currentTime) throws Exception {
-		MajiangGameManager majiangGameManager = singletonEntityRepository.getEntity(MajiangGameManager.class);
-		return majiangGameManager.ready(playerId, currentTime);
+		ReadyForGameResult result = new ReadyForGameResult();
+		GameServer gameServer = singletonEntityRepository.getEntity(GameServer.class);
+		GameValueObject gameValueObject = gameServer.ready(playerId);
+		result.setGame(gameValueObject);
+
+		List<String> playerIds = gameServer.findAllPlayerIdsForGame(gameValueObject.getId());
+		playerIds.remove(playerId);
+		result.setOtherPlayerIds(playerIds);
+
+		if (gameValueObject.getState().equals(GameState.playing)) {
+			MajiangGameManager majiangGameManager = singletonEntityRepository.getEntity(MajiangGameManager.class);
+			PanActionFrame firstActionFrame = majiangGameManager.createJuAndStartFirstPan(gameValueObject, currentTime);
+			result.setFirstActionFrame(firstActionFrame);
+		}
+		return result;
 	}
 
 	@Override
-	public JoinGameResult joinGame(String playerId, String gameId) throws Exception {
-		MajiangGameManager majiangGameManager = singletonEntityRepository.getEntity(MajiangGameManager.class);
-		return majiangGameManager.join(playerId, gameId);
+	public GameValueObject joinGame(String playerId, String gameId) throws Exception {
+		GameServer gameServer = singletonEntityRepository.getEntity(GameServer.class);
+		return gameServer.join(playerId, gameId);
 	}
 
 	@Override
-	public void backToGame(String playerId, String gameId) throws Exception {
-		MajiangGameManager majiangGameManager = singletonEntityRepository.getEntity(MajiangGameManager.class);
-		majiangGameManager.back(playerId, gameId);
+	public GameValueObject backToGame(String playerId, String gameId) throws Exception {
+		GameServer gameServer = singletonEntityRepository.getEntity(GameServer.class);
+		return gameServer.back(playerId, gameId);
 	}
 
 	@Override
 	public void bindPlayer(String playerId, String gameId) {
-		MajiangGameManager majiangGameManager = singletonEntityRepository.getEntity(MajiangGameManager.class);
-		majiangGameManager.bindPlayer(playerId, gameId);
+		GameServer gameServer = singletonEntityRepository.getEntity(GameServer.class);
+		gameServer.bindPlayer(playerId, gameId);
 	}
 
 }

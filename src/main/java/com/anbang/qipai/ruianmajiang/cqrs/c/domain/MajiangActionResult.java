@@ -1,24 +1,21 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.dml.majiang.pan.frame.PanActionFrame;
+import com.dml.mpgame.GameValueObject;
 
 public class MajiangActionResult {
 
-	private String gameId;
+	private GameValueObject gameValueObject;
 	private PanActionFrame panActionFrame;
 	private RuianMajiangPanResult panResult;
 	private RuianMajiangJuResult juResult;
-	private List<String> otherPlayerIds = new ArrayList<>();
 
-	public String getGameId() {
-		return gameId;
+	public GameValueObject getGameValueObject() {
+		return gameValueObject;
 	}
 
-	public void setGameId(String gameId) {
-		this.gameId = gameId;
+	public void setGameValueObject(GameValueObject gameValueObject) {
+		this.gameValueObject = gameValueObject;
 	}
 
 	public PanActionFrame getPanActionFrame() {
@@ -43,14 +40,6 @@ public class MajiangActionResult {
 
 	public void setJuResult(RuianMajiangJuResult juResult) {
 		this.juResult = juResult;
-	}
-
-	public List<String> getOtherPlayerIds() {
-		return otherPlayerIds;
-	}
-
-	public void setOtherPlayerIds(List<String> otherPlayerIds) {
-		this.otherPlayerIds = otherPlayerIds;
 	}
 
 }

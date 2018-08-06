@@ -3,7 +3,6 @@ package com.anbang.qipai.ruianmajiang.cqrs.c.service.disruptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.anbang.qipai.ruianmajiang.cqrs.c.domain.JoinGameResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyForGameResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.GameCmdService;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.impl.GameCmdServiceImpl;
@@ -35,11 +34,11 @@ public class DisruptorGameCmdService extends DisruptorCmdServiceBase implements 
 	}
 
 	@Override
-	public JoinGameResult joinGame(String playerId, String gameId) throws Exception {
+	public GameValueObject joinGame(String playerId, String gameId) throws Exception {
 		CommonCommand cmd = new CommonCommand(GameCmdServiceImpl.class.getName(), "joinGame", playerId, gameId);
-		DeferredResult<JoinGameResult> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd, () -> {
-			JoinGameResult joinGameResult = gameCmdServiceImpl.joinGame(cmd.getParameter(), cmd.getParameter());
-			return joinGameResult;
+		DeferredResult<GameValueObject> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd, () -> {
+			GameValueObject gameValueObject = gameCmdServiceImpl.joinGame(cmd.getParameter(), cmd.getParameter());
+			return gameValueObject;
 		});
 		try {
 			return result.getResult();
@@ -79,16 +78,16 @@ public class DisruptorGameCmdService extends DisruptorCmdServiceBase implements 
 	}
 
 	@Override
-	public void backToGame(String playerId, String gameId) throws Exception {
+	public GameValueObject backToGame(String playerId, String gameId) throws Exception {
 		CommonCommand cmd = new CommonCommand(GameCmdServiceImpl.class.getName(), "backToGame", playerId, gameId);
-		DeferredResult<Object> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd, () -> {
-			gameCmdServiceImpl.backToGame(cmd.getParameter(), cmd.getParameter());
-			return null;
+		DeferredResult<GameValueObject> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd, () -> {
+			GameValueObject gameValueObject = gameCmdServiceImpl.backToGame(cmd.getParameter(), cmd.getParameter());
+			return gameValueObject;
 		});
 		try {
-			result.getResult();
+			return result.getResult();
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			throw e;
 		}
 	}
 
