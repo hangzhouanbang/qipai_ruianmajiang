@@ -43,7 +43,7 @@ public class MajiangPlayQueryService {
 
 	@Autowired
 	private JuResultDboDao juResultDboDao;
-	
+
 	@Autowired
 	private RuianMajiangJuResultMsgService ruianMajiangJuResultMsgService;
 
@@ -101,34 +101,31 @@ public class MajiangPlayQueryService {
 	}
 
 	public void action(MajiangActionResult majiangActionResult) throws Throwable {
-
+		String gameId = majiangActionResult.getGameValueObject().getId();
 		PanActionFrame panActionFrame = majiangActionResult.getPanActionFrame();
-		majiangGameDao.update(majiangActionResult.getGameId(), panActionFrame.toByteArray(1024 * 8));
+		majiangGameDao.update(gameId, panActionFrame.toByteArray(1024 * 8));
 
 		// 盘出结果的话要记录结果
 		RuianMajiangPanResult ruianMajiangPanResult = majiangActionResult.getPanResult();
 		if (ruianMajiangPanResult != null) {
-			PanResultDbo panResultDbo = new PanResultDbo(majiangActionResult.getGameId(), ruianMajiangPanResult);
+			PanResultDbo panResultDbo = new PanResultDbo(gameId, ruianMajiangPanResult);
 			panResultDboDao.save(panResultDbo);
 			// 所有人的状态要改变
 			if (majiangActionResult.getJuResult() == null) {// 局没结束，还有下一盘
-				gamePlayerDboDao.updatePlayersStateForGame(majiangActionResult.getGameId(),
-						MajiangGamePlayerState.panFinished);
-				majiangGameDao.update(majiangActionResult.getGameId(), MajiangGameState.waitingNextPan);
+				gamePlayerDboDao.updatePlayersStateForGame(gameId, MajiangGamePlayerState.panFinished);
+				majiangGameDao.update(gameId, MajiangGameState.waitingNextPan);
 			} else {// 一切都结束了
 				// 要记录局结果 TODO
-				JuResultDbo juResultDbo = new JuResultDbo(majiangActionResult.getGameId(), panResultDbo,
-						majiangActionResult.getJuResult());
+				JuResultDbo juResultDbo = new JuResultDbo(gameId, panResultDbo, majiangActionResult.getJuResult());
 				juResultDboDao.save(juResultDbo);
 				ruianMajiangJuResultMsgService.recordJuResult(juResultDbo);
-				majiangGameDao.update(majiangActionResult.getGameId(), MajiangGameState.finished);
-				gamePlayerDboDao.updatePlayersStateForGame(majiangActionResult.getGameId(),
-						MajiangGamePlayerState.finished);
+				majiangGameDao.update(gameId, MajiangGameState.finished);
+				gamePlayerDboDao.updatePlayersStateForGame(gameId, MajiangGamePlayerState.finished);
 			}
 
 			// 更新每个玩家的总分
 			for (RuianMajiangPanPlayerResult panPlayerResult : ruianMajiangPanResult.getPlayerResultList()) {
-				gamePlayerDboDao.updateTotalScore(majiangActionResult.getGameId(), panPlayerResult.getPlayerId(),
+				gamePlayerDboDao.updateTotalScore(gameId, panPlayerResult.getPlayerId(),
 						panPlayerResult.getTotalScore());
 			}
 

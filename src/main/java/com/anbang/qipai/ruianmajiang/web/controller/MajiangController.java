@@ -18,7 +18,6 @@ import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.JuResultDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGamePlayerDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.PanResultDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangPlayQueryService;
-import com.anbang.qipai.ruianmajiang.msg.service.RuianMajiangJuResultMsgService;
 import com.anbang.qipai.ruianmajiang.web.vo.CommonVO;
 import com.anbang.qipai.ruianmajiang.web.vo.JuResultVO;
 import com.anbang.qipai.ruianmajiang.web.vo.PanActionFrameVO;
@@ -48,7 +47,6 @@ public class MajiangController {
 
 	@Autowired
 	private GamePlayWsNotifier wsNotifier;
-
 
 	/**
 	 * 当前盘我应该看到的所有信息
@@ -143,8 +141,10 @@ public class MajiangController {
 
 		if (majiangActionResult.getPanResult() == null) {// 盘没结束
 			// 通知其他人
-			for (String otherPlayerId : majiangActionResult.getOtherPlayerIds()) {
-				wsNotifier.notifyToQuery(otherPlayerId, QueryScope.panForMe.name());
+			for (String otherPlayerId : majiangActionResult.getGameValueObject().allPlayerIds()) {
+				if (!otherPlayerId.equals(playerId)) {
+					wsNotifier.notifyToQuery(otherPlayerId, QueryScope.panForMe.name());
+				}
 			}
 
 			data.put("queryScope", QueryScope.panForMe);
@@ -152,13 +152,17 @@ public class MajiangController {
 		} else {// 盘结束了
 
 			if (majiangActionResult.getJuResult() != null) {// 局也结束了
-				for (String otherPlayerId : majiangActionResult.getOtherPlayerIds()) {
-					wsNotifier.notifyToQuery(otherPlayerId, QueryScope.juResult.name());
+				for (String otherPlayerId : majiangActionResult.getGameValueObject().allPlayerIds()) {
+					if (!otherPlayerId.equals(playerId)) {
+						wsNotifier.notifyToQuery(otherPlayerId, QueryScope.juResult.name());
+					}
 				}
 				data.put("queryScope", QueryScope.juResult);
 			} else {
-				for (String otherPlayerId : majiangActionResult.getOtherPlayerIds()) {
-					wsNotifier.notifyToQuery(otherPlayerId, QueryScope.panResult.name());
+				for (String otherPlayerId : majiangActionResult.getGameValueObject().allPlayerIds()) {
+					if (!otherPlayerId.equals(playerId)) {
+						wsNotifier.notifyToQuery(otherPlayerId, QueryScope.panResult.name());
+					}
 				}
 				data.put("queryScope", QueryScope.panResult);
 			}
