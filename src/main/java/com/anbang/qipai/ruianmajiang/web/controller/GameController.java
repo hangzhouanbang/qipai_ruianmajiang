@@ -11,12 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.anbang.qipai.ruianmajiang.cqrs.c.domain.JoinGameResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyForGameResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.GameCmdService;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.PlayerAuthService;
-import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGamePlayerDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameDbo;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGamePlayerDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangGameQueryService;
 import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangPlayQueryService;
 import com.anbang.qipai.ruianmajiang.msg.service.RuianMajiangGameMsgService;
@@ -80,9 +79,9 @@ public class GameController {
 	@ResponseBody
 	public CommonVO joingame(String playerId, String gameId) {
 		CommonVO vo = new CommonVO();
-		JoinGameResult joinGameResult;
+		GameValueObject gameValueObject;
 		try {
-			joinGameResult = gameCmdService.joinGame(playerId, gameId);
+			gameValueObject = gameCmdService.joinGame(playerId, gameId);
 		} catch (Exception e) {
 			vo.setSuccess(false);
 			vo.setMsg(e.getClass().toString());
@@ -90,8 +89,10 @@ public class GameController {
 		}
 		majiangGameQueryService.joinGame(playerId, gameId);
 		// 通知其他人
-		for (String otherPlayerId : joinGameResult.getOtherPlayerIds()) {
-			wsNotifier.notifyToQuery(otherPlayerId, QueryScope.gameInfo.name());
+		for (String otherPlayerId : gameValueObject.allPlayerIds()) {
+			if (!otherPlayerId.equals(playerId)) {
+				wsNotifier.notifyToQuery(otherPlayerId, QueryScope.gameInfo.name());
+			}
 		}
 
 		String token = playerAuthService.newSessionForPlayer(playerId);
@@ -187,7 +188,8 @@ public class GameController {
 	public CommonVO info(String gameId) {
 		CommonVO vo = new CommonVO();
 		MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
-		List<MajiangGamePlayerDbo> gamePlayerDboListForGameId = majiangGameQueryService.findGamePlayerDbosForGame(gameId);
+		List<MajiangGamePlayerDbo> gamePlayerDboListForGameId = majiangGameQueryService
+				.findGamePlayerDbosForGame(gameId);
 		GameVO gameVO = new GameVO(majiangGameDbo, gamePlayerDboListForGameId);
 		Map data = new HashMap();
 		data.put("game", gameVO);
