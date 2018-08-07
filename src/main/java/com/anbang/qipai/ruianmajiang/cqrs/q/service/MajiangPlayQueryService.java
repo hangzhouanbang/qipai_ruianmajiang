@@ -22,7 +22,6 @@ import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGamePlayerDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGamePlayerState;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameState;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.PanResultDbo;
-import com.anbang.qipai.ruianmajiang.msg.service.RuianMajiangJuResultMsgService;
 import com.dml.majiang.pan.frame.LiangangangPanActionFramePlayerViewFilter;
 import com.dml.majiang.pan.frame.PanActionFrame;
 import com.dml.mpgame.GamePlayerState;
@@ -43,9 +42,6 @@ public class MajiangPlayQueryService {
 
 	@Autowired
 	private JuResultDboDao juResultDboDao;
-
-	@Autowired
-	private RuianMajiangJuResultMsgService ruianMajiangJuResultMsgService;
 
 	private LiangangangPanActionFramePlayerViewFilter pvFilter = new LiangangangPanActionFramePlayerViewFilter();
 
@@ -118,7 +114,6 @@ public class MajiangPlayQueryService {
 				// 要记录局结果 TODO
 				JuResultDbo juResultDbo = new JuResultDbo(gameId, panResultDbo, majiangActionResult.getJuResult());
 				juResultDboDao.save(juResultDbo);
-				ruianMajiangJuResultMsgService.recordJuResult(juResultDbo);
 				majiangGameDao.update(gameId, MajiangGameState.finished);
 				gamePlayerDboDao.updatePlayersStateForGame(gameId, MajiangGamePlayerState.finished);
 			}
