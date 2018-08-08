@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.dml.majiang.pan.frame.PanActionFrame;
-import com.dml.mpgame.GameValueObject;
+import com.dml.mpgame.game.GameValueObject;
 
 public class ReadyForGameResult {
 	private GameValueObject game;

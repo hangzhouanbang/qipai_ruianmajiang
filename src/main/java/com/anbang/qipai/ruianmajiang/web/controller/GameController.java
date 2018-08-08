@@ -23,8 +23,8 @@ import com.anbang.qipai.ruianmajiang.web.vo.CommonVO;
 import com.anbang.qipai.ruianmajiang.web.vo.GameVO;
 import com.anbang.qipai.ruianmajiang.websocket.GamePlayWsNotifier;
 import com.anbang.qipai.ruianmajiang.websocket.QueryScope;
-import com.dml.mpgame.GameState;
-import com.dml.mpgame.GameValueObject;
+import com.dml.mpgame.game.GameState;
+import com.dml.mpgame.game.GameValueObject;
 
 /**
  * 游戏框架相关

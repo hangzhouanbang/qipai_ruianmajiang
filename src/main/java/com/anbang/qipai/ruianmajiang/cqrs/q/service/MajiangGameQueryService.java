@@ -15,9 +15,9 @@ import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGamePlayerState;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameState;
 import com.anbang.qipai.ruianmajiang.plan.bean.PlayerInfo;
 import com.anbang.qipai.ruianmajiang.plan.dao.PlayerInfoDao;
-import com.dml.mpgame.GamePlayer;
-import com.dml.mpgame.GamePlayerOnlineState;
-import com.dml.mpgame.GameValueObject;
+import com.dml.mpgame.game.GamePlayer;
+import com.dml.mpgame.game.GamePlayerOnlineState;
+import com.dml.mpgame.game.GameValueObject;
 
 @Component
 public class MajiangGameQueryService {

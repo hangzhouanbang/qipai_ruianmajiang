@@ -1,7 +1,7 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
 import com.dml.majiang.pan.frame.PanActionFrame;
-import com.dml.mpgame.GameValueObject;
+import com.dml.mpgame.game.GameValueObject;
 
 public class MajiangActionResult {
 

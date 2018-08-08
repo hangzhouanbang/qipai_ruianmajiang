@@ -8,12 +8,12 @@ import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangGameManager;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyForGameResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.GameCmdService;
 import com.dml.majiang.pan.frame.PanActionFrame;
-import com.dml.mpgame.FixedNumberOfPlayersGameJoinStrategy;
-import com.dml.mpgame.FixedNumberOfPlayersGameReadyStrategy;
-import com.dml.mpgame.GameServer;
-import com.dml.mpgame.GameState;
-import com.dml.mpgame.GameValueObject;
-import com.dml.mpgame.HostGameLeaveStrategy;
+import com.dml.mpgame.game.GameState;
+import com.dml.mpgame.game.GameValueObject;
+import com.dml.mpgame.game.join.FixedNumberOfPlayersGameJoinStrategy;
+import com.dml.mpgame.game.leave.HostGameLeaveStrategy;
+import com.dml.mpgame.game.ready.FixedNumberOfPlayersGameReadyStrategy;
+import com.dml.mpgame.server.GameServer;
 
 @Component
 public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService {

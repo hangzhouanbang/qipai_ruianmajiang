@@ -1,6 +1,6 @@
 package com.anbang.qipai.ruianmajiang.cqrs.q.dbo;
 
-import com.dml.mpgame.GamePlayerOnlineState;
+import com.dml.mpgame.game.GamePlayerOnlineState;
 
 public class MajiangGamePlayerDbo {
 

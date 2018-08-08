@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGamePlayerDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGamePlayerState;
-import com.dml.mpgame.GamePlayerOnlineState;
+import com.dml.mpgame.game.GamePlayerOnlineState;
 
 public interface GamePlayerDboDao {
 

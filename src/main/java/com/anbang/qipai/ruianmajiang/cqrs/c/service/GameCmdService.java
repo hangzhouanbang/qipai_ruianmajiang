@@ -1,7 +1,7 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.service;
 
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyForGameResult;
-import com.dml.mpgame.GameValueObject;
+import com.dml.mpgame.game.GameValueObject;
 
 public interface GameCmdService {
 

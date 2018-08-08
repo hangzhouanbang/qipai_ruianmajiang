@@ -26,7 +26,7 @@ import com.dml.majiang.player.menfeng.RandomMustHasDongPlayersMenFengDeterminer;
 import com.dml.majiang.player.menfeng.ZhuangXiajiaIsDongIfZhuangNotHuPlayersMenFengDeterminer;
 import com.dml.majiang.player.shoupai.gouxing.NoDanpaiOneDuiziGouXingPanHu;
 import com.dml.majiang.player.zhuang.MenFengDongZhuangDeterminer;
-import com.dml.mpgame.GameValueObject;
+import com.dml.mpgame.game.GameValueObject;
 
 public class MajiangGame {
 	private String gameId;

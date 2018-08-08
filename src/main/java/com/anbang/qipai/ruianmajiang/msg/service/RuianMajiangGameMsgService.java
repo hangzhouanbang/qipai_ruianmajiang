@@ -9,8 +9,8 @@ import org.springframework.messaging.support.MessageBuilder;
 
 import com.anbang.qipai.ruianmajiang.msg.channel.RuianMajiangGameSource;
 import com.anbang.qipai.ruianmajiang.msg.msjobj.CommonMO;
-import com.dml.mpgame.GamePlayer;
-import com.dml.mpgame.GameValueObject;
+import com.dml.mpgame.game.GamePlayer;
+import com.dml.mpgame.game.GameValueObject;
 
 @EnableBinding(RuianMajiangGameSource.class)
 public class RuianMajiangGameMsgService {

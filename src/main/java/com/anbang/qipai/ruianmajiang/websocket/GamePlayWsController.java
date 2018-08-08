@@ -20,7 +20,7 @@ import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGamePlayerDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameState;
 import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangGameQueryService;
 import com.anbang.qipai.ruianmajiang.msg.service.RuianMajiangGameMsgService;
-import com.dml.mpgame.GameValueObject;
+import com.dml.mpgame.game.GameValueObject;
 import com.google.gson.Gson;
 
 @Component

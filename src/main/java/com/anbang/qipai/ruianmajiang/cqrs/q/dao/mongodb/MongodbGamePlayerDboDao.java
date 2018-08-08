@@ -13,7 +13,7 @@ import com.anbang.qipai.ruianmajiang.cqrs.q.dao.GamePlayerDboDao;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dao.mongodb.repository.GamePlayerDboRepository;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGamePlayerDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGamePlayerState;
-import com.dml.mpgame.GamePlayerOnlineState;
+import com.dml.mpgame.game.GamePlayerOnlineState;
 
 @Component
 public class MongodbGamePlayerDboDao implements GamePlayerDboDao {

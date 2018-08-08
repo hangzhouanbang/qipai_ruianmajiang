@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.dml.majiang.pan.frame.PanActionFrame;
-import com.dml.mpgame.GameValueObject;
+import com.dml.mpgame.game.GameValueObject;
 
 public class MajiangGameManager {
 

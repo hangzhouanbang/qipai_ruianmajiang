@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyForGameResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.GameCmdService;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.impl.GameCmdServiceImpl;
-import com.dml.mpgame.GameValueObject;
+import com.dml.mpgame.game.GameValueObject;
 import com.highto.framework.concurrent.DeferredResult;
 import com.highto.framework.ddd.CommonCommand;
 
