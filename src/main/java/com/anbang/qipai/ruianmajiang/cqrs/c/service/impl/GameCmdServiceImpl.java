@@ -14,6 +14,7 @@ import com.dml.mpgame.game.GameState;
 import com.dml.mpgame.game.GameValueObject;
 import com.dml.mpgame.game.finish.GameFinishVoteValueObject;
 import com.dml.mpgame.game.finish.MostPlayersWinVoteCalculator;
+import com.dml.mpgame.game.finish.VoteOption;
 import com.dml.mpgame.game.join.FixedNumberOfPlayersGameJoinStrategy;
 import com.dml.mpgame.game.leave.HostGameLeaveStrategy;
 import com.dml.mpgame.game.ready.FixedNumberOfPlayersGameReadyStrategy;
@@ -97,6 +98,25 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
 		gameServer.finish(gameId);
 		MajiangGameManager majiangGameManager = singletonEntityRepository.getEntity(MajiangGameManager.class);
 		return majiangGameManager.finishMajiangGame(gameId);
+	}
+
+	@Override
+	public VoteToFinishResult voteToFinish(String playerId, Boolean yes) throws Exception {
+		VoteToFinishResult voteToFinishResult = new VoteToFinishResult();
+		GameServer gameServer = singletonEntityRepository.getEntity(GameServer.class);
+		GameFinishVoteValueObject gameFinishVoteValueObject;
+		if (yes) {
+			gameFinishVoteValueObject = gameServer.voteToFinishGame(playerId, VoteOption.yes);
+		} else {
+			gameFinishVoteValueObject = gameServer.voteToFinishGame(playerId, VoteOption.no);
+		}
+		voteToFinishResult.setVoteValueObject(gameFinishVoteValueObject);
+		if (gameFinishVoteValueObject.getResult() != null) {
+			MajiangGameManager majiangGameManager = singletonEntityRepository.getEntity(MajiangGameManager.class);
+			RuianMajiangJuResult juResult = majiangGameManager.finishMajiangGame(gameFinishVoteValueObject.getGameId());
+			voteToFinishResult.setJuResult(juResult);
+		}
+		return voteToFinishResult;
 	}
 
 }

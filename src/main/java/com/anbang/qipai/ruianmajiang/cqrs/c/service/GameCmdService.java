@@ -24,4 +24,6 @@ public interface GameCmdService {
 
 	RuianMajiangJuResult finishGame(String gameId) throws Exception;
 
+	VoteToFinishResult voteToFinish(String playerId, Boolean yes) throws Exception;
+
 }

@@ -9,7 +9,7 @@ import com.dml.mpgame.game.GameValueObject;
 public class ReadyForGameResult {
 	private GameValueObject game;
 	private PanActionFrame firstActionFrame;
-	private List<String> otherPlayerIds = new ArrayList<>();;
+	private List<String> otherPlayerIds = new ArrayList<>();
 
 	public GameValueObject getGame() {
 		return game;

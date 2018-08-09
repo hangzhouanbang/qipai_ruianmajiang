@@ -15,6 +15,7 @@ import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyForGameResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.VoteToFinishResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.GameCmdService;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.PlayerAuthService;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.GameFinishVoteDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGamePlayerDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangGameQueryService;
@@ -273,8 +274,65 @@ public class GameController {
 		}
 
 		majiangGameQueryService.launchFinishVote(voteToFinishResult);
+		data.put("queryScope", QueryScope.gameFinishVote);
+		// 通知其他人来投票
+		List<MajiangGamePlayerDbo> gamePlayerDboList = majiangGameQueryService
+				.findGamePlayerDbosForGame(voteToFinishResult.getVoteValueObject().getGameId());
+		gamePlayerDboList.forEach((gamePlayerDbo) -> {
+			String otherPlayerId = gamePlayerDbo.getPlayerId();
+			if (!otherPlayerId.equals(playerId)) {
+				wsNotifier.notifyToQuery(otherPlayerId, QueryScope.gameFinishVote.name());
+			}
+		});
+		return vo;
+	}
 
-		// 通知其他人来投票 TODO
+	@RequestMapping(value = "/vote_to_finish")
+	@ResponseBody
+	public CommonVO votetofinish(String token, boolean yes) {
+		CommonVO vo = new CommonVO();
+		Map data = new HashMap();
+		vo.setData(data);
+		String playerId = playerAuthService.getPlayerIdByToken(token);
+		if (playerId == null) {
+			vo.setSuccess(false);
+			vo.setMsg("invalid token");
+			return vo;
+		}
+
+		VoteToFinishResult voteToFinishResult;
+		try {
+			voteToFinishResult = gameCmdService.voteToFinish(playerId, yes);
+		} catch (Exception e) {
+			vo.setSuccess(false);
+			vo.setMsg(e.getClass().getName());
+			return vo;
+		}
+
+		majiangGameQueryService.voteToFinish(voteToFinishResult);
+		data.put("queryScope", QueryScope.gameFinishVote);
+		// 通知其他人来投票
+		List<MajiangGamePlayerDbo> gamePlayerDboList = majiangGameQueryService
+				.findGamePlayerDbosForGame(voteToFinishResult.getVoteValueObject().getGameId());
+		gamePlayerDboList.forEach((gamePlayerDbo) -> {
+			String otherPlayerId = gamePlayerDbo.getPlayerId();
+			if (!otherPlayerId.equals(playerId)) {
+				wsNotifier.notifyToQuery(otherPlayerId, QueryScope.gameFinishVote.name());
+			}
+		});
+		return vo;
+
+	}
+
+	@RequestMapping(value = "/finish_vote_info")
+	@ResponseBody
+	public CommonVO finishvoteinfo(String gameId) {
+
+		CommonVO vo = new CommonVO();
+		GameFinishVoteDbo gameFinishVoteDbo = majiangGameQueryService.findGameFinishVoteDbo(gameId);
+		Map data = new HashMap();
+		data.put("vote", gameFinishVoteDbo.getVote());
+		vo.setData(data);
 		return vo;
 
 	}

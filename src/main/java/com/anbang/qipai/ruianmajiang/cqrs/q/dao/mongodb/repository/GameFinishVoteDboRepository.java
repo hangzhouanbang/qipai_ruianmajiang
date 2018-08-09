@@ -6,4 +6,6 @@ import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.GameFinishVoteDbo;
 
 public interface GameFinishVoteDboRepository extends MongoRepository<GameFinishVoteDbo, String> {
 
+	GameFinishVoteDbo findOneByGameId(String gameId);
+
 }

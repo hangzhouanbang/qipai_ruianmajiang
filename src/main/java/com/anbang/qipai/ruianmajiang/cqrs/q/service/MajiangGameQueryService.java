@@ -132,4 +132,24 @@ public class MajiangGameQueryService {
 		}
 	}
 
+	public void voteToFinish(VoteToFinishResult voteToFinishResult) {
+		GameFinishVoteValueObject gameFinishVoteValueObject = voteToFinishResult.getVoteValueObject();
+		gameFinishVoteDboDao.update(gameFinishVoteValueObject.getGameId(), gameFinishVoteValueObject);
+
+		// 投票通过了，比赛结束。要记录结果
+		RuianMajiangJuResult ruianMajiangJuResult = voteToFinishResult.getJuResult();
+		if (ruianMajiangJuResult != null) {
+			JuResultDbo juResultDbo = new JuResultDbo(gameFinishVoteValueObject.getGameId(), null,
+					ruianMajiangJuResult);
+			juResultDboDao.save(juResultDbo);
+			majiangGameDboDao.update(gameFinishVoteValueObject.getGameId(), MajiangGameState.finished);
+			gamePlayerDboDao.updatePlayersStateForGame(gameFinishVoteValueObject.getGameId(),
+					MajiangGamePlayerState.finished);
+		}
+	}
+
+	public GameFinishVoteDbo findGameFinishVoteDbo(String gameId) {
+		return gameFinishVoteDboDao.findByGameId(gameId);
+	}
+
 }

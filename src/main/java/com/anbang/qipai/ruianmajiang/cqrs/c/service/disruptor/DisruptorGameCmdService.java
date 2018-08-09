@@ -135,4 +135,19 @@ public class DisruptorGameCmdService extends DisruptorCmdServiceBase implements 
 		}
 	}
 
+	@Override
+	public VoteToFinishResult voteToFinish(String playerId, Boolean yes) throws Exception {
+		CommonCommand cmd = new CommonCommand(GameCmdServiceImpl.class.getName(), "voteToFinish", playerId, yes);
+		DeferredResult<VoteToFinishResult> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd, () -> {
+			VoteToFinishResult voteToFinishResult = gameCmdServiceImpl.voteToFinish(cmd.getParameter(),
+					cmd.getParameter());
+			return voteToFinishResult;
+		});
+		try {
+			return result.getResult();
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+
 }
