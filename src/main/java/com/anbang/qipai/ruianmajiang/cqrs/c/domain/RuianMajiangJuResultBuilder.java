@@ -16,50 +16,53 @@ public class RuianMajiangJuResultBuilder implements JuResultBuilder {
 	@Override
 	public JuResult buildJuResult(Ju ju) {
 		RuianMajiangJuResult ruianMajiangJuResult = new RuianMajiangJuResult();
-		Map<String, RuianMajiangJuPlayerResult> juPlayerResultMap = new HashMap<>();
-		for (PanResult panResult : ju.getFinishedPanResultList()) {
-			RuianMajiangPanResult ruianMajiangPanResult = (RuianMajiangPanResult) panResult;
-			for (RuianMajiangPanPlayerResult panPlayerResult : ruianMajiangPanResult.getPlayerResultList()) {
-				RuianMajiangJuPlayerResult juPlayerResult = juPlayerResultMap.get(panPlayerResult.getPlayerId());
-				if (juPlayerResult == null) {
-					juPlayerResult = new RuianMajiangJuPlayerResult();
-					juPlayerResult.setPlayerId(panPlayerResult.getPlayerId());
-					juPlayerResultMap.put(panPlayerResult.getPlayerId(), juPlayerResult);
+		ruianMajiangJuResult.setFinishedPanCount(ju.countFinishedPan());
+		if (ju.countFinishedPan() > 0) {
+			Map<String, RuianMajiangJuPlayerResult> juPlayerResultMap = new HashMap<>();
+			for (PanResult panResult : ju.getFinishedPanResultList()) {
+				RuianMajiangPanResult ruianMajiangPanResult = (RuianMajiangPanResult) panResult;
+				for (RuianMajiangPanPlayerResult panPlayerResult : ruianMajiangPanResult.getPlayerResultList()) {
+					RuianMajiangJuPlayerResult juPlayerResult = juPlayerResultMap.get(panPlayerResult.getPlayerId());
+					if (juPlayerResult == null) {
+						juPlayerResult = new RuianMajiangJuPlayerResult();
+						juPlayerResult.setPlayerId(panPlayerResult.getPlayerId());
+						juPlayerResultMap.put(panPlayerResult.getPlayerId(), juPlayerResult);
+					}
+					if (panPlayerResult.isHu()) {
+						juPlayerResult.increaseHuCount();
+					}
+					juPlayerResult.increaseCaishenCount(panPlayerResult.countCaishen());
+					if (panPlayerResult.getScore().getPao() != null) {
+						juPlayerResult.increaseDapaoCount(panPlayerResult.getScore().getPao().getValue());
+					}
+					juPlayerResult.tryAndUpdateMaxHushu(panPlayerResult.getScore().getHushu().getValue());
+					juPlayerResult.increaseTotalScore(panPlayerResult.getTotalScore());
 				}
-				if (panPlayerResult.isHu()) {
-					juPlayerResult.increaseHuCount();
-				}
-				juPlayerResult.increaseCaishenCount(panPlayerResult.countCaishen());
-				if (panPlayerResult.getScore().getPao() != null) {
-					juPlayerResult.increaseDapaoCount(panPlayerResult.getScore().getPao().getValue());
-				}
-				juPlayerResult.tryAndUpdateMaxHushu(panPlayerResult.getScore().getHushu().getValue());
-				juPlayerResult.increaseTotalScore(panPlayerResult.getTotalScore());
 			}
-		}
 
-		RuianMajiangJuPlayerResult dayingjia = null;
-		RuianMajiangJuPlayerResult datuhao = null;
-		for (RuianMajiangJuPlayerResult juPlayerResult : juPlayerResultMap.values()) {
-			if (dayingjia == null) {
-				dayingjia = juPlayerResult;
-			} else {
-				if (juPlayerResult.getTotalScore() > dayingjia.getTotalScore()) {
+			RuianMajiangJuPlayerResult dayingjia = null;
+			RuianMajiangJuPlayerResult datuhao = null;
+			for (RuianMajiangJuPlayerResult juPlayerResult : juPlayerResultMap.values()) {
+				if (dayingjia == null) {
 					dayingjia = juPlayerResult;
+				} else {
+					if (juPlayerResult.getTotalScore() > dayingjia.getTotalScore()) {
+						dayingjia = juPlayerResult;
+					}
 				}
-			}
 
-			if (datuhao == null) {
-				datuhao = juPlayerResult;
-			} else {
-				if (juPlayerResult.getTotalScore() < datuhao.getTotalScore()) {
+				if (datuhao == null) {
 					datuhao = juPlayerResult;
+				} else {
+					if (juPlayerResult.getTotalScore() < datuhao.getTotalScore()) {
+						datuhao = juPlayerResult;
+					}
 				}
 			}
+			ruianMajiangJuResult.setDatuhaoId(datuhao.getPlayerId());
+			ruianMajiangJuResult.setDayingjiaId(dayingjia.getPlayerId());
+			ruianMajiangJuResult.setPlayerResultList(new ArrayList<>(juPlayerResultMap.values()));
 		}
-		ruianMajiangJuResult.setDatuhaoId(datuhao.getPlayerId());
-		ruianMajiangJuResult.setDayingjiaId(dayingjia.getPlayerId());
-		ruianMajiangJuResult.setPlayerResultList(new ArrayList<>(juPlayerResultMap.values()));
 		return ruianMajiangJuResult;
 	}
 

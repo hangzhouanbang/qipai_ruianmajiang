@@ -5,6 +5,7 @@ import com.dml.majiang.ju.finish.FixedPanNumbersJuFinishiDeterminer;
 import com.dml.majiang.ju.firstpan.ClassicStartFirstPanProcess;
 import com.dml.majiang.ju.nextpan.AllPlayersReadyCreateNextPanDeterminer;
 import com.dml.majiang.ju.nextpan.ClassicStartNextPanProcess;
+import com.dml.majiang.ju.result.JuResult;
 import com.dml.majiang.pan.avaliablepai.NoHuapaiRandomAvaliablePaiFiller;
 import com.dml.majiang.pan.finish.PlayerHuOrNoPaiLeftPanFinishiDeterminer;
 import com.dml.majiang.pan.frame.PanActionFrame;
@@ -97,8 +98,12 @@ public class MajiangGame {
 		return result;
 	}
 
+	public JuResult finishJu() {
+		ju.finish();
+		return ju.getJuResult();
+	}
+
 	public PanActionFrame readyToNextPan(String playerId) throws Exception {
-		ReadyToNextPanResult readyToNextPanResult = new ReadyToNextPanResult();
 		AllPlayersReadyCreateNextPanDeterminer createNextPanDeterminer = (AllPlayersReadyCreateNextPanDeterminer) ju
 				.getCreateNextPanDeterminer();
 		createNextPanDeterminer.playerReady(playerId);

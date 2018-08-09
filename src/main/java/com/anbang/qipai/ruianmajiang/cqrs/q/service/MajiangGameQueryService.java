@@ -7,8 +7,14 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.anbang.qipai.ruianmajiang.cqrs.c.domain.RuianMajiangJuResult;
+import com.anbang.qipai.ruianmajiang.cqrs.c.domain.VoteToFinishResult;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dao.GameFinishVoteDboDao;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dao.GamePlayerDboDao;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dao.JuResultDboDao;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dao.MajiangGameDboDao;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.GameFinishVoteDbo;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.JuResultDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGamePlayerDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGamePlayerState;
@@ -18,6 +24,7 @@ import com.anbang.qipai.ruianmajiang.plan.dao.PlayerInfoDao;
 import com.dml.mpgame.game.GamePlayer;
 import com.dml.mpgame.game.GamePlayerOnlineState;
 import com.dml.mpgame.game.GameValueObject;
+import com.dml.mpgame.game.finish.GameFinishVoteValueObject;
 
 @Component
 public class MajiangGameQueryService {
@@ -30,6 +37,12 @@ public class MajiangGameQueryService {
 
 	@Autowired
 	private GamePlayerDboDao gamePlayerDboDao;
+
+	@Autowired
+	private GameFinishVoteDboDao gameFinishVoteDboDao;
+
+	@Autowired
+	private JuResultDboDao juResultDboDao;
 
 	public MajiangGameDbo findMajiangGameDboById(String gameId) {
 		return majiangGameDboDao.findById(gameId);
@@ -97,6 +110,25 @@ public class MajiangGameQueryService {
 			} else {
 				gamePlayerDboDao.removeByPlayerIdAndGameId(playerId, gameId);
 			}
+		}
+	}
+
+	public void launchFinishVote(VoteToFinishResult voteToFinishResult) {
+		GameFinishVoteValueObject gameFinishVoteValueObject = voteToFinishResult.getVoteValueObject();
+		GameFinishVoteDbo gameFinishVoteDbo = new GameFinishVoteDbo();
+		gameFinishVoteDbo.setVote(gameFinishVoteValueObject);
+		gameFinishVoteDbo.setGameId(gameFinishVoteValueObject.getGameId());
+		gameFinishVoteDboDao.save(gameFinishVoteDbo);
+
+		// 投票通过了，比赛结束。要记录结果
+		RuianMajiangJuResult ruianMajiangJuResult = voteToFinishResult.getJuResult();
+		if (ruianMajiangJuResult != null) {
+			JuResultDbo juResultDbo = new JuResultDbo(gameFinishVoteValueObject.getGameId(), null,
+					ruianMajiangJuResult);
+			juResultDboDao.save(juResultDbo);
+			majiangGameDboDao.update(gameFinishVoteValueObject.getGameId(), MajiangGameState.finished);
+			gamePlayerDboDao.updatePlayersStateForGame(gameFinishVoteValueObject.getGameId(),
+					MajiangGamePlayerState.finished);
 		}
 	}
 

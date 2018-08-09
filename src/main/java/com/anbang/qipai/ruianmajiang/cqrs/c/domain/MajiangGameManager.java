@@ -49,4 +49,9 @@ public class MajiangGameManager {
 		return readyToNextPanResult;
 	}
 
+	public RuianMajiangJuResult finishMajiangGame(String gameId) {
+		MajiangGame game = gameIdMajiangGameMap.get(gameId);
+		return (RuianMajiangJuResult) game.finishJu();
+	}
+
 }

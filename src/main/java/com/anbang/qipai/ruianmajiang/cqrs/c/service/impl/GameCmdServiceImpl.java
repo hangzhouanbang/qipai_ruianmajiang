@@ -6,10 +6,14 @@ import org.springframework.stereotype.Component;
 
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangGameManager;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyForGameResult;
+import com.anbang.qipai.ruianmajiang.cqrs.c.domain.RuianMajiangJuResult;
+import com.anbang.qipai.ruianmajiang.cqrs.c.domain.VoteToFinishResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.GameCmdService;
 import com.dml.majiang.pan.frame.PanActionFrame;
 import com.dml.mpgame.game.GameState;
 import com.dml.mpgame.game.GameValueObject;
+import com.dml.mpgame.game.finish.GameFinishVoteValueObject;
+import com.dml.mpgame.game.finish.MostPlayersWinVoteCalculator;
 import com.dml.mpgame.game.join.FixedNumberOfPlayersGameJoinStrategy;
 import com.dml.mpgame.game.leave.HostGameLeaveStrategy;
 import com.dml.mpgame.game.ready.FixedNumberOfPlayersGameReadyStrategy;
@@ -69,6 +73,30 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
 	public void bindPlayer(String playerId, String gameId) {
 		GameServer gameServer = singletonEntityRepository.getEntity(GameServer.class);
 		gameServer.bindPlayer(playerId, gameId);
+	}
+
+	@Override
+	public VoteToFinishResult launchFinishVote(String playerId) throws Exception {
+		VoteToFinishResult result = new VoteToFinishResult();
+		GameServer gameServer = singletonEntityRepository.getEntity(GameServer.class);
+		GameFinishVoteValueObject voteValueObject = gameServer.startFinishVote(playerId,
+				new MostPlayersWinVoteCalculator());
+		result.setVoteValueObject(voteValueObject);
+		// 有可能发起投票就解散
+		if (voteValueObject.getResult() != null) {
+			MajiangGameManager majiangGameManager = singletonEntityRepository.getEntity(MajiangGameManager.class);
+			RuianMajiangJuResult juResult = majiangGameManager.finishMajiangGame(voteValueObject.getGameId());
+			result.setJuResult(juResult);
+		}
+		return result;
+	}
+
+	@Override
+	public RuianMajiangJuResult finishGame(String gameId) throws Exception {
+		GameServer gameServer = singletonEntityRepository.getEntity(GameServer.class);
+		gameServer.finish(gameId);
+		MajiangGameManager majiangGameManager = singletonEntityRepository.getEntity(MajiangGameManager.class);
+		return majiangGameManager.finishMajiangGame(gameId);
 	}
 
 }

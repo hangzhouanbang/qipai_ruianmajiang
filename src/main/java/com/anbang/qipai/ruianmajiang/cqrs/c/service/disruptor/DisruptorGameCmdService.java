@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyForGameResult;
+import com.anbang.qipai.ruianmajiang.cqrs.c.domain.RuianMajiangJuResult;
+import com.anbang.qipai.ruianmajiang.cqrs.c.domain.VoteToFinishResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.GameCmdService;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.impl.GameCmdServiceImpl;
 import com.dml.mpgame.game.GameValueObject;
@@ -102,6 +104,34 @@ public class DisruptorGameCmdService extends DisruptorCmdServiceBase implements 
 			result.getResult();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public VoteToFinishResult launchFinishVote(String playerId) throws Exception {
+		CommonCommand cmd = new CommonCommand(GameCmdServiceImpl.class.getName(), "launchFinishVote", playerId);
+		DeferredResult<VoteToFinishResult> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd, () -> {
+			VoteToFinishResult voteToFinishResult = gameCmdServiceImpl.launchFinishVote(cmd.getParameter());
+			return voteToFinishResult;
+		});
+		try {
+			return result.getResult();
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+
+	@Override
+	public RuianMajiangJuResult finishGame(String gameId) throws Exception {
+		CommonCommand cmd = new CommonCommand(GameCmdServiceImpl.class.getName(), "finishGame", gameId);
+		DeferredResult<RuianMajiangJuResult> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd, () -> {
+			RuianMajiangJuResult ruianMajiangJuResult = gameCmdServiceImpl.finishGame(cmd.getParameter());
+			return ruianMajiangJuResult;
+		});
+		try {
+			return result.getResult();
+		} catch (Exception e) {
+			throw e;
 		}
 	}
 

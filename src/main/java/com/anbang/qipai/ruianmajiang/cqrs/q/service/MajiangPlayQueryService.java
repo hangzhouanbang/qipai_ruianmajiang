@@ -111,7 +111,7 @@ public class MajiangPlayQueryService {
 				gamePlayerDboDao.updatePlayersStateForGame(gameId, MajiangGamePlayerState.panFinished);
 				majiangGameDao.update(gameId, MajiangGameState.waitingNextPan);
 			} else {// 一切都结束了
-				// 要记录局结果 TODO
+				// 要记录局结果
 				JuResultDbo juResultDbo = new JuResultDbo(gameId, panResultDbo, majiangActionResult.getJuResult());
 				juResultDboDao.save(juResultDbo);
 				majiangGameDao.update(gameId, MajiangGameState.finished);

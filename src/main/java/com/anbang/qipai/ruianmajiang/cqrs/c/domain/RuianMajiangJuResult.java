@@ -6,11 +6,21 @@ import com.dml.majiang.ju.result.JuResult;
 
 public class RuianMajiangJuResult implements JuResult {
 
+	private int finishedPanCount;
+
 	private List<RuianMajiangJuPlayerResult> playerResultList;
 
 	private String dayingjiaId;
 
 	private String datuhaoId;
+
+	public int getFinishedPanCount() {
+		return finishedPanCount;
+	}
+
+	public void setFinishedPanCount(int finishedPanCount) {
+		this.finishedPanCount = finishedPanCount;
+	}
 
 	public List<RuianMajiangJuPlayerResult> getPlayerResultList() {
 		return playerResultList;
