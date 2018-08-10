@@ -18,10 +18,9 @@ public class RuianMajiangPanPlayerScore {
 
 	private int jiesuanScore;
 
+	private int value;
+
 	public void jiesuan() {
-		if (pao != null) {
-			paoScore = pao.getValue() * 10;
-		}
 		jiesuanScore = jiesuanHushu + jiesuanPao * 10;
 	}
 
@@ -41,6 +40,13 @@ public class RuianMajiangPanPlayerScore {
 		} else {
 			return shang * 10;
 		}
+	}
+
+	public void calculate() {
+		if (pao != null) {
+			paoScore = pao.getValue() * 10;
+		}
+		value = hushu.quzhengValue() / 10 + paoScore;
 	}
 
 	public RuianMajiangPao getPao() {
@@ -89,6 +95,14 @@ public class RuianMajiangPanPlayerScore {
 
 	public void setJiesuanScore(int jiesuanScore) {
 		this.jiesuanScore = jiesuanScore;
+	}
+
+	public int getValue() {
+		return value;
+	}
+
+	public void setValue(int value) {
+		this.value = value;
 	}
 
 }

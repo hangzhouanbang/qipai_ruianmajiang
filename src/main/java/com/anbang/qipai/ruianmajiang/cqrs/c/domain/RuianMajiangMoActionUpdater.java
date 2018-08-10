@@ -43,11 +43,13 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 		player.tryKezigangshoupaiAndGenerateCandidateAction();
 
 		// 胡
-		RuianMajiangJuResultBuilder ruianMajiangJuResultBuilder = (RuianMajiangJuResultBuilder) ju.getJuResultBuilder();
-		int dihu = ruianMajiangJuResultBuilder.getDihu();
+		RuianMajiangPanResultBuilder ruianMajiangPanResultBuilder = (RuianMajiangPanResultBuilder) ju
+				.getCurrentPanResultBuilder();
+		int dihu = ruianMajiangPanResultBuilder.getDihu();
+		boolean dapao = ruianMajiangPanResultBuilder.isDapao();
 		GouXingPanHu gouXingPanHu = ju.getGouXingPanHu();
-		RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestZimoHu(dihu, gouXingPanHu, player, moAction,
-				baibanIsGuipai);
+		RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestZimoHu(dapao, dihu, gouXingPanHu, player,
+				moAction, baibanIsGuipai);
 		if (bestHu != null) {
 			bestHu.setZimo(true);
 			player.addActionCandidate(new MajiangHuAction(player.getId(), bestHu));

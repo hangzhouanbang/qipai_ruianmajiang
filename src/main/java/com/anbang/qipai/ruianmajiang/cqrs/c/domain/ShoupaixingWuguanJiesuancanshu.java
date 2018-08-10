@@ -1,6 +1,7 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
 import com.dml.majiang.pai.MajiangPai;
+import com.dml.majiang.pai.fenzu.GangType;
 import com.dml.majiang.player.MajiangPlayer;
 
 /**
@@ -34,18 +35,21 @@ public class ShoupaixingWuguanJiesuancanshu {
 	private int chichupaiZuCount;
 	private int pengchupaiZuCount;
 	private int gangchupaiZuCount;
+	private int yijiuangangCount;
+	private int erbaangangCount;
+	private int fengziangangCount;
 	private MajiangPai[] yijiupaiArray;
 	private MajiangPai[] erbapaiArray;
 	private MajiangPai[] fengzipaiArray;
 
 	public ShoupaixingWuguanJiesuancanshu(MajiangPlayer player) {
-		pengchuHongzhong = player.ifPengchuForPaiType(MajiangPai.hongzhong);
-		gangchuHongzhong = player.ifGangchuForPaiType(MajiangPai.hongzhong);
-		pengchuFacai = player.ifPengchuForPaiType(MajiangPai.facai);
-		gangchuFacai = player.ifGangchuForPaiType(MajiangPai.facai);
+		pengchuHongzhong = player.ifPengchu(MajiangPai.hongzhong);
+		gangchuHongzhong = player.ifGangchu(MajiangPai.hongzhong);
+		pengchuFacai = player.ifPengchu(MajiangPai.facai);
+		gangchuFacai = player.ifGangchu(MajiangPai.facai);
 		menFengPai = player.fengpaiForMenfeng();
-		zuofengPeng = player.ifPengchuForPaiType(menFengPai);
-		zuofengGang = player.ifGangchuForPaiType(menFengPai);
+		zuofengPeng = player.ifPengchu(menFengPai);
+		zuofengGang = player.ifGangchu(menFengPai);
 		baibanShu = player.countPublicPai();
 		caishenShu = player.countGuipai();
 		allXushupaiInSameCategory = player.allXushupaiInSameCategory();
@@ -57,7 +61,7 @@ public class ShoupaixingWuguanJiesuancanshu {
 		yijiupaiArray = new MajiangPai[] { MajiangPai.yiwan, MajiangPai.jiuwan, MajiangPai.yitong, MajiangPai.jiutong,
 				MajiangPai.yitiao, MajiangPai.jiutiao };
 		for (int i = 0; i < yijiupaiArray.length; i++) {
-			if (player.ifPengchuForPaiType(yijiupaiArray[i])) {
+			if (player.ifPengchu(yijiupaiArray[i])) {
 				yijiupengShu++;
 			}
 		}
@@ -71,7 +75,7 @@ public class ShoupaixingWuguanJiesuancanshu {
 				MajiangPai.ertiao, MajiangPai.santiao, MajiangPai.sitiao, MajiangPai.wutiao, MajiangPai.liutiao,
 				MajiangPai.qitiao, MajiangPai.batiao };
 		for (int i = 0; i < erbapaiArray.length; i++) {
-			if (player.ifPengchuForPaiType(erbapaiArray[i])) {
+			if (player.ifPengchu(erbapaiArray[i])) {
 				erbapengShu++;
 			}
 		}
@@ -79,25 +83,25 @@ public class ShoupaixingWuguanJiesuancanshu {
 		fengzipaiArray = new MajiangPai[] { MajiangPai.dongfeng, MajiangPai.nanfeng, MajiangPai.xifeng,
 				MajiangPai.beifeng, MajiangPai.hongzhong, MajiangPai.facai };
 		for (int i = 0; i < fengzipaiArray.length; i++) {
-			if (player.ifPengchuForPaiType(fengzipaiArray[i])) {
+			if (player.ifPengchu(fengzipaiArray[i])) {
 				fengzipengShu++;
 			}
 		}
 		yijiuminggangShu = 0;
 		for (int i = 0; i < yijiupaiArray.length; i++) {
-			if (player.ifGangchuForPaiType(yijiupaiArray[i])) {
+			if (player.ifGangchu(yijiupaiArray[i])) {
 				yijiuminggangShu++;
 			}
 		}
 		erbaminggangShu = 0;
 		for (int i = 0; i < erbapaiArray.length; i++) {
-			if (player.ifGangchuForPaiType(erbapaiArray[i])) {
+			if (player.ifGangchu(erbapaiArray[i])) {
 				erbaminggangShu++;
 			}
 		}
 		fengziminggangShu = 0;
 		for (int i = 0; i < fengzipaiArray.length; i++) {
-			if (player.ifGangchuForPaiType(fengzipaiArray[i])) {
+			if (player.ifGangchu(fengzipaiArray[i])) {
 				fengziminggangShu++;
 			}
 		}
@@ -105,6 +109,27 @@ public class ShoupaixingWuguanJiesuancanshu {
 		chichupaiZuCount = player.countChichupaiZu();
 		pengchupaiZuCount = player.countPengchupaiZu();
 		gangchupaiZuCount = player.countGangchupaiZu();
+		for (int i = 0; i < yijiupaiArray.length; i++) {
+			if (player.ifGangchu(yijiupaiArray[i], GangType.shoupaigangmo)
+					|| player.ifGangchu(yijiupaiArray[i], GangType.gangsigeshoupai)) {
+				yijiuangangCount++;
+			}
+		}
+
+		for (int i = 0; i < erbapaiArray.length; i++) {
+			if (player.ifGangchu(erbapaiArray[i], GangType.shoupaigangmo)
+					|| player.ifGangchu(erbapaiArray[i], GangType.gangsigeshoupai)) {
+				erbaangangCount++;
+			}
+		}
+
+		for (int i = 0; i < fengzipaiArray.length; i++) {
+			if (player.ifGangchu(fengzipaiArray[i], GangType.shoupaigangmo)
+					|| player.ifGangchu(fengzipaiArray[i], GangType.gangsigeshoupai)) {
+				fengziangangCount++;
+			}
+		}
+
 	}
 
 	public boolean isPengchuHongzhong() {
@@ -197,6 +222,18 @@ public class ShoupaixingWuguanJiesuancanshu {
 
 	public int getGangchupaiZuCount() {
 		return gangchupaiZuCount;
+	}
+
+	public int getYijiuangangCount() {
+		return yijiuangangCount;
+	}
+
+	public int getErbaangangCount() {
+		return erbaangangCount;
+	}
+
+	public int getFengziangangCount() {
+		return fengziangangCount;
 	}
 
 	public MajiangPai[] getYijiupaiArray() {

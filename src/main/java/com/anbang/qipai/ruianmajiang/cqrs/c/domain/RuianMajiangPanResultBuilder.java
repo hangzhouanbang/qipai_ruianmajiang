@@ -16,6 +16,9 @@ import com.dml.majiang.player.shoupai.ShoupaiPaiXing;
 
 public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 
+	private int dihu;
+	private boolean dapao;
+
 	@Override
 	public PanResult buildCurrentPanResult(Ju ju, long panFinishTime) {
 		Pan currentPan = ju.getCurrentPan();
@@ -30,11 +33,9 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 		MajiangPlayer huPlayer = currentPan.findHuPlayer();
 		// TODO 要处理不胡,流局
 		RuianMajiangHu hu = (RuianMajiangHu) huPlayer.getHu();
-		RuianMajiangHushu huPlayerHushu = hu.getHushu();
+		RuianMajiangPanPlayerScore huPlayerScore = hu.getScore();
 		ShoupaiPaiXing huShoupaiPaiXing = hu.getShoupaiPaiXing();
 
-		RuianMajiangJuResultBuilder ruianMajiangJuResultBuilder = (RuianMajiangJuResultBuilder) ju.getJuResultBuilder();
-		int dihu = ruianMajiangJuResultBuilder.getDihu();
 		boolean baibanIsGuipai = currentPan.getPublicGuipaiSet().contains(MajiangPai.baiban);
 
 		// 两两结算RuianMajiangPanPlayerScore
@@ -43,13 +44,11 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 		playerIdList.forEach((playerId) -> {
 			RuianMajiangPanPlayerResult playerResult = new RuianMajiangPanPlayerResult();
 			playerResult.setPlayerId(playerId);
-			RuianMajiangPanPlayerScore score = new RuianMajiangPanPlayerScore();
-			playerResult.setScore(score);
 			if (playerId.equals(huPlayer.getId())) {
-				score.setHushu(huPlayerHushu);
+				playerResult.setScore(huPlayerScore);
 			} else {
-				// 计算非胡玩家胡数
-				score.setHushu(RuianMajiangJiesuanCalculator.calculateBestHushuForBuhuPlayer(dihu,
+				// 计算非胡玩家分数
+				playerResult.setScore(RuianMajiangJiesuanCalculator.calculateBestScoreForBuhuPlayer(dapao, dihu,
 						currentPan.findPlayerById(playerId), baibanIsGuipai));
 			}
 			playerResultList.add(playerResult);
@@ -64,7 +63,7 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 				RuianMajiangPanPlayerScore score2 = playerResult2.getScore();
 				String playerId2 = playerResult2.getPlayerId();
 				if (playerId1.equals(huPlayer.getId())) {// 1胡2不胡
-					int jiesuanHushu = quzheng(huPlayerHushu.getValue());
+					int jiesuanHushu = quzheng(huPlayerScore.getValue());
 					// 是不是庄家胡
 					boolean zhuangHu = currentPan.getZhuangPlayerId().equals(playerId1);
 					if (zhuangHu) {// 闲家输庄家
@@ -77,13 +76,13 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 							score1.jiesuanHushu(jiesuanHushu);
 							score2.jiesuanHushu(jiesuanHushu * -1);
 						} else {// 闲家输闲家
-							jiesuanHushu = quzheng(huPlayerHushu.getValue() / 2);
+							jiesuanHushu = quzheng(huPlayerScore.getValue() / 2);
 							score1.jiesuanHushu(jiesuanHushu);
 							score2.jiesuanHushu(jiesuanHushu * -1);
 						}
 					}
 				} else if (playerId2.equals(huPlayer.getId())) {// 2胡1不胡
-					int jiesuanHushu = quzheng(huPlayerHushu.getValue());
+					int jiesuanHushu = quzheng(huPlayerScore.getValue());
 					// 是不是庄家胡
 					boolean zhuangHu = currentPan.getZhuangPlayerId().equals(playerId2);
 					if (zhuangHu) {// 闲家输庄家
@@ -96,7 +95,7 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 							score2.jiesuanHushu(jiesuanHushu);
 							score1.jiesuanHushu(jiesuanHushu * -1);
 						} else {// 闲家输闲家
-							jiesuanHushu = quzheng(huPlayerHushu.getValue() / 2);
+							jiesuanHushu = quzheng(huPlayerScore.getValue() / 2);
 							score2.jiesuanHushu(jiesuanHushu);
 							score1.jiesuanHushu(jiesuanHushu * -1);
 						}
@@ -172,6 +171,22 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 		} else {
 			return shang * 10;
 		}
+	}
+
+	public int getDihu() {
+		return dihu;
+	}
+
+	public void setDihu(int dihu) {
+		this.dihu = dihu;
+	}
+
+	public boolean isDapao() {
+		return dapao;
+	}
+
+	public void setDapao(boolean dapao) {
+		this.dapao = dapao;
 	}
 
 }

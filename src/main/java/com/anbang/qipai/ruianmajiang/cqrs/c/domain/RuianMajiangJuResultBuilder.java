@@ -11,8 +11,6 @@ import com.dml.majiang.pan.result.PanResult;
 
 public class RuianMajiangJuResultBuilder implements JuResultBuilder {
 
-	private int dihu;// TODO 这个要移到盘那里去
-
 	@Override
 	public JuResult buildJuResult(Ju ju) {
 		RuianMajiangJuResult ruianMajiangJuResult = new RuianMajiangJuResult();
@@ -64,14 +62,6 @@ public class RuianMajiangJuResultBuilder implements JuResultBuilder {
 			ruianMajiangJuResult.setPlayerResultList(new ArrayList<>(juPlayerResultMap.values()));
 		}
 		return ruianMajiangJuResult;
-	}
-
-	public int getDihu() {
-		return dihu;
-	}
-
-	public void setDihu(int dihu) {
-		this.dihu = dihu;
 	}
 
 }

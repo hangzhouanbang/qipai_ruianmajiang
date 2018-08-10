@@ -9,7 +9,7 @@ public class RuianMajiangHu implements Hu {
 
 	private ShoupaiPaiXing shoupaiPaiXing;
 
-	private RuianMajiangHushu hushu;
+	private RuianMajiangPanPlayerScore score;
 
 	private boolean zimo;
 
@@ -18,9 +18,9 @@ public class RuianMajiangHu implements Hu {
 	public RuianMajiangHu() {
 	}
 
-	public RuianMajiangHu(ShoupaiPaiXing shoupaiPaiXing, RuianMajiangHushu hushu) {
+	public RuianMajiangHu(ShoupaiPaiXing shoupaiPaiXing, RuianMajiangPanPlayerScore score) {
 		this.shoupaiPaiXing = shoupaiPaiXing;
-		this.hushu = hushu;
+		this.score = score;
 	}
 
 	public ShoupaiPaiXing getShoupaiPaiXing() {
@@ -31,12 +31,12 @@ public class RuianMajiangHu implements Hu {
 		this.shoupaiPaiXing = shoupaiPaiXing;
 	}
 
-	public RuianMajiangHushu getHushu() {
-		return hushu;
+	public RuianMajiangPanPlayerScore getScore() {
+		return score;
 	}
 
-	public void setHushu(RuianMajiangHushu hushu) {
-		this.hushu = hushu;
+	public void setScore(RuianMajiangPanPlayerScore score) {
+		this.score = score;
 	}
 
 	public boolean isZimo() {

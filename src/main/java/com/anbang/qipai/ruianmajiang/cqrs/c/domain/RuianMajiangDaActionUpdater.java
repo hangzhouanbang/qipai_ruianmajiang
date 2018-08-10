@@ -35,14 +35,15 @@ public class RuianMajiangDaActionUpdater implements MajiangPlayerDaActionUpdater
 
 				if (!anyPlayerHu) {
 					// 点炮胡
-					RuianMajiangJuResultBuilder ruianMajiangJuResultBuilder = (RuianMajiangJuResultBuilder) ju
-							.getJuResultBuilder();
+					RuianMajiangPanResultBuilder ruianMajiangJuResultBuilder = (RuianMajiangPanResultBuilder) ju
+							.getCurrentPanResultBuilder();
 					int dihu = ruianMajiangJuResultBuilder.getDihu();
+					boolean dapao = ruianMajiangJuResultBuilder.isDapao();
 					GouXingPanHu gouXingPanHu = ju.getGouXingPanHu();
 					// 先把这张牌放入计算器
 					xiajiaPlayer.getShoupaiCalculator().addPai(daAction.getPai());
-					RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestDianpaoHu(dihu, gouXingPanHu,
-							xiajiaPlayer, baibanIsGuipai, daAction.getPai());
+					RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestDianpaoHu(dapao, dihu,
+							gouXingPanHu, xiajiaPlayer, baibanIsGuipai, daAction.getPai());
 					// 再把这张牌拿出计算器
 					xiajiaPlayer.getShoupaiCalculator().removePai(daAction.getPai());
 					if (bestHu != null) {
