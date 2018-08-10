@@ -66,6 +66,10 @@ public class RuianMajiangPao {
 		value = pao;
 	}
 
+	public int jiesuan(RuianMajiangPao anotherPlayerPao) {
+		return value - anotherPlayerPao.getValue();
+	}
+
 	public boolean isHongzhongPeng() {
 		return hongzhongPeng;
 	}

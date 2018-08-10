@@ -119,10 +119,49 @@ public class RuianMajiangJiesuanCalculator {
 				shoupaiPaiXing);
 		score.setHushu(hushu);
 		if (dapao) {
-			// TODO 计算炮数
+			RuianMajiangPao pao = calculatePao(shoupaixingWuguanJiesuancanshu, shoupaiPaiXing, hu);
+			score.setPao(pao);
 		}
 		score.calculate();
 		return score;
+	}
+
+	private static RuianMajiangPao calculatePao(ShoupaixingWuguanJiesuancanshu shoupaixingWuguanJiesuancanshu,
+			ShoupaiPaiXing shoupaiPaiXing, boolean hu) {
+		RuianMajiangPao pao = new RuianMajiangPao();
+		pao.setBaibanShu(shoupaixingWuguanJiesuancanshu.getBaibanShu());
+		pao.setCaishenShu(shoupaixingWuguanJiesuancanshu.getCaishenShu());
+		boolean facaiAnke = shoupaiPaiXing.hasKeziForPaiType(MajiangPai.facai);
+		pao.setFacaiAnke(facaiAnke);
+		pao.setFacaiGang(shoupaixingWuguanJiesuancanshu.isGangchuFacai());
+		pao.setFacaiPeng(shoupaixingWuguanJiesuancanshu.isPengchuFacai());
+		boolean hongzhongAnke = shoupaiPaiXing.hasKeziForPaiType(MajiangPai.hongzhong);
+		if (hongzhongAnke) {
+			ShoupaiKeziZu hongzhongKeziZu = shoupaiPaiXing.findFirstKeziZuForPaiType(MajiangPai.hongzhong);
+			if (hongzhongKeziZu.countGuipai() == 0) {
+				pao.setHongzhongAnke(true);
+			}
+		}
+
+		pao.setHongzhongGang(shoupaixingWuguanJiesuancanshu.isGangchuHongzhong());
+		pao.setHongzhongPeng(shoupaixingWuguanJiesuancanshu.isPengchuHongzhong());
+		pao.setHu(hu);
+
+		boolean zuofengAnke = shoupaiPaiXing.hasKeziForPaiType(shoupaixingWuguanJiesuancanshu.getMenFengPai());
+		if (zuofengAnke) {
+			ShoupaiKeziZu zuofengKeziZu = shoupaiPaiXing
+					.findFirstKeziZuForPaiType(shoupaixingWuguanJiesuancanshu.getMenFengPai());
+			if (zuofengKeziZu.countGuipai() == 0) {
+				pao.setZuofengAnke(true);
+			}
+		}
+
+		pao.setZuofengGang(shoupaixingWuguanJiesuancanshu.isZuofengGang());
+		pao.setZuofengPeng(shoupaixingWuguanJiesuancanshu.isZuofengPeng());
+
+		pao.calculate();
+
+		return pao;
 	}
 
 	private static RuianMajiangHushu calculateHushu(boolean hu, boolean gangkaiHu, boolean zimoHu, int dihu,
@@ -254,51 +293,6 @@ public class RuianMajiangJiesuanCalculator {
 		hushu.setYijiupengShu(shoupaixingWuguanJiesuancanshu.getYijiupengShu());
 		hushu.setZimoHu(zimoHu);
 		hushu.setZuofengDuizi(shoupaiPaiXing.hasDuiziForPaiType(shoupaixingWuguanJiesuancanshu.getMenFengPai()));
-
-		// pao.setBaibanShu(baibanShu);
-		// pao.setCaishenShu(caishenShu);
-		// pao.setFacaiAnke(facaiAnke);
-		// pao.setFacaiGang(gangchuFacai | facaiAngang);
-		// pao.setFacaiPeng(pengchuFacai);
-		// if (hongzhongAnke) {
-		// ShoupaiKeziZu hongzhongKeziZu =
-		// huPaiShoupaiPaiXing.findFirstKeziZuForPaiType(MajiangPai.hongzhong);
-		// if (hongzhongKeziZu.countGuipai() == 0) {
-		// pao.setHongzhongAnke(true);
-		// }
-		// }
-		//
-		// boolean hongzhongAnGang = false;
-		// if (hongzhongGang) {
-		// ShoupaiGangziZu hongzhongGangziZu = huPaiShoupaiPaiXing
-		// .findFirstGangziZuForPaiType(MajiangPai.hongzhong);
-		// if (hongzhongGangziZu.countGuipai() == 0) {
-		// pao.setHongzhongAnke(true);
-		// }
-		// }
-		//
-		// pao.setHongzhongGang(gangchuHongzhong | hongzhongAnGang);
-		// pao.setHongzhongPeng(pengchuHongzhong);
-		// pao.setHu(true);
-		//
-		// if (zuofengAnke) {
-		// ShoupaiKeziZu zuofengKeziZu =
-		// huPaiShoupaiPaiXing.findFirstKeziZuForPaiType(menFengPai);
-		// if (zuofengKeziZu.countGuipai() == 0) {
-		// pao.setZuofengAnke(true);
-		// }
-		// }
-		//
-		// boolean zuofengAnGangNoCaishen = false;
-		// if (zuofengAnGang) {
-		// ShoupaiGangziZu zuofengGangziZu =
-		// huPaiShoupaiPaiXing.findFirstGangziZuForPaiType(menFengPai);
-		// if (zuofengGangziZu.countGuipai() == 0) {
-		// zuofengAnGangNoCaishen = true;
-		// }
-		// }
-		// pao.setZuofengGang(zuofengGang | zuofengAnGangNoCaishen);
-		// pao.setZuofengPeng(zuofengPeng);
 
 		hushu.calculate();
 		return hushu;

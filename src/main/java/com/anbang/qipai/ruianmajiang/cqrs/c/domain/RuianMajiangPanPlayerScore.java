@@ -28,6 +28,10 @@ public class RuianMajiangPanPlayerScore {
 		jiesuanHushu += delta;
 	}
 
+	public void jiesuanPao(RuianMajiangPao anotherPlayerPao) {
+		jiesuanPao += pao.jiesuan(anotherPlayerPao);
+	}
+
 	public int quzhengJiesuanScore() {
 		return quzheng(jiesuanScore);
 	}
