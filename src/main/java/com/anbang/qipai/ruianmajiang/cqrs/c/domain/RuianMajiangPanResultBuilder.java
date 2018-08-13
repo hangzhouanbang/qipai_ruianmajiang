@@ -63,8 +63,10 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 				RuianMajiangPanPlayerScore score2 = playerResult2.getScore();
 				String playerId2 = playerResult2.getPlayerId();
 				// 结算炮
-				score1.jiesuanPao(score2.getPao());
-				score2.jiesuanPao(score1.getPao());
+				if (dapao) {
+					score1.jiesuanPao(score2.getPao());
+					score2.jiesuanPao(score1.getPao());
+				}
 				if (playerId1.equals(huPlayer.getId())) {// 1胡2不胡
 					int jiesuanHushu = quzheng(huPlayerScore.getValue());
 					// 是不是庄家胡

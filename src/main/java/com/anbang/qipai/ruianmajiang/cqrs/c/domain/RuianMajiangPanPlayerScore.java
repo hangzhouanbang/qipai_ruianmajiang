@@ -29,7 +29,9 @@ public class RuianMajiangPanPlayerScore {
 	}
 
 	public void jiesuanPao(RuianMajiangPao anotherPlayerPao) {
-		jiesuanPao += pao.jiesuan(anotherPlayerPao);
+		if (pao != null) {
+			jiesuanPao += pao.jiesuan(anotherPlayerPao);
+		}
 	}
 
 	public int quzhengJiesuanScore() {
