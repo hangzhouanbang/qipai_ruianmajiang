@@ -18,7 +18,8 @@ import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.JuResultDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGamePlayerDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.PanResultDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangPlayQueryService;
-import com.anbang.qipai.ruianmajiang.msg.service.RuianMajiangJuResultMsgService;
+import com.anbang.qipai.ruianmajiang.msg.service.RuianMajiangGameMsgService;
+import com.anbang.qipai.ruianmajiang.msg.service.RuianMajiangResultMsgService;
 import com.anbang.qipai.ruianmajiang.web.vo.CommonVO;
 import com.anbang.qipai.ruianmajiang.web.vo.JuResultVO;
 import com.anbang.qipai.ruianmajiang.web.vo.PanActionFrameVO;
@@ -50,7 +51,10 @@ public class MajiangController {
 	private GamePlayWsNotifier wsNotifier;
 
 	@Autowired
-	private RuianMajiangJuResultMsgService ruianMajiangJuResultMsgService;
+	private RuianMajiangResultMsgService ruianMajiangResultMsgService;
+
+	@Autowired
+	private RuianMajiangGameMsgService gameMsgService;
 
 	/**
 	 * 当前盘我应该看到的所有信息
@@ -166,7 +170,9 @@ public class MajiangController {
 				Map<String, MajiangGamePlayerDbo> playerMap = majiangPlayQueryService
 						.findGamePlayersAsMap(majiangActionResult.getGameValueObject().getId());
 				JuResultVO juResult = new JuResultVO(juResultDbo, playerMap);
-				ruianMajiangJuResultMsgService.recordJuResult(juResult);
+				ruianMajiangResultMsgService.recordJuResult(juResult);
+
+				gameMsgService.gameFinished(majiangActionResult.getGameValueObject());
 				data.put("queryScope", QueryScope.juResult);
 			} else {
 				for (String otherPlayerId : majiangActionResult.getGameValueObject().allPlayerIds()) {
@@ -176,6 +182,8 @@ public class MajiangController {
 				}
 				data.put("queryScope", QueryScope.panResult);
 			}
+			gameMsgService.panFinished(majiangActionResult.getGameValueObject(),
+					majiangActionResult.getPanActionFrame().getPanAfterAction());
 
 		}
 
