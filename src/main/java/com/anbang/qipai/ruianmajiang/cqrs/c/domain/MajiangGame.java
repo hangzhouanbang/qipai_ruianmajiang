@@ -14,6 +14,7 @@ import com.dml.majiang.pan.publicwaitingplayer.WaitDaPlayerPanPublicWaitingPlaye
 import com.dml.majiang.player.action.chi.ChiPlayerDaPaiChiActionUpdater;
 import com.dml.majiang.player.action.chi.PengganghuFirstChiActionProcessor;
 import com.dml.majiang.player.action.da.DachushoupaiDaActionProcessor;
+import com.dml.majiang.player.action.gang.GangCounter;
 import com.dml.majiang.player.action.gang.GangPlayerMoPaiGangActionUpdater;
 import com.dml.majiang.player.action.gang.HuFirstGangActionProcessor;
 import com.dml.majiang.player.action.guo.DoNothingGuoActionProcessor;
@@ -22,7 +23,7 @@ import com.dml.majiang.player.action.hu.PlayerSetHuHuActionProcessor;
 import com.dml.majiang.player.action.initial.ZhuangMoPaiInitialActionUpdater;
 import com.dml.majiang.player.action.mo.MoGuipaiCounter;
 import com.dml.majiang.player.action.peng.HuFirstPengActionProcessor;
-import com.dml.majiang.player.action.peng.RuianMajiangPengActionUpdater;
+import com.dml.majiang.player.action.peng.PengPlayerDaPaiPengActionUpdater;
 import com.dml.majiang.player.menfeng.RandomMustHasDongPlayersMenFengDeterminer;
 import com.dml.majiang.player.menfeng.ZhuangXiajiaIsDongIfZhuangNotHuPlayersMenFengDeterminer;
 import com.dml.majiang.player.shoupai.gouxing.NoDanpaiOneDuiziGouXingPanHu;
@@ -69,7 +70,7 @@ public class MajiangGame {
 		ju.setChiActionProcessor(new PengganghuFirstChiActionProcessor());
 		ju.setChiActionUpdater(new ChiPlayerDaPaiChiActionUpdater());
 		ju.setPengActionProcessor(new HuFirstPengActionProcessor());
-		ju.setPengActionUpdater(new RuianMajiangPengActionUpdater());
+		ju.setPengActionUpdater(new PengPlayerDaPaiPengActionUpdater());
 		ju.setGangActionProcessor(new HuFirstGangActionProcessor());
 		ju.setGangActionUpdater(new GangPlayerMoPaiGangActionUpdater());
 		ju.setGuoActionProcessor(new DoNothingGuoActionProcessor());
@@ -78,6 +79,7 @@ public class MajiangGame {
 
 		ju.addActionStatisticsListener(new CaizipaiListener());
 		ju.addActionStatisticsListener(new MoGuipaiCounter());
+		ju.addActionStatisticsListener(new GangCounter());
 
 		// 开始第一盘
 		ju.startFirstPan(game.allPlayerIds());
