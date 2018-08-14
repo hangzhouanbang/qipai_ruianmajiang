@@ -15,8 +15,10 @@ import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyToNextPanResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.MajiangPlayCmdService;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.PlayerAuthService;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.JuResultDbo;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGamePlayerDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.PanResultDbo;
+import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangGameQueryService;
 import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangPlayQueryService;
 import com.anbang.qipai.ruianmajiang.msg.service.RuianMajiangGameMsgService;
 import com.anbang.qipai.ruianmajiang.msg.service.RuianMajiangResultMsgService;
@@ -43,6 +45,9 @@ public class MajiangController {
 
 	@Autowired
 	private MajiangPlayQueryService majiangPlayQueryService;
+
+	@Autowired
+	private MajiangGameQueryService majiangGameQueryService;
 
 	@Autowired
 	private PlayerAuthService playerAuthService;
@@ -105,9 +110,10 @@ public class MajiangController {
 		CommonVO vo = new CommonVO();
 		Map data = new HashMap();
 		vo.setData(data);
+		MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
 		JuResultDbo juResultDbo = majiangPlayQueryService.findJuResultDbo(gameId);
 		Map<String, MajiangGamePlayerDbo> playerMap = majiangPlayQueryService.findGamePlayersAsMap(gameId);
-		data.put("juResult", new JuResultVO(juResultDbo, playerMap));
+		data.put("juResult", new JuResultVO(juResultDbo, playerMap, majiangGameDbo.getPanshu()));
 		return vo;
 	}
 
@@ -165,11 +171,13 @@ public class MajiangController {
 						wsNotifier.notifyToQuery(otherPlayerId, QueryScope.juResult.name());
 					}
 				}
+				MajiangGameDbo majiangGameDbo = majiangGameQueryService
+						.findMajiangGameDboById(majiangActionResult.getGameValueObject().getId());
 				JuResultDbo juResultDbo = majiangPlayQueryService
 						.findJuResultDbo(majiangActionResult.getGameValueObject().getId());
 				Map<String, MajiangGamePlayerDbo> playerMap = majiangPlayQueryService
 						.findGamePlayersAsMap(majiangActionResult.getGameValueObject().getId());
-				JuResultVO juResult = new JuResultVO(juResultDbo, playerMap);
+				JuResultVO juResult = new JuResultVO(juResultDbo, playerMap, majiangGameDbo.getPanshu());
 				ruianMajiangResultMsgService.recordJuResult(juResult);
 
 				gameMsgService.gameFinished(majiangActionResult.getGameValueObject());
