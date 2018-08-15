@@ -12,6 +12,10 @@ public class PanResultVO {
 
 	private List<RuianMajiangPanPlayerResultVO> playerResultList;
 
+	private boolean hu;
+
+	private int panNo;
+
 	private long finishTime;
 
 	public PanResultVO(PanResultDbo dbo, Map<String, MajiangGamePlayerDbo> playerMap) {
@@ -20,6 +24,8 @@ public class PanResultVO {
 		list.forEach((panPlayerResult) -> playerResultList
 				.add(new RuianMajiangPanPlayerResultVO(playerMap.get(panPlayerResult.getPlayerId()),
 						dbo.getZhuangPlayerId(), dbo.isZimo(), dbo.getDianpaoPlayerId(), panPlayerResult)));
+		hu = dbo.isHu();
+		panNo=dbo.getPanNo();
 		finishTime = dbo.getFinishTime();
 	}
 
@@ -27,8 +33,20 @@ public class PanResultVO {
 		return playerResultList;
 	}
 
+	public boolean isHu() {
+		return hu;
+	}
+
 	public long getFinishTime() {
 		return finishTime;
+	}
+
+	public int getPanNo() {
+		return panNo;
+	}
+
+	public void setPanNo(int panNo) {
+		this.panNo = panNo;
 	}
 
 }
