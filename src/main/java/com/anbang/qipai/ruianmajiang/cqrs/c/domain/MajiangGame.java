@@ -7,7 +7,6 @@ import com.dml.majiang.ju.nextpan.AllPlayersReadyCreateNextPanDeterminer;
 import com.dml.majiang.ju.nextpan.ClassicStartNextPanProcess;
 import com.dml.majiang.ju.result.JuResult;
 import com.dml.majiang.pan.avaliablepai.NoHuapaiRandomAvaliablePaiFiller;
-import com.dml.majiang.pan.finish.PlayerHuOrNoPaiLeftPanFinishiDeterminer;
 import com.dml.majiang.pan.frame.PanActionFrame;
 import com.dml.majiang.pan.guipai.RandomGuipaiDeterminer;
 import com.dml.majiang.pan.publicwaitingplayer.WaitDaPlayerPanPublicWaitingPlayerDeterminer;
@@ -18,7 +17,6 @@ import com.dml.majiang.player.action.gang.GangCounter;
 import com.dml.majiang.player.action.gang.GangPlayerMoPaiGangActionUpdater;
 import com.dml.majiang.player.action.gang.HuFirstGangActionProcessor;
 import com.dml.majiang.player.action.guo.DoNothingGuoActionProcessor;
-import com.dml.majiang.player.action.guo.PlayerDaPaiOrXiajiaMoPaiGuoActionUpdater;
 import com.dml.majiang.player.action.hu.PlayerSetHuHuActionProcessor;
 import com.dml.majiang.player.action.initial.ZhuangMoPaiInitialActionUpdater;
 import com.dml.majiang.player.action.mo.MoGuipaiCounter;
@@ -50,7 +48,7 @@ public class MajiangGame {
 		ju.setAvaliablePaiFiller(new NoHuapaiRandomAvaliablePaiFiller(currentTime + 1));
 		ju.setGuipaiDeterminer(new RandomGuipaiDeterminer(currentTime + 2));
 		ju.setFaPaiStrategy(new RuianMajiangFaPaiStrategy(16));
-		ju.setCurrentPanFinishiDeterminer(new PlayerHuOrNoPaiLeftPanFinishiDeterminer());
+		ju.setCurrentPanFinishiDeterminer(new RuianMajiangPanFinishiDeterminer());
 		ju.setGouXingPanHu(new NoDanpaiOneDuiziGouXingPanHu());
 		ju.setCurrentPanPublicWaitingPlayerDeterminer(new WaitDaPlayerPanPublicWaitingPlayerDeterminer());
 		RuianMajiangPanResultBuilder ruianMajiangPanResultBuilder = new RuianMajiangPanResultBuilder();
@@ -74,7 +72,7 @@ public class MajiangGame {
 		ju.setGangActionProcessor(new HuFirstGangActionProcessor());
 		ju.setGangActionUpdater(new GangPlayerMoPaiGangActionUpdater());
 		ju.setGuoActionProcessor(new DoNothingGuoActionProcessor());
-		ju.setGuoActionUpdater(new PlayerDaPaiOrXiajiaMoPaiGuoActionUpdater());
+		ju.setGuoActionUpdater(new RuianMajiangGuoActionUpdater());
 		ju.setHuActionProcessor(new PlayerSetHuHuActionProcessor());
 
 		ju.addActionStatisticsListener(new CaizipaiListener());

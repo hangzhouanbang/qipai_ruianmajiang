@@ -12,15 +12,17 @@ public class JuResultVO {
 
 	private String dayingjiaId;
 	private String datuhaoId;
+	private int panshu;
 	private List<RuianMajiangJuPlayerResultVO> playerResultList;
 
 	private PanResultVO lastPanResult;
 
-	public JuResultVO(JuResultDbo juResultDbo, Map<String, MajiangGamePlayerDbo> playerMap) {
+	public JuResultVO(JuResultDbo juResultDbo, Map<String, MajiangGamePlayerDbo> playerMap, int panshu) {
 		RuianMajiangJuResult ruianMajiangJuResult = juResultDbo.getJuResult();
 		dayingjiaId = ruianMajiangJuResult.getDayingjiaId();
 		datuhaoId = ruianMajiangJuResult.getDatuhaoId();
 		lastPanResult = new PanResultVO(juResultDbo.getLastPanResult(), playerMap);
+		this.panshu = panshu;
 		playerResultList = new ArrayList<>();
 		ruianMajiangJuResult.getPlayerResultList().forEach((juPlayerResult) -> playerResultList
 				.add(new RuianMajiangJuPlayerResultVO(juPlayerResult, playerMap.get(juPlayerResult.getPlayerId()))));
@@ -56,6 +58,14 @@ public class JuResultVO {
 
 	public void setLastPanResult(PanResultVO lastPanResult) {
 		this.lastPanResult = lastPanResult;
+	}
+
+	public int getPanshu() {
+		return panshu;
+	}
+
+	public void setPanshu(int panshu) {
+		this.panshu = panshu;
 	}
 
 }

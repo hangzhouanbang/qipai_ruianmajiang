@@ -25,7 +25,7 @@ public class PanResultVO {
 				.add(new RuianMajiangPanPlayerResultVO(playerMap.get(panPlayerResult.getPlayerId()),
 						dbo.getZhuangPlayerId(), dbo.isZimo(), dbo.getDianpaoPlayerId(), panPlayerResult)));
 		hu = dbo.isHu();
-		panNo=dbo.getPanNo();
+		panNo = dbo.getPanNo();
 		finishTime = dbo.getFinishTime();
 	}
 
@@ -43,10 +43,6 @@ public class PanResultVO {
 
 	public int getPanNo() {
 		return panNo;
-	}
-
-	public void setPanNo(int panNo) {
-		this.panNo = panNo;
 	}
 
 }

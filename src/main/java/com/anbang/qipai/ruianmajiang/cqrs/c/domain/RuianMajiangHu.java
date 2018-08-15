@@ -13,6 +13,10 @@ public class RuianMajiangHu implements Hu {
 
 	private boolean zimo;
 
+	private boolean dianpao;
+
+	private boolean qianggang;
+
 	private String dianpaoPlayerId;
 
 	public RuianMajiangHu() {
@@ -45,6 +49,22 @@ public class RuianMajiangHu implements Hu {
 
 	public void setZimo(boolean zimo) {
 		this.zimo = zimo;
+	}
+
+	public boolean isDianpao() {
+		return dianpao;
+	}
+
+	public void setDianpao(boolean dianpao) {
+		this.dianpao = dianpao;
+	}
+
+	public boolean isQianggang() {
+		return qianggang;
+	}
+
+	public void setQianggang(boolean qianggang) {
+		this.qianggang = qianggang;
 	}
 
 	public String getDianpaoPlayerId() {

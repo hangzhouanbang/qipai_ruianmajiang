@@ -1,6 +1,8 @@
 package com.anbang.qipai.ruianmajiang.msg.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,7 @@ import org.springframework.messaging.support.MessageBuilder;
 
 import com.anbang.qipai.ruianmajiang.msg.channel.RuianMajiangGameSource;
 import com.anbang.qipai.ruianmajiang.msg.msjobj.CommonMO;
+import com.dml.majiang.pan.frame.PanValueObject;
 import com.dml.mpgame.game.GamePlayer;
 import com.dml.mpgame.game.GameValueObject;
 
@@ -37,4 +40,25 @@ public class RuianMajiangGameMsgService {
 		}
 	}
 
+	public void gameFinished(GameValueObject gameValueObject) {
+		CommonMO mo = new CommonMO();
+		mo.setMsg("ju finished");
+		Map data = new HashMap();
+		data.put("gameId", gameValueObject.getId());
+		mo.setData(data);
+		ruianMajiangGameSource.ruianMajiangGame().send(MessageBuilder.withPayload(mo).build());
+	}
+
+	public void panFinished(GameValueObject gameValueObject, PanValueObject panAfterAction) {
+		CommonMO mo = new CommonMO();
+		mo.setMsg("pan finished");
+		Map data = new HashMap();
+		data.put("gameId", gameValueObject.getId());
+		data.put("no", panAfterAction.getNo());
+		List<String> playerIds = new ArrayList<>();
+		gameValueObject.getPlayers().forEach((gamePlayer) -> playerIds.add(gamePlayer.getId()));
+		data.put("playerIds", playerIds);
+		mo.setData(data);
+		ruianMajiangGameSource.ruianMajiangGame().send(MessageBuilder.withPayload(mo).build());
+	}
 }

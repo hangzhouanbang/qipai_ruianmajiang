@@ -22,7 +22,7 @@ spring:
                   ms: 5
                 batch:
                   size: 16384
-          ruianMajiangJuResult:
+          ruianMajiangResult:
             producer:
               configuration:
                 request:
@@ -38,8 +38,8 @@ spring:
           contentType: application/json
           producer:
             partitionCount: 1
-        ruianMajiangJuResult:
-          destination: ruianMajiangJuResult
+        ruianMajiangResult:
+          destination: ruianMajiangResult
           contentType: application/json
           producer:
             partitionCount: 1
