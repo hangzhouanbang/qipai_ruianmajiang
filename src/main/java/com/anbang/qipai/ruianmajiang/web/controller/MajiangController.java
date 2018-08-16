@@ -180,7 +180,7 @@ public class MajiangController {
 				JuResultVO juResult = new JuResultVO(juResultDbo, playerMap, majiangGameDbo.getPanshu());
 				ruianMajiangResultMsgService.recordJuResult(juResult);
 
-				gameMsgService.gameFinished(majiangActionResult.getGameValueObject());
+				gameMsgService.gameFinished(majiangActionResult.getGameValueObject().getId());
 				data.put("queryScope", QueryScope.juResult);
 			} else {
 				for (String otherPlayerId : majiangActionResult.getGameValueObject().allPlayerIds()) {

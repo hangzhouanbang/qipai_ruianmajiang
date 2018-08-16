@@ -273,6 +273,11 @@ public class GameController {
 			return vo;
 		}
 
+		// 如果游戏结束，移除房间
+		if (voteToFinishResult.getJuResult() != null) {
+			gameMsgService.gameFinished(voteToFinishResult.getVoteValueObject().getGameId());
+		}
+
 		majiangGameQueryService.launchFinishVote(voteToFinishResult);
 		data.put("queryScope", QueryScope.gameFinishVote);
 		// 通知其他人来投票
@@ -307,6 +312,11 @@ public class GameController {
 			vo.setSuccess(false);
 			vo.setMsg(e.getClass().getName());
 			return vo;
+		}
+
+		// 如果游戏结束，移除房间
+		if (voteToFinishResult.getJuResult() != null) {
+			gameMsgService.gameFinished(voteToFinishResult.getVoteValueObject().getGameId());
 		}
 
 		majiangGameQueryService.voteToFinish(voteToFinishResult);

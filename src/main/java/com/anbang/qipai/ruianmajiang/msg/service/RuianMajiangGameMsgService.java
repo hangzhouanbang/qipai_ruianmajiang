@@ -40,11 +40,11 @@ public class RuianMajiangGameMsgService {
 		}
 	}
 
-	public void gameFinished(GameValueObject gameValueObject) {
+	public void gameFinished(String gameId) {
 		CommonMO mo = new CommonMO();
 		mo.setMsg("ju finished");
 		Map data = new HashMap();
-		data.put("gameId", gameValueObject.getId());
+		data.put("gameId", gameId);
 		mo.setData(data);
 		ruianMajiangGameSource.ruianMajiangGame().send(MessageBuilder.withPayload(mo).build());
 	}
