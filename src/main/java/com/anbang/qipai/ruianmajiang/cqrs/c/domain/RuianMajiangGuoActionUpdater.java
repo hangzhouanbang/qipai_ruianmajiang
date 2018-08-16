@@ -36,7 +36,8 @@ public class RuianMajiangGuoActionUpdater implements MajiangPlayerGuoActionUpdat
 
 			if ((avaliablePaiLeft - liupai) < playersCount) {// 进入流局前最后4张
 				// 打牌那家的下家摸牌
-				MajiangPlayer xiajiaPlayer = currentPan.findXiajia(player);
+				MajiangPlayer xiajiaPlayer = currentPan
+						.findXiajia(currentPan.findPlayerById(action.getActionPlayerId()));
 				xiajiaPlayer.addActionCandidate(new MajiangMoAction(xiajiaPlayer.getId(), new LundaoMopai()));
 			} else {
 				// 那要我打牌
@@ -45,7 +46,8 @@ public class RuianMajiangGuoActionUpdater implements MajiangPlayerGuoActionUpdat
 		} else if (action.getType().equals(MajiangPlayerActionType.da)) {// 过的是别人打出牌之后我可以吃碰杠胡
 			if (currentPan.allPlayerHasNoActionCandidates()) {// 如果所有玩家啥也干不了
 				// 打牌那家的下家摸牌
-				MajiangPlayer xiajiaPlayer = currentPan.findXiajia(player);
+				MajiangPlayer xiajiaPlayer = currentPan
+						.findXiajia(currentPan.findPlayerById(action.getActionPlayerId()));
 				xiajiaPlayer.addActionCandidate(new MajiangMoAction(xiajiaPlayer.getId(), new LundaoMopai()));
 			}
 		} else {

@@ -458,6 +458,7 @@ public class RuianMajiangJiesuanCalculator {
 
 	private static List<ShoupaiPaiXing> calculateAllShoupaiPaiXingForGouXingWithHupai(GouXing gouXing,
 			ShoupaiCalculator shoupaiCalculator, GuipaiDangPai[] guipaiDangPaiArray, MajiangPai huPai) {
+		boolean sancaishen = (guipaiDangPaiArray.length == 3);
 		List<ShoupaiPaiXing> huPaiShoupaiPaiXingList = new ArrayList<>();
 		// 计算牌型
 		List<PaiXing> paiXingList = shoupaiCalculator.calculateAllPaiXingFromGouXing(gouXing);
@@ -468,13 +469,13 @@ public class RuianMajiangJiesuanCalculator {
 			while (i.hasNext()) {
 				ShoupaiPaiXing shoupaiPaiXing = i.next();
 				for (ShoupaiKeziZu shoupaiKeziZu : shoupaiPaiXing.getKeziList()) {
-					if (shoupaiKeziZu.countGuipai() > 1) {
+					if (shoupaiKeziZu.countGuipaiDangQitapai() > (sancaishen ? 2 : 1)) {
 						i.remove();
 						break;
 					}
 				}
 				for (ShoupaiGangziZu shoupaiGangziZu : shoupaiPaiXing.getGangziList()) {
-					if (shoupaiGangziZu.countGuipai() > 1) {
+					if (shoupaiGangziZu.countGuipaiDangQitapai() > (sancaishen ? 2 : 1)) {
 						i.remove();
 						break;
 					}
@@ -494,6 +495,7 @@ public class RuianMajiangJiesuanCalculator {
 
 	private static List<ShoupaiPaiXing> calculateAllShoupaiPaiXingForGouXingWithoutHupai(GouXing gouXing,
 			ShoupaiCalculator shoupaiCalculator, GuipaiDangPai[] guipaiDangPaiArray) {
+		boolean sancaishen = (guipaiDangPaiArray.length == 3);
 		List<ShoupaiPaiXing> huPaiShoupaiPaiXingList = new ArrayList<>();
 		// 计算牌型
 		List<PaiXing> paiXingList = shoupaiCalculator.calculateAllPaiXingFromGouXing(gouXing);
@@ -504,13 +506,13 @@ public class RuianMajiangJiesuanCalculator {
 			while (i.hasNext()) {
 				ShoupaiPaiXing shoupaiPaiXing = i.next();
 				for (ShoupaiKeziZu shoupaiKeziZu : shoupaiPaiXing.getKeziList()) {
-					if (shoupaiKeziZu.countGuipai() > 1) {
+					if (shoupaiKeziZu.countGuipaiDangQitapai() > (sancaishen ? 2 : 1)) {
 						i.remove();
 						break;
 					}
 				}
 				for (ShoupaiGangziZu shoupaiGangziZu : shoupaiPaiXing.getGangziList()) {
-					if (shoupaiGangziZu.countGuipai() > 1) {
+					if (shoupaiGangziZu.countGuipaiDangQitapai() > (sancaishen ? 2 : 1)) {
 						i.remove();
 						break;
 					}
