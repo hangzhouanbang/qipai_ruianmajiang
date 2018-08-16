@@ -50,8 +50,12 @@ public class MajiangGameManager {
 	}
 
 	public RuianMajiangJuResult finishMajiangGame(String gameId) {
-		MajiangGame game = gameIdMajiangGameMap.get(gameId);
-		return (RuianMajiangJuResult) game.finishJu();
+		MajiangGame game = gameIdMajiangGameMap.remove(gameId);
+		if (game.getJu() != null) {
+			return (RuianMajiangJuResult) game.finishJu();
+		} else {
+			return null;
+		}
 	}
 
 }
