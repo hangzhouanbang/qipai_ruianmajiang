@@ -96,7 +96,7 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 				JuezhangStatisticsListener juezhangStatisticsListener = ju.getActionStatisticsListenerManager()
 						.findListener(JuezhangStatisticsListener.class);
 				for (MajiangPai pai : fangruShoupaiList) {
-					if (juezhangStatisticsListener.ifJuezhang(pai)) {
+					if (MajiangPai.isFengpai(pai) && juezhangStatisticsListener.ifJuezhang(pai)) {
 						player.addActionCandidate(new MajiangDaAction(player.getId(), pai));
 					}
 				}
