@@ -112,6 +112,7 @@ public class MajiangController {
 		vo.setData(data);
 		MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
 		JuResultDbo juResultDbo = majiangPlayQueryService.findJuResultDbo(gameId);
+		gameMsgService.gameFinished(gameId);
 		Map<String, MajiangGamePlayerDbo> playerMap = majiangPlayQueryService.findGamePlayersAsMap(gameId);
 		data.put("juResult", new JuResultVO(juResultDbo, playerMap, majiangGameDbo.getPanshu()));
 		return vo;
@@ -180,7 +181,6 @@ public class MajiangController {
 				JuResultVO juResult = new JuResultVO(juResultDbo, playerMap, majiangGameDbo.getPanshu());
 				ruianMajiangResultMsgService.recordJuResult(juResult);
 
-				gameMsgService.gameFinished(majiangActionResult.getGameValueObject().getId());
 				data.put("queryScope", QueryScope.juResult);
 			} else {
 				for (String otherPlayerId : majiangActionResult.getGameValueObject().allPlayerIds()) {

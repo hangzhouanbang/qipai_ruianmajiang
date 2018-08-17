@@ -273,11 +273,6 @@ public class GameController {
 			return vo;
 		}
 
-		// 如果游戏结束，移除房间
-		if (voteToFinishResult.getJuResult() != null) {
-			gameMsgService.gameFinished(voteToFinishResult.getVoteValueObject().getGameId());
-		}
-
 		majiangGameQueryService.launchFinishVote(voteToFinishResult);
 		data.put("queryScope", QueryScope.gameFinishVote);
 		// 通知其他人来投票
@@ -314,11 +309,6 @@ public class GameController {
 			return vo;
 		}
 
-		// 如果游戏结束，移除房间
-		if (voteToFinishResult.getJuResult() != null) {
-			gameMsgService.gameFinished(voteToFinishResult.getVoteValueObject().getGameId());
-		}
-
 		majiangGameQueryService.voteToFinish(voteToFinishResult);
 		data.put("queryScope", QueryScope.gameFinishVote);
 		// 通知其他人来投票
@@ -340,6 +330,7 @@ public class GameController {
 
 		CommonVO vo = new CommonVO();
 		GameFinishVoteDbo gameFinishVoteDbo = majiangGameQueryService.findGameFinishVoteDbo(gameId);
+		gameMsgService.gameFinished(gameId);
 		Map data = new HashMap();
 		data.put("vote", gameFinishVoteDbo.getVote());
 		vo.setData(data);
