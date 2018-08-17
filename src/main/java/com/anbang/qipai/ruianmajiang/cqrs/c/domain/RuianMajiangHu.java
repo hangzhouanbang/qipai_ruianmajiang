@@ -17,6 +17,8 @@ public class RuianMajiangHu implements Hu {
 
 	private boolean qianggang;
 
+	private boolean huxingHu;// 三财神推倒就不是胡形的胡
+
 	private String dianpaoPlayerId;
 
 	public RuianMajiangHu() {
@@ -25,6 +27,12 @@ public class RuianMajiangHu implements Hu {
 	public RuianMajiangHu(ShoupaiPaiXing shoupaiPaiXing, RuianMajiangPanPlayerScore score) {
 		this.shoupaiPaiXing = shoupaiPaiXing;
 		this.score = score;
+		this.huxingHu = true;
+	}
+
+	public RuianMajiangHu(RuianMajiangPanPlayerScore score) {
+		this.score = score;
+		this.huxingHu = false;
 	}
 
 	public ShoupaiPaiXing getShoupaiPaiXing() {
@@ -65,6 +73,14 @@ public class RuianMajiangHu implements Hu {
 
 	public void setQianggang(boolean qianggang) {
 		this.qianggang = qianggang;
+	}
+
+	public boolean isHuxingHu() {
+		return huxingHu;
+	}
+
+	public void setHuxingHu(boolean huxingHu) {
+		this.huxingHu = huxingHu;
 	}
 
 	public String getDianpaoPlayerId() {

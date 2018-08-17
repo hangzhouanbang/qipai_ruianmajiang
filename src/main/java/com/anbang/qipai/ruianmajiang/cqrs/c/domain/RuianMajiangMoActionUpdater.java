@@ -9,6 +9,7 @@ import com.dml.majiang.player.action.hu.MajiangHuAction;
 import com.dml.majiang.player.action.mo.LundaoMopai;
 import com.dml.majiang.player.action.mo.MajiangMoAction;
 import com.dml.majiang.player.action.mo.MajiangPlayerMoActionUpdater;
+import com.dml.majiang.player.action.mo.MoGuipaiCounter;
 import com.dml.majiang.player.shoupai.gouxing.GouXingPanHu;
 
 public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater {
@@ -65,12 +66,15 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 				bestHu.setZimo(true);
 				player.addActionCandidate(new MajiangHuAction(player.getId(), bestHu));
 			} else {
-				// // 非胡牌型特殊胡-三财神
-				// MoGuipaiCounter moGuipaiCounter =
-				// ju.getActionStatisticsListenerManager().findListener(MoGuipaiCounter.class);
-				// if (moGuipaiCounter.getCount() == 3) {
-				//
-				// }
+				// 非胡牌型特殊胡-三财神
+				MoGuipaiCounter moGuipaiCounter = ju.getActionStatisticsListenerManager()
+						.findListener(MoGuipaiCounter.class);
+				if (moGuipaiCounter.getCount() == 3) {
+					RuianMajiangPanPlayerScore score = RuianMajiangJiesuanCalculator
+							.calculateBestScoreForBuhuPlayer(dapao, dihu, player, baibanIsGuipai);
+					RuianMajiangHu sancaishenHu = new RuianMajiangHu(score);
+					player.addActionCandidate(new MajiangHuAction(player.getId(), sancaishenHu));
+				}
 			}
 
 			// 需要有“过”

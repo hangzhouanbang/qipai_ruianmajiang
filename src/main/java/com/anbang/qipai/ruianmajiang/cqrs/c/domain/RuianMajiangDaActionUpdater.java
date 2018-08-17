@@ -51,13 +51,6 @@ public class RuianMajiangDaActionUpdater implements MajiangPlayerDaActionUpdater
 						bestHu.setDianpaoPlayerId(player.getId());
 						xiajiaPlayer.addActionCandidate(new MajiangHuAction(xiajiaPlayer.getId(), bestHu));
 						anyPlayerHu = true;
-					} else {
-						// // 非胡牌型特殊胡-三财神
-						// MoGuipaiCounter moGuipaiCounter =
-						// ju.getActionStatisticsListenerManager().findListener(MoGuipaiCounter.class);
-						// if (moGuipaiCounter.getCount() == 3) {
-						//
-						// }
 					}
 				}
 
