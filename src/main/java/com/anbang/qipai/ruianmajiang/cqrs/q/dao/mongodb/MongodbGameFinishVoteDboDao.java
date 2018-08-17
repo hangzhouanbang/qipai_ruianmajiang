@@ -37,4 +37,9 @@ public class MongodbGameFinishVoteDboDao implements GameFinishVoteDboDao {
 		return repository.findOneByGameId(gameId);
 	}
 
+	@Override
+	public void removeGameFinishVoteDboByGameId(String gameId) {
+		mongoTemplate.remove(new Query(Criteria.where("gameId").is(gameId)), GameFinishVoteDbo.class);
+	}
+
 }

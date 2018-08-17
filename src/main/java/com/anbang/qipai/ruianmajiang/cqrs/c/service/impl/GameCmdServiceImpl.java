@@ -15,6 +15,7 @@ import com.dml.mpgame.game.GameValueObject;
 import com.dml.mpgame.game.finish.GameFinishVoteValueObject;
 import com.dml.mpgame.game.finish.MostPlayersWinVoteCalculator;
 import com.dml.mpgame.game.finish.VoteOption;
+import com.dml.mpgame.game.finish.VoteResult;
 import com.dml.mpgame.game.join.FixedNumberOfPlayersGameJoinStrategy;
 import com.dml.mpgame.game.leave.HostGameLeaveStrategy;
 import com.dml.mpgame.game.ready.FixedNumberOfPlayersGameReadyStrategy;
@@ -111,7 +112,8 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
 			gameFinishVoteValueObject = gameServer.voteToFinishGame(playerId, VoteOption.no);
 		}
 		voteToFinishResult.setVoteValueObject(gameFinishVoteValueObject);
-		if (gameFinishVoteValueObject.getResult() != null) {
+		if (gameFinishVoteValueObject.getResult() != null
+				&& VoteResult.yes.equals(gameFinishVoteValueObject.getResult())) {
 			MajiangGameManager majiangGameManager = singletonEntityRepository.getEntity(MajiangGameManager.class);
 			RuianMajiangJuResult juResult = majiangGameManager.finishMajiangGame(gameFinishVoteValueObject.getGameId());
 			voteToFinishResult.setJuResult(juResult);
