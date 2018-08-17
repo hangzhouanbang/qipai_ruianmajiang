@@ -3,7 +3,7 @@ package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 import com.dml.majiang.ju.Ju;
 import com.dml.majiang.pan.Pan;
 import com.dml.majiang.pan.finish.CurrentPanFinishiDeterminer;
-import com.dml.majiang.player.action.gang.GangCounter;
+import com.dml.majiang.player.action.listener.gang.GangCounter;
 
 public class RuianMajiangPanFinishiDeterminer implements CurrentPanFinishiDeterminer {
 

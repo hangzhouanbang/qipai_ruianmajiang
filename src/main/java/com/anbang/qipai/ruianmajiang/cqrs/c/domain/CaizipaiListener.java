@@ -2,9 +2,9 @@ package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
 import com.dml.majiang.ju.Ju;
 import com.dml.majiang.player.action.da.MajiangDaAction;
-import com.dml.majiang.player.action.da.MajiangPlayerDaActionStatisticsListener;
+import com.dml.majiang.player.action.listener.da.MajiangPlayerDaActionStatisticsListener;
+import com.dml.majiang.player.action.listener.peng.MajiangPlayerPengActionStatisticsListener;
 import com.dml.majiang.player.action.peng.MajiangPengAction;
-import com.dml.majiang.player.action.peng.MajiangPlayerPengActionStatisticsListener;
 
 /**
  * 统计拆字牌

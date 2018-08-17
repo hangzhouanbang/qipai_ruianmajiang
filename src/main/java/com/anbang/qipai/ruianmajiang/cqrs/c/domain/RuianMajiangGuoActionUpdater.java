@@ -1,14 +1,19 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
+import java.util.List;
+
 import com.dml.majiang.ju.Ju;
+import com.dml.majiang.pai.MajiangPai;
 import com.dml.majiang.pan.Pan;
 import com.dml.majiang.pan.frame.PanActionFrame;
 import com.dml.majiang.player.MajiangPlayer;
 import com.dml.majiang.player.action.MajiangPlayerAction;
 import com.dml.majiang.player.action.MajiangPlayerActionType;
-import com.dml.majiang.player.action.gang.GangCounter;
+import com.dml.majiang.player.action.da.MajiangDaAction;
 import com.dml.majiang.player.action.guo.MajiangGuoAction;
 import com.dml.majiang.player.action.guo.MajiangPlayerGuoActionUpdater;
+import com.dml.majiang.player.action.listener.comprehensive.JuezhangStatisticsListener;
+import com.dml.majiang.player.action.listener.gang.GangCounter;
 import com.dml.majiang.player.action.mo.LundaoMopai;
 import com.dml.majiang.player.action.mo.MajiangMoAction;
 
@@ -41,7 +46,17 @@ public class RuianMajiangGuoActionUpdater implements MajiangPlayerGuoActionUpdat
 				xiajiaPlayer.addActionCandidate(new MajiangMoAction(xiajiaPlayer.getId(), new LundaoMopai()));
 			} else {
 				// 那要我打牌
-				player.generateDaActions();
+				List<MajiangPai> fangruShoupaiList = player.getFangruShoupaiList();
+				JuezhangStatisticsListener juezhangStatisticsListener = ju.getActionStatisticsListenerManager()
+						.findListener(JuezhangStatisticsListener.class);
+				for (MajiangPai pai : fangruShoupaiList) {
+					if (juezhangStatisticsListener.ifJuezhang(pai)) {
+						player.addActionCandidate(new MajiangDaAction(player.getId(), pai));
+					}
+				}
+				if (player.getActionCandidates().isEmpty()) {
+					player.generateDaActions();
+				}
 			}
 		} else if (action.getType().equals(MajiangPlayerActionType.da)) {// 过的是别人打出牌之后我可以吃碰杠胡
 			if (currentPan.allPlayerHasNoActionCandidates()) {// 如果所有玩家啥也干不了
