@@ -65,7 +65,7 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 			boolean dapao = ruianMajiangPanResultBuilder.isDapao();
 			GouXingPanHu gouXingPanHu = ju.getGouXingPanHu();
 			RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestZimoHu(dapao, dihu, gouXingPanHu, player,
-					moAction, baibanIsGuipai);
+					moAction, baibanIsGuipai);// TODO 天胡 地胡
 			if (bestHu != null) {
 				bestHu.setZimo(true);
 				player.addActionCandidate(new MajiangHuAction(player.getId(), bestHu));
@@ -96,7 +96,7 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 				JuezhangStatisticsListener juezhangStatisticsListener = ju.getActionStatisticsListenerManager()
 						.findListener(JuezhangStatisticsListener.class);
 				for (MajiangPai pai : fangruShoupaiList) {
-					if (juezhangStatisticsListener.ifJuezhang(pai)) {
+					if (MajiangPai.isFengpai(pai) && juezhangStatisticsListener.ifJuezhang(pai)) {
 						player.addActionCandidate(new MajiangDaAction(player.getId(), pai));
 					}
 				}
