@@ -16,6 +16,7 @@ import com.dml.majiang.player.action.gang.HuFirstGangActionProcessor;
 import com.dml.majiang.player.action.guo.DoNothingGuoActionProcessor;
 import com.dml.majiang.player.action.hu.PlayerSetHuHuActionProcessor;
 import com.dml.majiang.player.action.initial.ZhuangMoPaiInitialActionUpdater;
+import com.dml.majiang.player.action.listener.comprehensive.DianpaoDihuOpportunityDetector;
 import com.dml.majiang.player.action.listener.comprehensive.JuezhangStatisticsListener;
 import com.dml.majiang.player.action.listener.gang.GangCounter;
 import com.dml.majiang.player.action.listener.mo.MoGuipaiCounter;
@@ -77,6 +78,7 @@ public class MajiangGame {
 		ju.addActionStatisticsListener(new JuezhangStatisticsListener());
 		ju.addActionStatisticsListener(new MoGuipaiCounter());
 		ju.addActionStatisticsListener(new GangCounter());
+		ju.addActionStatisticsListener(new DianpaoDihuOpportunityDetector());
 
 		// 开始第一盘
 		ju.startFirstPan(game.allPlayerIds());
