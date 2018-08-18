@@ -11,4 +11,5 @@ public interface GameFinishVoteDboDao {
 
 	GameFinishVoteDbo findByGameId(String gameId);
 
+	void removeGameFinishVoteDboByGameId(String gameId);
 }

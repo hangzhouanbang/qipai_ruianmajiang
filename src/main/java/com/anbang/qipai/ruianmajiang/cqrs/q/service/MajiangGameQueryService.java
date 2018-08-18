@@ -152,4 +152,7 @@ public class MajiangGameQueryService {
 		return gameFinishVoteDboDao.findByGameId(gameId);
 	}
 
+	public void removeGameFinishVoteDbo(String gameId) {
+		gameFinishVoteDboDao.removeGameFinishVoteDboByGameId(gameId);
+	}
 }
