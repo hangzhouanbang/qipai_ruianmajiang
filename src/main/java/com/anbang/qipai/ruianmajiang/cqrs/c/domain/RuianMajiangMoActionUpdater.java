@@ -64,8 +64,16 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 			int dihu = ruianMajiangPanResultBuilder.getDihu();
 			boolean dapao = ruianMajiangPanResultBuilder.isDapao();
 			GouXingPanHu gouXingPanHu = ju.getGouXingPanHu();
-			RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestZimoHu(dapao, dihu, gouXingPanHu, player,
-					moAction, baibanIsGuipai);// TODO 天胡 地胡
+
+			boolean couldTianhu = false;
+			if (currentPan.getZhuangPlayerId().equals(player.getId())) {
+				if (player.countFangruShoupai() == 0) {
+					couldTianhu = true;
+				}
+			}
+
+			RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestZimoHu(couldTianhu, dapao, dihu,
+					gouXingPanHu, player, moAction, baibanIsGuipai);
 			if (bestHu != null) {
 				bestHu.setZimo(true);
 				player.addActionCandidate(new MajiangHuAction(player.getId(), bestHu));

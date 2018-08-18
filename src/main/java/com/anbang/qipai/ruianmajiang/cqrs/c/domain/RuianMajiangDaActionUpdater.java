@@ -7,6 +7,7 @@ import com.dml.majiang.player.MajiangPlayer;
 import com.dml.majiang.player.action.da.MajiangDaAction;
 import com.dml.majiang.player.action.da.MajiangPlayerDaActionUpdater;
 import com.dml.majiang.player.action.hu.MajiangHuAction;
+import com.dml.majiang.player.action.listener.comprehensive.DianpaoDihuOpportunityDetector;
 import com.dml.majiang.player.action.mo.LundaoMopai;
 import com.dml.majiang.player.action.mo.MajiangMoAction;
 import com.dml.majiang.player.shoupai.gouxing.GouXingPanHu;
@@ -17,11 +18,15 @@ public class RuianMajiangDaActionUpdater implements MajiangPlayerDaActionUpdater
 	public void updateActions(MajiangDaAction daAction, Ju ju) throws Exception {
 
 		Pan currentPan = ju.getCurrentPan();
-		MajiangPlayer player = currentPan.findPlayerById(daAction.getActionPlayerId());
-		player.clearActionCandidates();
+		MajiangPlayer daPlayer = currentPan.findPlayerById(daAction.getActionPlayerId());
+		// 是否是地胡
+		DianpaoDihuOpportunityDetector dianpaoDihuOpportunityDetector = ju.getActionStatisticsListenerManager()
+				.findListener(DianpaoDihuOpportunityDetector.class);
+		boolean couldDihu = dianpaoDihuOpportunityDetector.ifDihuOpportunity();
+		daPlayer.clearActionCandidates();
 		boolean baibanIsGuipai = currentPan.getPublicGuipaiSet().contains(MajiangPai.baiban);
 
-		MajiangPlayer xiajiaPlayer = currentPan.findXiajia(player);
+		MajiangPlayer xiajiaPlayer = currentPan.findXiajia(daPlayer);
 		xiajiaPlayer.clearActionCandidates();
 		// 下家可以吃
 		xiajiaPlayer.tryChiAndGenerateCandidateActions(daAction.getActionPlayerId(), daAction.getPai());
@@ -42,13 +47,13 @@ public class RuianMajiangDaActionUpdater implements MajiangPlayerDaActionUpdater
 					GouXingPanHu gouXingPanHu = ju.getGouXingPanHu();
 					// 先把这张牌放入计算器
 					xiajiaPlayer.getShoupaiCalculator().addPai(daAction.getPai());
-					RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestDianpaoHu(dapao, dihu,
+					RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestDianpaoHu(couldDihu, dapao, dihu,
 							gouXingPanHu, xiajiaPlayer, baibanIsGuipai, daAction.getPai());
 					// 再把这张牌拿出计算器
 					xiajiaPlayer.getShoupaiCalculator().removePai(daAction.getPai());
 					if (bestHu != null) {
 						bestHu.setZimo(false);
-						bestHu.setDianpaoPlayerId(player.getId());
+						bestHu.setDianpaoPlayerId(daPlayer.getId());
 						xiajiaPlayer.addActionCandidate(new MajiangHuAction(xiajiaPlayer.getId(), bestHu));
 						anyPlayerHu = true;
 					}
@@ -64,7 +69,7 @@ public class RuianMajiangDaActionUpdater implements MajiangPlayerDaActionUpdater
 
 		// 如果所有玩家啥也做不了,那就下家摸牌
 		if (currentPan.allPlayerHasNoActionCandidates()) {
-			xiajiaPlayer = currentPan.findXiajia(player);
+			xiajiaPlayer = currentPan.findXiajia(daPlayer);
 			xiajiaPlayer.addActionCandidate(new MajiangMoAction(xiajiaPlayer.getId(), new LundaoMopai()));
 		}
 
