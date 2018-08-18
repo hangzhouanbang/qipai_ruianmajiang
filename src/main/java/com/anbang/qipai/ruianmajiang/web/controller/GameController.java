@@ -16,13 +16,17 @@ import com.anbang.qipai.ruianmajiang.cqrs.c.domain.VoteToFinishResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.GameCmdService;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.PlayerAuthService;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.GameFinishVoteDbo;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.JuResultDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGamePlayerDbo;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.PanResultDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangGameQueryService;
 import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangPlayQueryService;
 import com.anbang.qipai.ruianmajiang.msg.service.RuianMajiangGameMsgService;
+import com.anbang.qipai.ruianmajiang.msg.service.RuianMajiangResultMsgService;
 import com.anbang.qipai.ruianmajiang.web.vo.CommonVO;
 import com.anbang.qipai.ruianmajiang.web.vo.GameVO;
+import com.anbang.qipai.ruianmajiang.web.vo.JuResultVO;
 import com.anbang.qipai.ruianmajiang.websocket.GamePlayWsNotifier;
 import com.anbang.qipai.ruianmajiang.websocket.QueryScope;
 import com.dml.mpgame.game.GameState;
@@ -56,6 +60,9 @@ public class GameController {
 
 	@Autowired
 	private RuianMajiangGameMsgService gameMsgService;
+
+	@Autowired
+	private RuianMajiangResultMsgService ruianMajiangResultMsgService;
 
 	/**
 	 * 新一局游戏
@@ -279,6 +286,15 @@ public class GameController {
 			majiangGameQueryService.removeGameFinishVoteDbo(gameFinishVoteDbo.getGameId());
 		}
 		majiangGameQueryService.launchFinishVote(voteToFinishResult);
+		String gameId = voteToFinishResult.getVoteValueObject().getGameId();
+		JuResultDbo juResultDbo = majiangPlayQueryService.findJuResultDbo(gameId);
+		// 记录战绩
+		if (juResultDbo != null) {
+			MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
+			Map<String, MajiangGamePlayerDbo> playerMap = majiangPlayQueryService.findGamePlayersAsMap(gameId);
+			JuResultVO juResult = new JuResultVO(juResultDbo, playerMap, majiangGameDbo.getPanshu());
+			ruianMajiangResultMsgService.recordJuResult(juResult);
+		}
 		data.put("queryScope", QueryScope.gameFinishVote);
 		// 通知其他人来投票
 		List<MajiangGamePlayerDbo> gamePlayerDboList = majiangGameQueryService
@@ -313,8 +329,16 @@ public class GameController {
 			vo.setMsg(e.getClass().getName());
 			return vo;
 		}
-
+		String gameId = voteToFinishResult.getVoteValueObject().getGameId();
 		majiangGameQueryService.voteToFinish(voteToFinishResult);
+		JuResultDbo juResultDbo = majiangPlayQueryService.findJuResultDbo(gameId);
+		// 记录战绩
+		if (juResultDbo != null) {
+			MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
+			Map<String, MajiangGamePlayerDbo> playerMap = majiangPlayQueryService.findGamePlayersAsMap(gameId);
+			JuResultVO juResult = new JuResultVO(juResultDbo, playerMap, majiangGameDbo.getPanshu());
+			ruianMajiangResultMsgService.recordJuResult(juResult);
+		}
 		data.put("queryScope", QueryScope.gameFinishVote);
 		// 通知其他人来投票
 		List<MajiangGamePlayerDbo> gamePlayerDboList = majiangGameQueryService

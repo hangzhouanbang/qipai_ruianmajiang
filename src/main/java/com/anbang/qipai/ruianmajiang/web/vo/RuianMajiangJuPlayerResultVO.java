@@ -26,6 +26,17 @@ public class RuianMajiangJuPlayerResultVO {
 		totalScore = juPlayerResult.getTotalScore();
 	}
 
+	public RuianMajiangJuPlayerResultVO(MajiangGamePlayerDbo majiangGamePlayerDbo) {
+		playerId = majiangGamePlayerDbo.getPlayerId();
+		nickname = majiangGamePlayerDbo.getNickname();
+		headimgurl = majiangGamePlayerDbo.getHeadimgurl();
+		huCount = 0;
+		caishenCount = 0;
+		dapaoCount = 0;
+		maxHushu = 0;
+		totalScore = 0;
+	}
+
 	public String getPlayerId() {
 		return playerId;
 	}

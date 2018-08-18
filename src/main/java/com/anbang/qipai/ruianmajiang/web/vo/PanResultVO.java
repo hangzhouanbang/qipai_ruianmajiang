@@ -20,10 +20,12 @@ public class PanResultVO {
 
 	public PanResultVO(PanResultDbo dbo, Map<String, MajiangGamePlayerDbo> playerMap) {
 		List<RuianMajiangPanPlayerResult> list = dbo.getPlayerResultList();
-		playerResultList = new ArrayList<>(list.size());
-		list.forEach((panPlayerResult) -> playerResultList
-				.add(new RuianMajiangPanPlayerResultVO(playerMap.get(panPlayerResult.getPlayerId()),
-						dbo.getZhuangPlayerId(), dbo.isZimo(), dbo.getDianpaoPlayerId(), panPlayerResult)));
+		if (list != null) {
+			playerResultList = new ArrayList<>(list.size());
+			list.forEach((panPlayerResult) -> playerResultList
+					.add(new RuianMajiangPanPlayerResultVO(playerMap.get(panPlayerResult.getPlayerId()),
+							dbo.getZhuangPlayerId(), dbo.isZimo(), dbo.getDianpaoPlayerId(), panPlayerResult)));
+		}
 		hu = dbo.isHu();
 		panNo = dbo.getPanNo();
 		finishTime = dbo.getFinishTime();

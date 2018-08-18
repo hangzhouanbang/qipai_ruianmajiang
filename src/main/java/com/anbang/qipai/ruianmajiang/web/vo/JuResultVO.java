@@ -13,19 +13,30 @@ public class JuResultVO {
 	private String dayingjiaId;
 	private String datuhaoId;
 	private int panshu;
+	private int finishedPanCount;
 	private List<RuianMajiangJuPlayerResultVO> playerResultList;
 
 	private PanResultVO lastPanResult;
+	private long finishTime;
 
 	public JuResultVO(JuResultDbo juResultDbo, Map<String, MajiangGamePlayerDbo> playerMap, int panshu) {
 		RuianMajiangJuResult ruianMajiangJuResult = juResultDbo.getJuResult();
 		dayingjiaId = ruianMajiangJuResult.getDayingjiaId();
 		datuhaoId = ruianMajiangJuResult.getDatuhaoId();
-		lastPanResult = new PanResultVO(juResultDbo.getLastPanResult(), playerMap);
+		if (juResultDbo.getLastPanResult() != null) {
+			lastPanResult = new PanResultVO(juResultDbo.getLastPanResult(), playerMap);
+		}
+		finishTime = lastPanResult.getFinishTime();
 		this.panshu = panshu;
+		finishedPanCount = ruianMajiangJuResult.getFinishedPanCount();
 		playerResultList = new ArrayList<>();
-		ruianMajiangJuResult.getPlayerResultList().forEach((juPlayerResult) -> playerResultList
-				.add(new RuianMajiangJuPlayerResultVO(juPlayerResult, playerMap.get(juPlayerResult.getPlayerId()))));
+		if (ruianMajiangJuResult.getPlayerResultList() != null) {
+			ruianMajiangJuResult.getPlayerResultList().forEach((juPlayerResult) -> playerResultList.add(
+					new RuianMajiangJuPlayerResultVO(juPlayerResult, playerMap.get(juPlayerResult.getPlayerId()))));
+		} else {
+			playerMap.values().forEach((majiangGamePlayerDbo) -> playerResultList
+					.add(new RuianMajiangJuPlayerResultVO(majiangGamePlayerDbo)));
+		}
 	}
 
 	public String getDayingjiaId() {
@@ -66,6 +77,22 @@ public class JuResultVO {
 
 	public void setPanshu(int panshu) {
 		this.panshu = panshu;
+	}
+
+	public int getFinishedPanCount() {
+		return finishedPanCount;
+	}
+
+	public void setFinishedPanCount(int finishedPanCount) {
+		this.finishedPanCount = finishedPanCount;
+	}
+
+	public long getFinishTime() {
+		return finishTime;
+	}
+
+	public void setFinishTime(long finishTime) {
+		this.finishTime = finishTime;
 	}
 
 }

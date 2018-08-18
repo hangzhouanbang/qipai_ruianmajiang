@@ -45,7 +45,7 @@ spring:
             partitionCount: 1
         members:
           destination: members
-          group: qipai_members
+          group: qipai_ruianmajiang
           consumer:
             concurrency: 1
             partitioned: false
