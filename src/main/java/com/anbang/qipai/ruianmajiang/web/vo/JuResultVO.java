@@ -10,6 +10,7 @@ import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGamePlayerDbo;
 
 public class JuResultVO {
 
+	private String gameId;
 	private String dayingjiaId;
 	private String datuhaoId;
 	private int panshu;
@@ -20,6 +21,7 @@ public class JuResultVO {
 	private long finishTime;
 
 	public JuResultVO(JuResultDbo juResultDbo, Map<String, MajiangGamePlayerDbo> playerMap, int panshu) {
+		gameId = juResultDbo.getGameId();
 		RuianMajiangJuResult ruianMajiangJuResult = juResultDbo.getJuResult();
 		dayingjiaId = ruianMajiangJuResult.getDayingjiaId();
 		datuhaoId = ruianMajiangJuResult.getDatuhaoId();
