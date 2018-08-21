@@ -21,7 +21,7 @@ public class RuianMajiangPanPlayerScore {
 	private int value;
 
 	public void jiesuan() {
-		jiesuanScore = jiesuanHushu + jiesuanPao * 10;
+		jiesuanScore = jiesuanHushu + jiesuanPao * 100;//TODO 一炮10或者5要配置
 	}
 
 	public void jiesuanHushu(int delta) {

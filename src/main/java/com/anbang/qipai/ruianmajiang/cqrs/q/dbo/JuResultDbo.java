@@ -8,6 +8,7 @@ public class JuResultDbo {
 	private String gameId;
 	private PanResultDbo lastPanResult;
 	private RuianMajiangJuResult juResult;
+	private long finishTime;
 
 	public JuResultDbo() {
 	}
@@ -16,6 +17,7 @@ public class JuResultDbo {
 		this.gameId = gameId;
 		this.lastPanResult = lastPanResult;
 		this.juResult = juResult;
+		finishTime=System.currentTimeMillis();
 	}
 
 	public String getId() {
@@ -48,6 +50,14 @@ public class JuResultDbo {
 
 	public void setJuResult(RuianMajiangJuResult juResult) {
 		this.juResult = juResult;
+	}
+
+	public long getFinishTime() {
+		return finishTime;
+	}
+
+	public void setFinishTime(long finishTime) {
+		this.finishTime = finishTime;
 	}
 
 }
