@@ -1,6 +1,6 @@
 package com.anbang.qipai.ruianmajiang.cqrs.q.dbo;
 
-public class MajiangGameDbo {
+public class MajiangGameDbo {// TODO 这个类要按规范拆分重构
 	private String id;// 就是gameid
 	private int difen;
 	private int taishu;

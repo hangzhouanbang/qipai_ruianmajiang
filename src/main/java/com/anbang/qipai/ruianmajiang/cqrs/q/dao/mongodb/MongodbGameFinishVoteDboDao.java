@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dao.GameFinishVoteDboDao;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dao.mongodb.repository.GameFinishVoteDboRepository;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.GameFinishVoteDbo;
-import com.dml.mpgame.game.finish.GameFinishVoteValueObject;
+import com.dml.mpgame.game.finish.vote.GameFinishVoteValueObject;
 
 @Component
 public class MongodbGameFinishVoteDboDao implements GameFinishVoteDboDao {

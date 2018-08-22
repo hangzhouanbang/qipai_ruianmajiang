@@ -11,15 +11,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.anbang.qipai.ruianmajiang.cqrs.c.domain.FinishResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyForGameResult;
-import com.anbang.qipai.ruianmajiang.cqrs.c.domain.VoteToFinishResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.GameCmdService;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.PlayerAuthService;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.GameFinishVoteDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.JuResultDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGamePlayerDbo;
-import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.PanResultDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangGameQueryService;
 import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangPlayQueryService;
 import com.anbang.qipai.ruianmajiang.msg.service.RuianMajiangGameMsgService;
@@ -31,7 +30,7 @@ import com.anbang.qipai.ruianmajiang.websocket.GamePlayWsNotifier;
 import com.anbang.qipai.ruianmajiang.websocket.QueryScope;
 import com.dml.mpgame.game.GameState;
 import com.dml.mpgame.game.GameValueObject;
-import com.dml.mpgame.game.finish.VoteResult;
+import com.dml.mpgame.game.finish.vote.VoteResult;
 
 /**
  * 游戏框架相关
@@ -170,6 +169,7 @@ public class GameController {
 		}
 
 		majiangGameQueryService.backToGame(playerId, gameId);
+
 		// 通知其他玩家
 		List<MajiangGamePlayerDbo> gamePlayerDboList = majiangGameQueryService.findGamePlayerDbosForGame(gameId);
 		gamePlayerDboList.forEach((gamePlayerDbo) -> {
@@ -259,9 +259,9 @@ public class GameController {
 		return vo;
 	}
 
-	@RequestMapping(value = "/launch_finish_vote")
+	@RequestMapping(value = "/finish")
 	@ResponseBody
-	public CommonVO launchfinishvote(String token) {
+	public CommonVO finish(String token) {
 		CommonVO vo = new CommonVO();
 		Map data = new HashMap();
 		vo.setData(data);
@@ -272,21 +272,16 @@ public class GameController {
 			return vo;
 		}
 
-		VoteToFinishResult voteToFinishResult;
+		FinishResult finishResult;
 		try {
-			voteToFinishResult = gameCmdService.launchFinishVote(playerId);
+			finishResult = gameCmdService.finish(playerId);
 		} catch (Exception e) {
 			vo.setSuccess(false);
 			vo.setMsg(e.getClass().getName());
 			return vo;
 		}
-		GameFinishVoteDbo gameFinishVoteDbo = majiangGameQueryService
-				.findGameFinishVoteDbo(voteToFinishResult.getVoteValueObject().getGameId());
-		if (gameFinishVoteDbo != null) {
-			majiangGameQueryService.removeGameFinishVoteDbo(gameFinishVoteDbo.getGameId());
-		}
-		majiangGameQueryService.launchFinishVote(voteToFinishResult);
-		String gameId = voteToFinishResult.getVoteValueObject().getGameId();
+		majiangGameQueryService.finish(finishResult);
+		String gameId = finishResult.getGameValueObject().getId();
 		JuResultDbo juResultDbo = majiangPlayQueryService.findJuResultDbo(gameId);
 		// 记录战绩
 		if (juResultDbo != null) {
@@ -297,8 +292,7 @@ public class GameController {
 		}
 		data.put("queryScope", QueryScope.gameFinishVote);
 		// 通知其他人来投票
-		List<MajiangGamePlayerDbo> gamePlayerDboList = majiangGameQueryService
-				.findGamePlayerDbosForGame(voteToFinishResult.getVoteValueObject().getGameId());
+		List<MajiangGamePlayerDbo> gamePlayerDboList = majiangGameQueryService.findGamePlayerDbosForGame(gameId);
 		gamePlayerDboList.forEach((gamePlayerDbo) -> {
 			String otherPlayerId = gamePlayerDbo.getPlayerId();
 			if (!otherPlayerId.equals(playerId)) {
@@ -321,16 +315,16 @@ public class GameController {
 			return vo;
 		}
 
-		VoteToFinishResult voteToFinishResult;
+		FinishResult finishResult;
 		try {
-			voteToFinishResult = gameCmdService.voteToFinish(playerId, yes);
+			finishResult = gameCmdService.voteToFinish(playerId, yes);
 		} catch (Exception e) {
 			vo.setSuccess(false);
 			vo.setMsg(e.getClass().getName());
 			return vo;
 		}
-		String gameId = voteToFinishResult.getVoteValueObject().getGameId();
-		majiangGameQueryService.voteToFinish(voteToFinishResult);
+		String gameId = finishResult.getGameValueObject().getId();
+		majiangGameQueryService.voteToFinish(finishResult);
 		JuResultDbo juResultDbo = majiangPlayQueryService.findJuResultDbo(gameId);
 		// 记录战绩
 		if (juResultDbo != null) {
@@ -340,9 +334,8 @@ public class GameController {
 			ruianMajiangResultMsgService.recordJuResult(juResult);
 		}
 		data.put("queryScope", QueryScope.gameFinishVote);
-		// 通知其他人来投票
-		List<MajiangGamePlayerDbo> gamePlayerDboList = majiangGameQueryService
-				.findGamePlayerDbosForGame(voteToFinishResult.getVoteValueObject().getGameId());
+		// 通知其他人来查询投票情况
+		List<MajiangGamePlayerDbo> gamePlayerDboList = majiangGameQueryService.findGamePlayerDbosForGame(gameId);
 		gamePlayerDboList.forEach((gamePlayerDbo) -> {
 			String otherPlayerId = gamePlayerDbo.getPlayerId();
 			if (!otherPlayerId.equals(playerId)) {

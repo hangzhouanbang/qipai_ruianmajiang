@@ -7,8 +7,8 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.anbang.qipai.ruianmajiang.cqrs.c.domain.FinishResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.RuianMajiangJuResult;
-import com.anbang.qipai.ruianmajiang.cqrs.c.domain.VoteToFinishResult;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dao.GameFinishVoteDboDao;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dao.GamePlayerDboDao;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dao.JuResultDboDao;
@@ -24,7 +24,8 @@ import com.anbang.qipai.ruianmajiang.plan.dao.PlayerInfoDao;
 import com.dml.mpgame.game.GamePlayer;
 import com.dml.mpgame.game.GamePlayerOnlineState;
 import com.dml.mpgame.game.GameValueObject;
-import com.dml.mpgame.game.finish.GameFinishVoteValueObject;
+import com.dml.mpgame.game.finish.vote.GameFinishVoteValueObject;
+import com.dml.mpgame.game.finish.vote.VoteAfterStartedGameFinishStrategyValueObject;
 
 @Component
 public class MajiangGameQueryService {
@@ -113,38 +114,39 @@ public class MajiangGameQueryService {
 		}
 	}
 
-	public void launchFinishVote(VoteToFinishResult voteToFinishResult) {
-		GameFinishVoteValueObject gameFinishVoteValueObject = voteToFinishResult.getVoteValueObject();
+	public void finish(FinishResult finishResult) {
+		GameValueObject gameValueObject = finishResult.getGameValueObject();
+		gameFinishVoteDboDao.removeGameFinishVoteDboByGameId(gameValueObject.getId());
+		GameFinishVoteValueObject gameFinishVoteValueObject = ((VoteAfterStartedGameFinishStrategyValueObject) gameValueObject
+				.getFinishStrategy()).getVote();
 		GameFinishVoteDbo gameFinishVoteDbo = new GameFinishVoteDbo();
 		gameFinishVoteDbo.setVote(gameFinishVoteValueObject);
-		gameFinishVoteDbo.setGameId(gameFinishVoteValueObject.getGameId());
+		gameFinishVoteDbo.setGameId(gameValueObject.getId());
 		gameFinishVoteDboDao.save(gameFinishVoteDbo);
 
 		// 投票通过了，比赛结束。要记录结果
-		RuianMajiangJuResult ruianMajiangJuResult = voteToFinishResult.getJuResult();
+		RuianMajiangJuResult ruianMajiangJuResult = finishResult.getJuResult();
 		if (ruianMajiangJuResult != null) {
-			JuResultDbo juResultDbo = new JuResultDbo(gameFinishVoteValueObject.getGameId(), null,
-					ruianMajiangJuResult);
+			JuResultDbo juResultDbo = new JuResultDbo(gameValueObject.getId(), null, ruianMajiangJuResult);
 			juResultDboDao.save(juResultDbo);
-			majiangGameDboDao.update(gameFinishVoteValueObject.getGameId(), MajiangGameState.finished);
-			gamePlayerDboDao.updatePlayersStateForGame(gameFinishVoteValueObject.getGameId(),
-					MajiangGamePlayerState.finished);
+			majiangGameDboDao.update(gameValueObject.getId(), MajiangGameState.finished);
+			gamePlayerDboDao.updatePlayersStateForGame(gameValueObject.getId(), MajiangGamePlayerState.finished);
 		}
 	}
 
-	public void voteToFinish(VoteToFinishResult voteToFinishResult) {
-		GameFinishVoteValueObject gameFinishVoteValueObject = voteToFinishResult.getVoteValueObject();
-		gameFinishVoteDboDao.update(gameFinishVoteValueObject.getGameId(), gameFinishVoteValueObject);
+	public void voteToFinish(FinishResult finishResult) {
+		GameValueObject gameValueObject = finishResult.getGameValueObject();
+		GameFinishVoteValueObject gameFinishVoteValueObject = ((VoteAfterStartedGameFinishStrategyValueObject) gameValueObject
+				.getFinishStrategy()).getVote();
+		gameFinishVoteDboDao.update(gameValueObject.getId(), gameFinishVoteValueObject);
 
 		// 投票通过了，比赛结束。要记录结果
-		RuianMajiangJuResult ruianMajiangJuResult = voteToFinishResult.getJuResult();
+		RuianMajiangJuResult ruianMajiangJuResult = finishResult.getJuResult();
 		if (ruianMajiangJuResult != null) {
-			JuResultDbo juResultDbo = new JuResultDbo(gameFinishVoteValueObject.getGameId(), null,
-					ruianMajiangJuResult);
+			JuResultDbo juResultDbo = new JuResultDbo(gameValueObject.getId(), null, ruianMajiangJuResult);
 			juResultDboDao.save(juResultDbo);
-			majiangGameDboDao.update(gameFinishVoteValueObject.getGameId(), MajiangGameState.finished);
-			gamePlayerDboDao.updatePlayersStateForGame(gameFinishVoteValueObject.getGameId(),
-					MajiangGamePlayerState.finished);
+			majiangGameDboDao.update(gameValueObject.getId(), MajiangGameState.finished);
+			gamePlayerDboDao.updatePlayersStateForGame(gameValueObject.getId(), MajiangGamePlayerState.finished);
 		}
 	}
 

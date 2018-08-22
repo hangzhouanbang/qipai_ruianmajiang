@@ -29,7 +29,7 @@ public class MajiangPlayCmdServiceImpl extends CmdServiceBase implements Majiang
 				actionTime);
 
 		if (majiangActionResult.getJuResult() != null) {// 全部结束
-			GameValueObject gameValueObject = gameServer.finish(gameId);
+			GameValueObject gameValueObject = gameServer.finishGameImmediately(gameId);
 			majiangActionResult.setGameValueObject(gameValueObject);
 		} else {
 			majiangActionResult.setGameValueObject(gameServer.findGame(gameId));

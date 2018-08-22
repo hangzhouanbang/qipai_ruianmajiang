@@ -4,18 +4,17 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
+import com.anbang.qipai.ruianmajiang.cqrs.c.domain.FinishResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangGameManager;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyForGameResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.RuianMajiangJuResult;
-import com.anbang.qipai.ruianmajiang.cqrs.c.domain.VoteToFinishResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.GameCmdService;
 import com.dml.majiang.pan.frame.PanActionFrame;
+import com.dml.mpgame.game.Game;
 import com.dml.mpgame.game.GameState;
 import com.dml.mpgame.game.GameValueObject;
-import com.dml.mpgame.game.finish.GameFinishVoteValueObject;
-import com.dml.mpgame.game.finish.MostPlayersWinVoteCalculator;
-import com.dml.mpgame.game.finish.VoteOption;
-import com.dml.mpgame.game.finish.VoteResult;
+import com.dml.mpgame.game.finish.vote.VoteAfterStartedGameFinishStrategy;
+import com.dml.mpgame.game.finish.vote.VoteOption;
 import com.dml.mpgame.game.join.FixedNumberOfPlayersGameJoinStrategy;
 import com.dml.mpgame.game.leave.HostGameLeaveStrategy;
 import com.dml.mpgame.game.ready.FixedNumberOfPlayersGameReadyStrategy;
@@ -78,47 +77,39 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
 	}
 
 	@Override
-	public VoteToFinishResult launchFinishVote(String playerId) throws Exception {
-		VoteToFinishResult result = new VoteToFinishResult();
+	public FinishResult finish(String playerId) throws Exception {
+		FinishResult result = new FinishResult();
 		GameServer gameServer = singletonEntityRepository.getEntity(GameServer.class);
-		GameFinishVoteValueObject voteValueObject = gameServer.startFinishVote(playerId,
-				new MostPlayersWinVoteCalculator());
-		result.setVoteValueObject(voteValueObject);
-		// 有可能发起投票就解散
-		if (voteValueObject.getResult() != null) {
+		GameValueObject gameValueObject = gameServer.finishGame(playerId);
+		result.setGameValueObject(gameValueObject);
+		if (gameValueObject.getState().equals(GameState.finished)) {
 			MajiangGameManager majiangGameManager = singletonEntityRepository.getEntity(MajiangGameManager.class);
-			RuianMajiangJuResult juResult = majiangGameManager.finishMajiangGame(voteValueObject.getGameId());
+			RuianMajiangJuResult juResult = majiangGameManager.finishMajiangGame(gameValueObject.getId());
 			result.setJuResult(juResult);
 		}
 		return result;
 	}
 
 	@Override
-	public RuianMajiangJuResult finishGame(String gameId) throws Exception {
+	public FinishResult voteToFinish(String playerId, Boolean yes) throws Exception {
+		FinishResult finishResult = new FinishResult();
 		GameServer gameServer = singletonEntityRepository.getEntity(GameServer.class);
-		gameServer.finish(gameId);
-		MajiangGameManager majiangGameManager = singletonEntityRepository.getEntity(MajiangGameManager.class);
-		return majiangGameManager.finishMajiangGame(gameId);
-	}
-
-	@Override
-	public VoteToFinishResult voteToFinish(String playerId, Boolean yes) throws Exception {
-		VoteToFinishResult voteToFinishResult = new VoteToFinishResult();
-		GameServer gameServer = singletonEntityRepository.getEntity(GameServer.class);
-		GameFinishVoteValueObject gameFinishVoteValueObject;
+		GameValueObject gameValueObject;
+		Game game = gameServer.findGamePlayerPlaying(playerId);
+		VoteAfterStartedGameFinishStrategy voteAfterStartedGameFinishStrategy = (VoteAfterStartedGameFinishStrategy) game
+				.getGameFinishStrategy();
 		if (yes) {
-			gameFinishVoteValueObject = gameServer.voteToFinishGame(playerId, VoteOption.yes);
+			gameValueObject = voteAfterStartedGameFinishStrategy.vote(playerId, VoteOption.yes, game);
 		} else {
-			gameFinishVoteValueObject = gameServer.voteToFinishGame(playerId, VoteOption.no);
+			gameValueObject = voteAfterStartedGameFinishStrategy.vote(playerId, VoteOption.no, game);
 		}
-		voteToFinishResult.setVoteValueObject(gameFinishVoteValueObject);
-		if (gameFinishVoteValueObject.getResult() != null
-				&& VoteResult.yes.equals(gameFinishVoteValueObject.getResult())) {
+		finishResult.setGameValueObject(gameValueObject);
+		if (gameValueObject.getState().equals(GameState.finished)) {
 			MajiangGameManager majiangGameManager = singletonEntityRepository.getEntity(MajiangGameManager.class);
-			RuianMajiangJuResult juResult = majiangGameManager.finishMajiangGame(gameFinishVoteValueObject.getGameId());
-			voteToFinishResult.setJuResult(juResult);
+			RuianMajiangJuResult juResult = majiangGameManager.finishMajiangGame(game.getId());
+			finishResult.setJuResult(juResult);
 		}
-		return voteToFinishResult;
+		return finishResult;
 	}
 
 }

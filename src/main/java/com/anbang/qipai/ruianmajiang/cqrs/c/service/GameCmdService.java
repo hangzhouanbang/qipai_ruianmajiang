@@ -1,8 +1,7 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.service;
 
+import com.anbang.qipai.ruianmajiang.cqrs.c.domain.FinishResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyForGameResult;
-import com.anbang.qipai.ruianmajiang.cqrs.c.domain.RuianMajiangJuResult;
-import com.anbang.qipai.ruianmajiang.cqrs.c.domain.VoteToFinishResult;
 import com.dml.mpgame.game.GameValueObject;
 
 public interface GameCmdService {
@@ -20,10 +19,8 @@ public interface GameCmdService {
 
 	void bindPlayer(String playerId, String gameId);
 
-	VoteToFinishResult launchFinishVote(String playerId) throws Exception;
+	FinishResult finish(String playerId) throws Exception;
 
-	RuianMajiangJuResult finishGame(String gameId) throws Exception;
-
-	VoteToFinishResult voteToFinish(String playerId, Boolean yes) throws Exception;
+	FinishResult voteToFinish(String playerId, Boolean yes) throws Exception;
 
 }
