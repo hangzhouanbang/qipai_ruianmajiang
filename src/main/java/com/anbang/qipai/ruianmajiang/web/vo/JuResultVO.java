@@ -27,10 +27,8 @@ public class JuResultVO {
 		datuhaoId = ruianMajiangJuResult.getDatuhaoId();
 		if (juResultDbo.getLastPanResult() != null) {
 			lastPanResult = new PanResultVO(juResultDbo.getLastPanResult(), playerMap);
-			finishTime = lastPanResult.getFinishTime();
-		} else {
-			finishTime = System.currentTimeMillis();
 		}
+		finishTime = juResultDbo.getFinishTime();
 		this.panshu = panshu;
 		finishedPanCount = ruianMajiangJuResult.getFinishedPanCount();
 		playerResultList = new ArrayList<>();
@@ -97,6 +95,14 @@ public class JuResultVO {
 
 	public void setFinishTime(long finishTime) {
 		this.finishTime = finishTime;
+	}
+
+	public String getGameId() {
+		return gameId;
+	}
+
+	public void setGameId(String gameId) {
+		this.gameId = gameId;
 	}
 
 }
