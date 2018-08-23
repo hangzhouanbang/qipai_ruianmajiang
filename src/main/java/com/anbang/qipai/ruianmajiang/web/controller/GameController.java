@@ -290,13 +290,21 @@ public class GameController {
 			JuResultVO juResult = new JuResultVO(juResultDbo, playerMap, majiangGameDbo.getPanshu());
 			ruianMajiangResultMsgService.recordJuResult(juResult);
 		}
-		data.put("queryScope", QueryScope.gameFinishVote);
+
+		QueryScope queryScope;
+		if (finishResult.getGameValueObject().getState().equals(GameState.finished)) {
+			queryScope = QueryScope.gameInfo;
+		} else {
+			queryScope = QueryScope.gameFinishVote;
+		}
+
+		data.put("queryScope", queryScope);
 		// 通知其他人来投票
 		List<MajiangGamePlayerDbo> gamePlayerDboList = majiangGameQueryService.findGamePlayerDbosForGame(gameId);
 		gamePlayerDboList.forEach((gamePlayerDbo) -> {
 			String otherPlayerId = gamePlayerDbo.getPlayerId();
 			if (!otherPlayerId.equals(playerId)) {
-				wsNotifier.notifyToQuery(otherPlayerId, QueryScope.gameFinishVote.name());
+				wsNotifier.notifyToQuery(otherPlayerId, queryScope.name());
 			}
 		});
 		return vo;
@@ -333,6 +341,7 @@ public class GameController {
 			JuResultVO juResult = new JuResultVO(juResultDbo, playerMap, majiangGameDbo.getPanshu());
 			ruianMajiangResultMsgService.recordJuResult(juResult);
 		}
+
 		data.put("queryScope", QueryScope.gameFinishVote);
 		// 通知其他人来查询投票情况
 		List<MajiangGamePlayerDbo> gamePlayerDboList = majiangGameQueryService.findGamePlayerDbosForGame(gameId);
