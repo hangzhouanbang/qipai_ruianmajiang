@@ -19,6 +19,7 @@ import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.GameFinishVoteDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.JuResultDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGamePlayerDbo;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameState;
 import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangGameQueryService;
 import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangPlayQueryService;
 import com.anbang.qipai.ruianmajiang.msg.service.RuianMajiangGameMsgService;
@@ -197,6 +198,10 @@ public class GameController {
 	public CommonVO info(String gameId) {
 		CommonVO vo = new CommonVO();
 		MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
+		//防止游戏结束却没解散房间
+		if(MajiangGameState.finished.equals(majiangGameDbo.getState())) {
+			gameMsgService.gameFinished(majiangGameDbo.getId());
+		}
 		List<MajiangGamePlayerDbo> gamePlayerDboListForGameId = majiangGameQueryService
 				.findGamePlayerDbosForGame(gameId);
 		GameVO gameVO = new GameVO(majiangGameDbo, gamePlayerDboListForGameId);
