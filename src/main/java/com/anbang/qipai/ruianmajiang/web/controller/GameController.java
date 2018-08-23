@@ -280,7 +280,8 @@ public class GameController {
 			return vo;
 		}
 		majiangGameQueryService.finish(finishResult);
-		String gameId = finishResult.getGameValueObject().getId();
+		GameValueObject gameValueObject = finishResult.getGameValueObject();
+		String gameId = gameValueObject.getId();
 		JuResultDbo juResultDbo = majiangPlayQueryService.findJuResultDbo(gameId);
 		// 记录战绩
 		if (juResultDbo != null) {
@@ -291,22 +292,43 @@ public class GameController {
 			gameMsgService.gameFinished(gameId);
 		}
 
-		QueryScope queryScope;
 		if (finishResult.getGameValueObject().getState().equals(GameState.finished)) {
-			queryScope = QueryScope.gameInfo;
+			data.put("queryScope", QueryScope.gameInfo);
+			// 通知其他人来查询
+			List<MajiangGamePlayerDbo> gamePlayerDboList = majiangGameQueryService.findGamePlayerDbosForGame(gameId);
+			gamePlayerDboList.forEach((gamePlayerDbo) -> {
+				String otherPlayerId = gamePlayerDbo.getPlayerId();
+				if (!otherPlayerId.equals(playerId)) {
+					wsNotifier.notifyToQuery(otherPlayerId, QueryScope.gameInfo.name());
+				}
+			});
 		} else {
-			queryScope = QueryScope.gameFinishVote;
+			// 游戏没结束有两种可能：一种是发起了投票。还有一种是游戏没开始，解散发起人又不是房主，那就自己走人。
+			if (gameValueObject.allPlayerIds().contains(playerId)) {
+				data.put("queryScope", QueryScope.gameFinishVote);
+				// 通知其他人来查询
+				List<MajiangGamePlayerDbo> gamePlayerDboList = majiangGameQueryService
+						.findGamePlayerDbosForGame(gameId);
+				gamePlayerDboList.forEach((gamePlayerDbo) -> {
+					String otherPlayerId = gamePlayerDbo.getPlayerId();
+					if (!otherPlayerId.equals(playerId)) {
+						wsNotifier.notifyToQuery(otherPlayerId, QueryScope.gameFinishVote.name());
+					}
+				});
+			} else {
+				data.put("queryScope", null);
+				// 通知其他人来查询
+				List<MajiangGamePlayerDbo> gamePlayerDboList = majiangGameQueryService
+						.findGamePlayerDbosForGame(gameId);
+				gamePlayerDboList.forEach((gamePlayerDbo) -> {
+					String otherPlayerId = gamePlayerDbo.getPlayerId();
+					if (!otherPlayerId.equals(playerId)) {
+						wsNotifier.notifyToQuery(otherPlayerId, QueryScope.gameInfo.name());
+					}
+				});
+			}
 		}
 
-		data.put("queryScope", queryScope);
-		// 通知其他人来投票
-		List<MajiangGamePlayerDbo> gamePlayerDboList = majiangGameQueryService.findGamePlayerDbosForGame(gameId);
-		gamePlayerDboList.forEach((gamePlayerDbo) -> {
-			String otherPlayerId = gamePlayerDbo.getPlayerId();
-			if (!otherPlayerId.equals(playerId)) {
-				wsNotifier.notifyToQuery(otherPlayerId, queryScope.name());
-			}
-		});
 		return vo;
 	}
 
