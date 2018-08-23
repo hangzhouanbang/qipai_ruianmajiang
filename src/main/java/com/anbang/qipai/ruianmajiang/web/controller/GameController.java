@@ -30,7 +30,6 @@ import com.anbang.qipai.ruianmajiang.websocket.GamePlayWsNotifier;
 import com.anbang.qipai.ruianmajiang.websocket.QueryScope;
 import com.dml.mpgame.game.GameState;
 import com.dml.mpgame.game.GameValueObject;
-import com.dml.mpgame.game.finish.vote.VoteResult;
 
 /**
  * 游戏框架相关
@@ -289,6 +288,7 @@ public class GameController {
 			Map<String, MajiangGamePlayerDbo> playerMap = majiangPlayQueryService.findGamePlayersAsMap(gameId);
 			JuResultVO juResult = new JuResultVO(juResultDbo, playerMap, majiangGameDbo.getPanshu());
 			ruianMajiangResultMsgService.recordJuResult(juResult);
+			gameMsgService.gameFinished(gameId);
 		}
 
 		QueryScope queryScope;
@@ -340,6 +340,7 @@ public class GameController {
 			Map<String, MajiangGamePlayerDbo> playerMap = majiangPlayQueryService.findGamePlayersAsMap(gameId);
 			JuResultVO juResult = new JuResultVO(juResultDbo, playerMap, majiangGameDbo.getPanshu());
 			ruianMajiangResultMsgService.recordJuResult(juResult);
+			gameMsgService.gameFinished(gameId);
 		}
 
 		data.put("queryScope", QueryScope.gameFinishVote);
@@ -361,10 +362,6 @@ public class GameController {
 
 		CommonVO vo = new CommonVO();
 		GameFinishVoteDbo gameFinishVoteDbo = majiangGameQueryService.findGameFinishVoteDbo(gameId);
-		VoteResult result = gameFinishVoteDbo.getVote().getResult();
-		if (result != null && VoteResult.yes.equals(result)) {
-			gameMsgService.gameFinished(gameId);
-		}
 		Map data = new HashMap();
 		data.put("vote", gameFinishVoteDbo.getVote());
 		vo.setData(data);
