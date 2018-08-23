@@ -23,6 +23,7 @@ import com.anbang.qipai.ruianmajiang.plan.bean.PlayerInfo;
 import com.anbang.qipai.ruianmajiang.plan.dao.PlayerInfoDao;
 import com.dml.mpgame.game.GamePlayer;
 import com.dml.mpgame.game.GamePlayerOnlineState;
+import com.dml.mpgame.game.GameState;
 import com.dml.mpgame.game.GameValueObject;
 import com.dml.mpgame.game.finish.vote.GameFinishVoteValueObject;
 import com.dml.mpgame.game.finish.vote.VoteAfterStartedGameFinishStrategyValueObject;
@@ -124,13 +125,24 @@ public class MajiangGameQueryService {
 		gameFinishVoteDbo.setGameId(gameValueObject.getId());
 		gameFinishVoteDboDao.save(gameFinishVoteDbo);
 
-		// 投票通过了，比赛结束。要记录结果
+		if (gameValueObject.getState().equals(GameState.finished)) {
+			majiangGameDboDao.update(gameValueObject.getId(), MajiangGameState.finished);
+			gamePlayerDboDao.updatePlayersStateForGame(gameValueObject.getId(), MajiangGamePlayerState.finished);
+		}
+
+		List<MajiangGamePlayerDbo> gamePlayerDboList = gamePlayerDboDao.findByGameId(gameValueObject.getId());
+		List<String> allPlayerIds = gameValueObject.allPlayerIds();
+		for (MajiangGamePlayerDbo gamePlayerDbo : gamePlayerDboList) {
+			String playerId = gamePlayerDbo.getPlayerId();
+			if (!allPlayerIds.contains(playerId)) {
+				gamePlayerDboDao.removeByPlayerIdAndGameId(playerId, gameValueObject.getId());
+			}
+		}
+
 		RuianMajiangJuResult ruianMajiangJuResult = finishResult.getJuResult();
 		if (ruianMajiangJuResult != null) {
 			JuResultDbo juResultDbo = new JuResultDbo(gameValueObject.getId(), null, ruianMajiangJuResult);
 			juResultDboDao.save(juResultDbo);
-			majiangGameDboDao.update(gameValueObject.getId(), MajiangGameState.finished);
-			gamePlayerDboDao.updatePlayersStateForGame(gameValueObject.getId(), MajiangGamePlayerState.finished);
 		}
 	}
 
@@ -140,13 +152,15 @@ public class MajiangGameQueryService {
 				.getFinishStrategy()).getVote();
 		gameFinishVoteDboDao.update(gameValueObject.getId(), gameFinishVoteValueObject);
 
-		// 投票通过了，比赛结束。要记录结果
+		if (gameValueObject.getState().equals(GameState.finished)) {
+			majiangGameDboDao.update(gameValueObject.getId(), MajiangGameState.finished);
+			gamePlayerDboDao.updatePlayersStateForGame(gameValueObject.getId(), MajiangGamePlayerState.finished);
+		}
+
 		RuianMajiangJuResult ruianMajiangJuResult = finishResult.getJuResult();
 		if (ruianMajiangJuResult != null) {
 			JuResultDbo juResultDbo = new JuResultDbo(gameValueObject.getId(), null, ruianMajiangJuResult);
 			juResultDboDao.save(juResultDbo);
-			majiangGameDboDao.update(gameValueObject.getId(), MajiangGameState.finished);
-			gamePlayerDboDao.updatePlayersStateForGame(gameValueObject.getId(), MajiangGamePlayerState.finished);
 		}
 	}
 
