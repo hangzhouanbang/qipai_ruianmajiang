@@ -13,6 +13,7 @@ import com.dml.majiang.pan.frame.PanActionFrame;
 import com.dml.mpgame.game.Game;
 import com.dml.mpgame.game.GameState;
 import com.dml.mpgame.game.GameValueObject;
+import com.dml.mpgame.game.finish.vote.MostPlayersWinVoteCalculator;
 import com.dml.mpgame.game.finish.vote.VoteAfterStartedGameFinishStrategy;
 import com.dml.mpgame.game.finish.vote.VoteOption;
 import com.dml.mpgame.game.join.FixedNumberOfPlayersGameJoinStrategy;
@@ -28,7 +29,8 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
 			Integer renshu, Boolean dapao) {
 		GameServer gameServer = singletonEntityRepository.getEntity(GameServer.class);
 		gameServer.playerCreateGame(gameId, new FixedNumberOfPlayersGameJoinStrategy(renshu),
-				new FixedNumberOfPlayersGameReadyStrategy(renshu), new HostGameLeaveStrategy(playerId), playerId);
+				new FixedNumberOfPlayersGameReadyStrategy(renshu), new HostGameLeaveStrategy(playerId),
+				new VoteAfterStartedGameFinishStrategy(playerId, new MostPlayersWinVoteCalculator()), playerId);
 		MajiangGameManager majiangGameManager = singletonEntityRepository.getEntity(MajiangGameManager.class);
 		majiangGameManager.newMajiangGame(gameId, difen, taishu, panshu, renshu, dapao);
 	}
