@@ -99,7 +99,7 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
 		GameValueObject gameValueObject;
 		Game game = gameServer.findGamePlayerPlaying(playerId);
 		VoteAfterStartedGameFinishStrategy voteAfterStartedGameFinishStrategy = (VoteAfterStartedGameFinishStrategy) game
-				.getGameFinishStrategy();
+				.getFinishStrategy();
 		if (yes) {
 			gameValueObject = voteAfterStartedGameFinishStrategy.vote(playerId, VoteOption.yes, game);
 		} else {
