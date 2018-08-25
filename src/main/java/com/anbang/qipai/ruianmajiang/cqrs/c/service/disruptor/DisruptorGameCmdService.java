@@ -4,10 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.FinishResult;
+import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangGameValueObject;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyForGameResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.GameCmdService;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.impl.GameCmdServiceImpl;
-import com.dml.mpgame.game.GameValueObject;
 import com.highto.framework.concurrent.DeferredResult;
 import com.highto.framework.ddd.CommonCommand;
 
@@ -18,29 +18,33 @@ public class DisruptorGameCmdService extends DisruptorCmdServiceBase implements 
 	private GameCmdServiceImpl gameCmdServiceImpl;
 
 	@Override
-	public void newMajiangGame(String gameId, String playerId, Integer difen, Integer taishu, Integer panshu,
-			Integer renshu, Boolean dapao) {
+	public MajiangGameValueObject newMajiangGame(String gameId, String playerId, Integer difen, Integer taishu,
+			Integer panshu, Integer renshu, Boolean dapao) {
 		CommonCommand cmd = new CommonCommand(GameCmdServiceImpl.class.getName(), "newMajiangGame", gameId, playerId,
 				difen, taishu, panshu, renshu, dapao);
-		DeferredResult<Object> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd, () -> {
-			gameCmdServiceImpl.newMajiangGame(cmd.getParameter(), cmd.getParameter(), cmd.getParameter(),
-					cmd.getParameter(), cmd.getParameter(), cmd.getParameter(), cmd.getParameter());
-			return null;
-		});
+		DeferredResult<MajiangGameValueObject> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd,
+				() -> {
+					MajiangGameValueObject majiangGameValueObject = gameCmdServiceImpl.newMajiangGame(
+							cmd.getParameter(), cmd.getParameter(), cmd.getParameter(), cmd.getParameter(),
+							cmd.getParameter(), cmd.getParameter(), cmd.getParameter());
+					return majiangGameValueObject;
+				});
 		try {
-			result.getResult();
+			return result.getResult();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	@Override
-	public GameValueObject joinGame(String playerId, String gameId) throws Exception {
+	public MajiangGameValueObject joinGame(String playerId, String gameId) throws Exception {
 		CommonCommand cmd = new CommonCommand(GameCmdServiceImpl.class.getName(), "joinGame", playerId, gameId);
-		DeferredResult<GameValueObject> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd, () -> {
-			GameValueObject gameValueObject = gameCmdServiceImpl.joinGame(cmd.getParameter(), cmd.getParameter());
-			return gameValueObject;
-		});
+		DeferredResult<MajiangGameValueObject> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd,
+				() -> {
+					MajiangGameValueObject majiangGameValueObject = gameCmdServiceImpl.joinGame(cmd.getParameter(),
+							cmd.getParameter());
+					return majiangGameValueObject;
+				});
 		try {
 			return result.getResult();
 		} catch (Exception e) {
@@ -49,12 +53,13 @@ public class DisruptorGameCmdService extends DisruptorCmdServiceBase implements 
 	}
 
 	@Override
-	public GameValueObject leaveGame(String playerId) throws Exception {
+	public MajiangGameValueObject leaveGame(String playerId) throws Exception {
 		CommonCommand cmd = new CommonCommand(GameCmdServiceImpl.class.getName(), "leaveGame", playerId);
-		DeferredResult<GameValueObject> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd, () -> {
-			GameValueObject gameValueObject = gameCmdServiceImpl.leaveGame(cmd.getParameter());
-			return gameValueObject;
-		});
+		DeferredResult<MajiangGameValueObject> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd,
+				() -> {
+					MajiangGameValueObject majiangGameValueObject = gameCmdServiceImpl.leaveGame(cmd.getParameter());
+					return majiangGameValueObject;
+				});
 		try {
 			return result.getResult();
 		} catch (Exception e) {
@@ -79,12 +84,14 @@ public class DisruptorGameCmdService extends DisruptorCmdServiceBase implements 
 	}
 
 	@Override
-	public GameValueObject backToGame(String playerId, String gameId) throws Exception {
+	public MajiangGameValueObject backToGame(String playerId, String gameId) throws Exception {
 		CommonCommand cmd = new CommonCommand(GameCmdServiceImpl.class.getName(), "backToGame", playerId, gameId);
-		DeferredResult<GameValueObject> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd, () -> {
-			GameValueObject gameValueObject = gameCmdServiceImpl.backToGame(cmd.getParameter(), cmd.getParameter());
-			return gameValueObject;
-		});
+		DeferredResult<MajiangGameValueObject> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd,
+				() -> {
+					MajiangGameValueObject majiangGameValueObject = gameCmdServiceImpl.backToGame(cmd.getParameter(),
+							cmd.getParameter());
+					return majiangGameValueObject;
+				});
 		try {
 			return result.getResult();
 		} catch (Exception e) {

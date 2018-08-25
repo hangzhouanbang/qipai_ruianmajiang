@@ -1,21 +1,20 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
 import com.dml.majiang.pan.frame.PanActionFrame;
-import com.dml.mpgame.game.GameValueObject;
 
 public class MajiangActionResult {
 
-	private GameValueObject gameValueObject;
+	private MajiangGameValueObject majiangGame;
 	private PanActionFrame panActionFrame;
 	private RuianMajiangPanResult panResult;
 	private RuianMajiangJuResult juResult;
 
-	public GameValueObject getGameValueObject() {
-		return gameValueObject;
+	public MajiangGameValueObject getMajiangGame() {
+		return majiangGame;
 	}
 
-	public void setGameValueObject(GameValueObject gameValueObject) {
-		this.gameValueObject = gameValueObject;
+	public void setMajiangGame(MajiangGameValueObject majiangGame) {
+		this.majiangGame = majiangGame;
 	}
 
 	public PanActionFrame getPanActionFrame() {

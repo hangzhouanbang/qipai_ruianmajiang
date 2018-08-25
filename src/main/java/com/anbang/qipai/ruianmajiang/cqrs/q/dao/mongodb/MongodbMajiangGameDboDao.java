@@ -7,10 +7,11 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
 
+import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangGameState;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dao.MajiangGameDboDao;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dao.mongodb.repository.MajiangGameDboRepository;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameDbo;
-import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameState;
+import com.dml.mpgame.game.GamePlayerOnlineState;
 
 @Component
 public class MongodbMajiangGameDboDao implements MajiangGameDboDao {
@@ -41,6 +42,17 @@ public class MongodbMajiangGameDboDao implements MajiangGameDboDao {
 	public void update(String id, MajiangGameState state) {
 		mongoTemplate.updateFirst(new Query(Criteria.where("id").is(id)), new Update().set("state", state),
 				MajiangGameDbo.class);
+	}
+
+	@Override
+	public void updatePlayerOnlineState(String id, String playerId, GamePlayerOnlineState onlineState) {
+		MajiangGameDbo majiangGameDbo = repository.findOne(id);
+		majiangGameDbo.getPlayers().forEach((player) -> {
+			if (player.getPlayerId().equals(playerId)) {
+				player.setOnlineState(onlineState);
+			}
+		});
+		repository.save(majiangGameDbo);
 	}
 
 }

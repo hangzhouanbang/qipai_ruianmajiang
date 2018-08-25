@@ -1,11 +1,10 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.service.impl;
 
-import java.util.List;
-
 import org.springframework.stereotype.Component;
 
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangActionResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangGameManager;
+import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangGameValueObject;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyToNextPanResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.MajiangPlayCmdService;
 import com.dml.mpgame.game.GameValueObject;
@@ -28,12 +27,16 @@ public class MajiangPlayCmdServiceImpl extends CmdServiceBase implements Majiang
 		MajiangActionResult majiangActionResult = majiangGameManager.majiangAction(playerId, gameId, actionId,
 				actionTime);
 
+		GameValueObject gameValueObject;
 		if (majiangActionResult.getJuResult() != null) {// 全部结束
-			GameValueObject gameValueObject = gameServer.finishGameImmediately(gameId);
-			majiangActionResult.setGameValueObject(gameValueObject);
+			gameValueObject = gameServer.finishGameImmediately(gameId);
 		} else {
-			majiangActionResult.setGameValueObject(gameServer.findGame(gameId));
+			gameValueObject = gameServer.findGame(gameId);
 		}
+
+		MajiangGameValueObject majiangGameValueObject = majiangGameManager.updateMajiangGameByGame(gameValueObject);
+		majiangActionResult.setMajiangGame(majiangGameValueObject);
+
 		return majiangActionResult;
 
 	}
@@ -48,9 +51,6 @@ public class MajiangPlayCmdServiceImpl extends CmdServiceBase implements Majiang
 			throw new PlayerNotInGameException();
 		}
 		ReadyToNextPanResult readyToNextPanResult = majiangGameManager.readyToNextPan(playerId, gameId);
-		List<String> allPlayerIds = gameServer.findAllPlayerIdsForGame(gameId);
-		allPlayerIds.remove(playerId);
-		readyToNextPanResult.setOtherPlayerIds(allPlayerIds);
 		return readyToNextPanResult;
 	}
 

@@ -10,7 +10,9 @@ public class MajiangGameManager {
 
 	private Map<String, MajiangGame> gameIdMajiangGameMap = new HashMap<>();
 
-	public void newMajiangGame(String gameId, int difen, int taishu, int panshu, int renshu, boolean dapao) {
+	public MajiangGameValueObject newMajiangGame(GameValueObject gameValueObject, int difen, int taishu, int panshu,
+			int renshu, boolean dapao) {
+		String gameId = gameValueObject.getId();
 		MajiangGame majiangGame = new MajiangGame();
 		majiangGame.setDapao(dapao);
 		majiangGame.setDifen(difen);
@@ -18,7 +20,9 @@ public class MajiangGameManager {
 		majiangGame.setRenshu(renshu);
 		majiangGame.setTaishu(taishu);
 		majiangGame.setGameId(gameId);
+		majiangGame.updateByGame(gameValueObject);
 		gameIdMajiangGameMap.put(gameId, majiangGame);
+		return new MajiangGameValueObject(majiangGame);
 	}
 
 	public PanActionFrame createJuAndStartFirstPan(GameValueObject game, long currentTime) throws Exception {
@@ -42,10 +46,10 @@ public class MajiangGameManager {
 
 	public ReadyToNextPanResult readyToNextPan(String playerId, String gameId) throws Exception {
 		ReadyToNextPanResult readyToNextPanResult = new ReadyToNextPanResult();
-		readyToNextPanResult.setGameId(gameId);
 		MajiangGame game = gameIdMajiangGameMap.get(gameId);
 		PanActionFrame firstActionFrame = game.readyToNextPan(playerId);
 		readyToNextPanResult.setFirstActionFrame(firstActionFrame);
+		readyToNextPanResult.setMajiangGame(new MajiangGameValueObject(game));
 		return readyToNextPanResult;
 	}
 
@@ -56,6 +60,11 @@ public class MajiangGameManager {
 		} else {
 			return null;
 		}
+	}
+
+	public MajiangGameValueObject updateMajiangGameByGame(GameValueObject game) {
+		MajiangGame majiangGame = gameIdMajiangGameMap.get(game.getId());
+		return majiangGame.updateByGame(game);
 	}
 
 }

@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.FinishResult;
+import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangGameState;
+import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangGameValueObject;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyForGameResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.GameCmdService;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.PlayerAuthService;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.GameFinishVoteDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.JuResultDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameDbo;
-import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGamePlayerDbo;
-import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameState;
 import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangGameQueryService;
 import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangPlayQueryService;
 import com.anbang.qipai.ruianmajiang.msg.service.RuianMajiangGameMsgService;
@@ -29,8 +29,6 @@ import com.anbang.qipai.ruianmajiang.web.vo.GameVO;
 import com.anbang.qipai.ruianmajiang.web.vo.JuResultVO;
 import com.anbang.qipai.ruianmajiang.websocket.GamePlayWsNotifier;
 import com.anbang.qipai.ruianmajiang.websocket.QueryScope;
-import com.dml.mpgame.game.GameState;
-import com.dml.mpgame.game.GameValueObject;
 
 /**
  * 游戏框架相关
@@ -71,8 +69,9 @@ public class GameController {
 	public CommonVO newgame(String playerId, int difen, int taishu, int panshu, int renshu, boolean dapao) {
 		CommonVO vo = new CommonVO();
 		String newGameId = UUID.randomUUID().toString();
-		gameCmdService.newMajiangGame(newGameId, playerId, difen, taishu, panshu, renshu, dapao);
-		majiangGameQueryService.newMajiangGame(newGameId, playerId, difen, taishu, panshu, renshu, dapao);
+		MajiangGameValueObject majiangGameValueObject = gameCmdService.newMajiangGame(newGameId, playerId, difen,
+				taishu, panshu, renshu, dapao);
+		majiangGameQueryService.newMajiangGame(majiangGameValueObject);
 		String token = playerAuthService.newSessionForPlayer(playerId);
 		Map data = new HashMap();
 		data.put("gameId", newGameId);
@@ -88,17 +87,17 @@ public class GameController {
 	@ResponseBody
 	public CommonVO joingame(String playerId, String gameId) {
 		CommonVO vo = new CommonVO();
-		GameValueObject gameValueObject;
+		MajiangGameValueObject majiangGameValueObject;
 		try {
-			gameValueObject = gameCmdService.joinGame(playerId, gameId);
+			majiangGameValueObject = gameCmdService.joinGame(playerId, gameId);
 		} catch (Exception e) {
 			vo.setSuccess(false);
 			vo.setMsg(e.getClass().toString());
 			return vo;
 		}
-		majiangGameQueryService.joinGame(playerId, gameId);
+		majiangGameQueryService.joinGame(majiangGameValueObject);
 		// 通知其他人
-		for (String otherPlayerId : gameValueObject.allPlayerIds()) {
+		for (String otherPlayerId : majiangGameValueObject.allPlayerIds()) {
 			if (!otherPlayerId.equals(playerId)) {
 				wsNotifier.notifyToQuery(otherPlayerId, QueryScope.gameInfo.name());
 			}
@@ -127,10 +126,10 @@ public class GameController {
 		}
 		// 断开玩家的socket
 		wsNotifier.closeSessionForPlayer(playerId);
-		GameValueObject gameValueObject;
+		MajiangGameValueObject majiangGameValueObject;
 		try {
-			gameValueObject = gameCmdService.leaveGame(playerId);
-			if (gameValueObject == null) {
+			majiangGameValueObject = gameCmdService.leaveGame(playerId);
+			if (majiangGameValueObject == null) {
 				vo.setSuccess(true);
 				return vo;
 			}
@@ -139,13 +138,11 @@ public class GameController {
 			vo.setMsg(e.getClass().getName());
 			return vo;
 		}
-		majiangGameQueryService.leaveGame(gameValueObject);
-		gameMsgService.gamePlayerLeave(gameValueObject, playerId);
+		majiangGameQueryService.leaveGame(majiangGameValueObject);
+		gameMsgService.gamePlayerLeave(majiangGameValueObject, playerId);
 		// 通知其他玩家
-		List<MajiangGamePlayerDbo> gamePlayerDboList = majiangGameQueryService
-				.findGamePlayerDbosForGame(gameValueObject.getId());
-		gamePlayerDboList.forEach((gamePlayerDbo) -> {
-			String otherPlayerId = gamePlayerDbo.getPlayerId();
+
+		majiangGameValueObject.allPlayerIds().forEach((otherPlayerId) -> {
 			if (!otherPlayerId.equals(playerId)) {
 				wsNotifier.notifyToQuery(otherPlayerId, QueryScope.gameInfo.name());
 			}
@@ -160,20 +157,19 @@ public class GameController {
 	@ResponseBody
 	public CommonVO backtogame(String playerId, String gameId) {
 		CommonVO vo = new CommonVO();
+		MajiangGameValueObject majiangGameValueObject;
 		try {
-			gameCmdService.backToGame(playerId, gameId);
+			majiangGameValueObject = gameCmdService.backToGame(playerId, gameId);
 		} catch (Exception e) {
 			vo.setSuccess(false);
 			vo.setMsg(e.getClass().toString());
 			return vo;
 		}
 
-		majiangGameQueryService.backToGame(playerId, gameId);
+		majiangGameQueryService.backToGame(playerId, majiangGameValueObject);
 
 		// 通知其他玩家
-		List<MajiangGamePlayerDbo> gamePlayerDboList = majiangGameQueryService.findGamePlayerDbosForGame(gameId);
-		gamePlayerDboList.forEach((gamePlayerDbo) -> {
-			String otherPlayerId = gamePlayerDbo.getPlayerId();
+		majiangGameValueObject.allPlayerIds().forEach((otherPlayerId) -> {
 			if (!otherPlayerId.equals(playerId)) {
 				wsNotifier.notifyToQuery(otherPlayerId, QueryScope.gameInfo.name());
 			}
@@ -198,13 +194,7 @@ public class GameController {
 	public CommonVO info(String gameId) {
 		CommonVO vo = new CommonVO();
 		MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
-		//防止游戏结束却没解散房间
-		if(MajiangGameState.finished.equals(majiangGameDbo.getState())) {
-			gameMsgService.gameFinished(majiangGameDbo.getId());
-		}
-		List<MajiangGamePlayerDbo> gamePlayerDboListForGameId = majiangGameQueryService
-				.findGamePlayerDbosForGame(gameId);
-		GameVO gameVO = new GameVO(majiangGameDbo, gamePlayerDboListForGameId);
+		GameVO gameVO = new GameVO(majiangGameDbo);
 		Map data = new HashMap();
 		data.put("game", gameVO);
 		vo.setData(data);
@@ -247,16 +237,18 @@ public class GameController {
 			return vo;
 		}
 		// 通知其他人
-		for (String otherPlayerId : readyForGameResult.getOtherPlayerIds()) {
-			wsNotifier.notifyToQuery(otherPlayerId, QueryScope.gameInfo.name());
-			if (readyForGameResult.getGame().getState().equals(GameState.playing)) {
-				wsNotifier.notifyToQuery(otherPlayerId, QueryScope.panForMe.name());
+		for (String otherPlayerId : readyForGameResult.getMajiangGame().allPlayerIds()) {
+			if (!otherPlayerId.equals(playerId)) {
+				wsNotifier.notifyToQuery(otherPlayerId, QueryScope.gameInfo.name());
+				if (readyForGameResult.getMajiangGame().getState().equals(MajiangGameState.playing)) {
+					wsNotifier.notifyToQuery(otherPlayerId, QueryScope.panForMe.name());
+				}
 			}
 		}
 
 		List<QueryScope> queryScopes = new ArrayList<>();
 		queryScopes.add(QueryScope.gameInfo);
-		if (readyForGameResult.getGame().getState().equals(GameState.playing)) {
+		if (readyForGameResult.getMajiangGame().getState().equals(MajiangGameState.playing)) {
 			queryScopes.add(QueryScope.panForMe);
 		}
 		data.put("queryScopes", queryScopes);
@@ -285,37 +277,31 @@ public class GameController {
 			return vo;
 		}
 		majiangGameQueryService.finish(finishResult);
-		GameValueObject gameValueObject = finishResult.getGameValueObject();
-		String gameId = gameValueObject.getId();
+		MajiangGameValueObject majiangGameValueObject = finishResult.getMajiangGameValueObject();
+		String gameId = majiangGameValueObject.getGameId();
 		JuResultDbo juResultDbo = majiangPlayQueryService.findJuResultDbo(gameId);
 		// 记录战绩
 		if (juResultDbo != null) {
 			MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
-			Map<String, MajiangGamePlayerDbo> playerMap = majiangPlayQueryService.findGamePlayersAsMap(gameId);
-			JuResultVO juResult = new JuResultVO(juResultDbo, playerMap, majiangGameDbo.getPanshu());
+			JuResultVO juResult = new JuResultVO(juResultDbo, majiangGameDbo);
 			ruianMajiangResultMsgService.recordJuResult(juResult);
 			gameMsgService.gameFinished(gameId);
 		}
 
-		if (finishResult.getGameValueObject().getState().equals(GameState.finished)) {
+		if (majiangGameValueObject.getState().equals(MajiangGameState.finished)) {
 			data.put("queryScope", QueryScope.gameInfo);
 			// 通知其他人来查询
-			List<MajiangGamePlayerDbo> gamePlayerDboList = majiangGameQueryService.findGamePlayerDbosForGame(gameId);
-			gamePlayerDboList.forEach((gamePlayerDbo) -> {
-				String otherPlayerId = gamePlayerDbo.getPlayerId();
+			majiangGameValueObject.allPlayerIds().forEach((otherPlayerId) -> {
 				if (!otherPlayerId.equals(playerId)) {
 					wsNotifier.notifyToQuery(otherPlayerId, QueryScope.gameInfo.name());
 				}
 			});
 		} else {
 			// 游戏没结束有两种可能：一种是发起了投票。还有一种是游戏没开始，解散发起人又不是房主，那就自己走人。
-			if (gameValueObject.allPlayerIds().contains(playerId)) {
+			if (majiangGameValueObject.allPlayerIds().contains(playerId)) {
 				data.put("queryScope", QueryScope.gameFinishVote);
 				// 通知其他人来查询
-				List<MajiangGamePlayerDbo> gamePlayerDboList = majiangGameQueryService
-						.findGamePlayerDbosForGame(gameId);
-				gamePlayerDboList.forEach((gamePlayerDbo) -> {
-					String otherPlayerId = gamePlayerDbo.getPlayerId();
+				majiangGameValueObject.allPlayerIds().forEach((otherPlayerId) -> {
 					if (!otherPlayerId.equals(playerId)) {
 						wsNotifier.notifyToQuery(otherPlayerId, QueryScope.gameFinishVote.name());
 					}
@@ -323,10 +309,7 @@ public class GameController {
 			} else {
 				data.put("queryScope", null);
 				// 通知其他人来查询
-				List<MajiangGamePlayerDbo> gamePlayerDboList = majiangGameQueryService
-						.findGamePlayerDbosForGame(gameId);
-				gamePlayerDboList.forEach((gamePlayerDbo) -> {
-					String otherPlayerId = gamePlayerDbo.getPlayerId();
+				majiangGameValueObject.allPlayerIds().forEach((otherPlayerId) -> {
 					if (!otherPlayerId.equals(playerId)) {
 						wsNotifier.notifyToQuery(otherPlayerId, QueryScope.gameInfo.name());
 					}
@@ -358,23 +341,20 @@ public class GameController {
 			vo.setMsg(e.getClass().getName());
 			return vo;
 		}
-		String gameId = finishResult.getGameValueObject().getId();
+		String gameId = finishResult.getMajiangGameValueObject().getGameId();
 		majiangGameQueryService.voteToFinish(finishResult);
 		JuResultDbo juResultDbo = majiangPlayQueryService.findJuResultDbo(gameId);
 		// 记录战绩
 		if (juResultDbo != null) {
 			MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
-			Map<String, MajiangGamePlayerDbo> playerMap = majiangPlayQueryService.findGamePlayersAsMap(gameId);
-			JuResultVO juResult = new JuResultVO(juResultDbo, playerMap, majiangGameDbo.getPanshu());
+			JuResultVO juResult = new JuResultVO(juResultDbo, majiangGameDbo);
 			ruianMajiangResultMsgService.recordJuResult(juResult);
 			gameMsgService.gameFinished(gameId);
 		}
 
 		data.put("queryScope", QueryScope.gameFinishVote);
 		// 通知其他人来查询投票情况
-		List<MajiangGamePlayerDbo> gamePlayerDboList = majiangGameQueryService.findGamePlayerDbosForGame(gameId);
-		gamePlayerDboList.forEach((gamePlayerDbo) -> {
-			String otherPlayerId = gamePlayerDbo.getPlayerId();
+		finishResult.getMajiangGameValueObject().allPlayerIds().forEach((otherPlayerId) -> {
 			if (!otherPlayerId.equals(playerId)) {
 				wsNotifier.notifyToQuery(otherPlayerId, QueryScope.gameFinishVote.name());
 			}

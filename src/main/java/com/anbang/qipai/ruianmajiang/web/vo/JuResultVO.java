@@ -2,11 +2,10 @@ package com.anbang.qipai.ruianmajiang.web.vo;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.RuianMajiangJuResult;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.JuResultDbo;
-import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGamePlayerDbo;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameDbo;
 
 public class JuResultVO {
 
@@ -20,23 +19,24 @@ public class JuResultVO {
 	private PanResultVO lastPanResult;
 	private long finishTime;
 
-	public JuResultVO(JuResultDbo juResultDbo, Map<String, MajiangGamePlayerDbo> playerMap, int panshu) {
+	public JuResultVO(JuResultDbo juResultDbo, MajiangGameDbo majiangGameDbo) {
 		gameId = juResultDbo.getGameId();
 		RuianMajiangJuResult ruianMajiangJuResult = juResultDbo.getJuResult();
 		dayingjiaId = ruianMajiangJuResult.getDayingjiaId();
 		datuhaoId = ruianMajiangJuResult.getDatuhaoId();
 		if (juResultDbo.getLastPanResult() != null) {
-			lastPanResult = new PanResultVO(juResultDbo.getLastPanResult(), playerMap);
+			lastPanResult = new PanResultVO(juResultDbo.getLastPanResult(), majiangGameDbo);
 		}
 		finishTime = juResultDbo.getFinishTime();
-		this.panshu = panshu;
+		this.panshu = majiangGameDbo.getPanshu();
 		finishedPanCount = ruianMajiangJuResult.getFinishedPanCount();
 		playerResultList = new ArrayList<>();
 		if (ruianMajiangJuResult.getPlayerResultList() != null) {
-			ruianMajiangJuResult.getPlayerResultList().forEach((juPlayerResult) -> playerResultList.add(
-					new RuianMajiangJuPlayerResultVO(juPlayerResult, playerMap.get(juPlayerResult.getPlayerId()))));
+			ruianMajiangJuResult.getPlayerResultList()
+					.forEach((juPlayerResult) -> playerResultList.add(new RuianMajiangJuPlayerResultVO(juPlayerResult,
+							majiangGameDbo.findPlayer(juPlayerResult.getPlayerId()))));
 		} else {
-			playerMap.values().forEach((majiangGamePlayerDbo) -> playerResultList
+			majiangGameDbo.getPlayers().forEach((majiangGamePlayerDbo) -> playerResultList
 					.add(new RuianMajiangJuPlayerResultVO(majiangGamePlayerDbo)));
 		}
 	}

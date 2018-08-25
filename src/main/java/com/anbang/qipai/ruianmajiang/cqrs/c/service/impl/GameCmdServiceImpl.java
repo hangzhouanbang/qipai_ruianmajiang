@@ -1,11 +1,10 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.service.impl;
 
-import java.util.List;
-
 import org.springframework.stereotype.Component;
 
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.FinishResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangGameManager;
+import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangGameValueObject;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyForGameResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.RuianMajiangJuResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.GameCmdService;
@@ -15,6 +14,7 @@ import com.dml.mpgame.game.GameState;
 import com.dml.mpgame.game.GameValueObject;
 import com.dml.mpgame.game.finish.vote.MostPlayersWinVoteCalculator;
 import com.dml.mpgame.game.finish.vote.VoteAfterStartedGameFinishStrategy;
+import com.dml.mpgame.game.finish.vote.VoteAfterStartedGameFinishStrategyValueObject;
 import com.dml.mpgame.game.finish.vote.VoteOption;
 import com.dml.mpgame.game.join.FixedNumberOfPlayersGameJoinStrategy;
 import com.dml.mpgame.game.leave.HostGameLeaveStrategy;
@@ -25,20 +25,33 @@ import com.dml.mpgame.server.GameServer;
 public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService {
 
 	@Override
-	public void newMajiangGame(String gameId, String playerId, Integer difen, Integer taishu, Integer panshu,
-			Integer renshu, Boolean dapao) {
+	public MajiangGameValueObject newMajiangGame(String gameId, String playerId, Integer difen, Integer taishu,
+			Integer panshu, Integer renshu, Boolean dapao) {
 		GameServer gameServer = singletonEntityRepository.getEntity(GameServer.class);
-		gameServer.playerCreateGame(gameId, new FixedNumberOfPlayersGameJoinStrategy(renshu),
-				new FixedNumberOfPlayersGameReadyStrategy(renshu), new HostGameLeaveStrategy(playerId),
+		GameValueObject gameValueObject = gameServer.playerCreateGame(gameId,
+				new FixedNumberOfPlayersGameJoinStrategy(renshu), new FixedNumberOfPlayersGameReadyStrategy(renshu),
+				new HostGameLeaveStrategy(playerId),
 				new VoteAfterStartedGameFinishStrategy(playerId, new MostPlayersWinVoteCalculator()), playerId);
 		MajiangGameManager majiangGameManager = singletonEntityRepository.getEntity(MajiangGameManager.class);
-		majiangGameManager.newMajiangGame(gameId, difen, taishu, panshu, renshu, dapao);
+		MajiangGameValueObject majiangGameValueObject = majiangGameManager.newMajiangGame(gameValueObject, difen,
+				taishu, panshu, renshu, dapao);
+		return majiangGameValueObject;
 	}
 
 	@Override
-	public GameValueObject leaveGame(String playerId) throws Exception {
+	public MajiangGameValueObject leaveGame(String playerId) throws Exception {
 		GameServer gameServer = singletonEntityRepository.getEntity(GameServer.class);
-		return gameServer.leave(playerId);
+		GameValueObject gameValueObject = gameServer.leave(playerId);
+
+		if (gameValueObject != null) {
+			MajiangGameManager majiangGameManager = singletonEntityRepository.getEntity(MajiangGameManager.class);
+			MajiangGameValueObject majiangGameValueObject = majiangGameManager.updateMajiangGameByGame(gameValueObject);
+
+			return majiangGameValueObject;
+		} else {
+			return null;
+		}
+
 	}
 
 	@Override
@@ -46,14 +59,12 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
 		ReadyForGameResult result = new ReadyForGameResult();
 		GameServer gameServer = singletonEntityRepository.getEntity(GameServer.class);
 		GameValueObject gameValueObject = gameServer.ready(playerId);
-		result.setGame(gameValueObject);
 
-		List<String> playerIds = gameServer.findAllPlayerIdsForGame(gameValueObject.getId());
-		playerIds.remove(playerId);
-		result.setOtherPlayerIds(playerIds);
+		MajiangGameManager majiangGameManager = singletonEntityRepository.getEntity(MajiangGameManager.class);
+		MajiangGameValueObject majiangGameValueObject = majiangGameManager.updateMajiangGameByGame(gameValueObject);
+		result.setMajiangGame(majiangGameValueObject);
 
 		if (gameValueObject.getState().equals(GameState.playing)) {
-			MajiangGameManager majiangGameManager = singletonEntityRepository.getEntity(MajiangGameManager.class);
 			PanActionFrame firstActionFrame = majiangGameManager.createJuAndStartFirstPan(gameValueObject, currentTime);
 			result.setFirstActionFrame(firstActionFrame);
 		}
@@ -61,15 +72,25 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
 	}
 
 	@Override
-	public GameValueObject joinGame(String playerId, String gameId) throws Exception {
+	public MajiangGameValueObject joinGame(String playerId, String gameId) throws Exception {
 		GameServer gameServer = singletonEntityRepository.getEntity(GameServer.class);
-		return gameServer.join(playerId, gameId);
+		GameValueObject gameValueObject = gameServer.join(playerId, gameId);
+
+		MajiangGameManager majiangGameManager = singletonEntityRepository.getEntity(MajiangGameManager.class);
+		MajiangGameValueObject majiangGameValueObject = majiangGameManager.updateMajiangGameByGame(gameValueObject);
+
+		return majiangGameValueObject;
 	}
 
 	@Override
-	public GameValueObject backToGame(String playerId, String gameId) throws Exception {
+	public MajiangGameValueObject backToGame(String playerId, String gameId) throws Exception {
 		GameServer gameServer = singletonEntityRepository.getEntity(GameServer.class);
-		return gameServer.back(playerId, gameId);
+		GameValueObject gameValueObject = gameServer.back(playerId, gameId);
+
+		MajiangGameManager majiangGameManager = singletonEntityRepository.getEntity(MajiangGameManager.class);
+		MajiangGameValueObject majiangGameValueObject = majiangGameManager.updateMajiangGameByGame(gameValueObject);
+
+		return majiangGameValueObject;
 	}
 
 	@Override
@@ -83,9 +104,14 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
 		FinishResult result = new FinishResult();
 		GameServer gameServer = singletonEntityRepository.getEntity(GameServer.class);
 		GameValueObject gameValueObject = gameServer.finishGame(playerId);
-		result.setGameValueObject(gameValueObject);
+		result.setVoteFinishStrategy(
+				(VoteAfterStartedGameFinishStrategyValueObject) gameValueObject.getFinishStrategy());
+
+		MajiangGameManager majiangGameManager = singletonEntityRepository.getEntity(MajiangGameManager.class);
+		MajiangGameValueObject majiangGameValueObject = majiangGameManager.updateMajiangGameByGame(gameValueObject);
+		result.setMajiangGameValueObject(majiangGameValueObject);
+
 		if (gameValueObject.getState().equals(GameState.finished)) {
-			MajiangGameManager majiangGameManager = singletonEntityRepository.getEntity(MajiangGameManager.class);
 			RuianMajiangJuResult juResult = majiangGameManager.finishMajiangGame(gameValueObject.getId());
 			result.setJuResult(juResult);
 		}
@@ -105,9 +131,14 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
 		} else {
 			gameValueObject = voteAfterStartedGameFinishStrategy.vote(playerId, VoteOption.no, game);
 		}
-		finishResult.setGameValueObject(gameValueObject);
+		finishResult.setVoteFinishStrategy(
+				(VoteAfterStartedGameFinishStrategyValueObject) gameValueObject.getFinishStrategy());
+
+		MajiangGameManager majiangGameManager = singletonEntityRepository.getEntity(MajiangGameManager.class);
+		MajiangGameValueObject majiangGameValueObject = majiangGameManager.updateMajiangGameByGame(gameValueObject);
+		finishResult.setMajiangGameValueObject(majiangGameValueObject);
+
 		if (gameValueObject.getState().equals(GameState.finished)) {
-			MajiangGameManager majiangGameManager = singletonEntityRepository.getEntity(MajiangGameManager.class);
 			RuianMajiangJuResult juResult = majiangGameManager.finishMajiangGame(game.getId());
 			finishResult.setJuResult(juResult);
 		}
