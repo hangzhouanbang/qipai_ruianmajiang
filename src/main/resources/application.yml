@@ -50,6 +50,13 @@ spring:
             concurrency: 1
             partitioned: false
           contentType: application/json
+        ruianGameRoom:
+          destination: ruianGameRoom
+          group: qipai_ruianmajiang
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
       
 server:
   port: 2001
