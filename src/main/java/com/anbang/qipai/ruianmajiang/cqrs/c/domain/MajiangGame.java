@@ -134,6 +134,7 @@ public class MajiangGame {
 		if (ju.determineToCreateNextPan()) {
 			ju.startNextPan();
 			state = MajiangGameState.playing;
+			playerStateMap.keySet().forEach((pid) -> playerStateMap.put(pid, MajiangGamePlayerState.readyToStart));
 			// 必然庄家已经先摸了一张牌了
 			return ju.getCurrentPan().findLatestActionFrame();
 		} else {
