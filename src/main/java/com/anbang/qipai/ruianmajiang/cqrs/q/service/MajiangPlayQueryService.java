@@ -82,15 +82,17 @@ public class MajiangPlayQueryService {
 	}
 
 	public void action(MajiangActionResult majiangActionResult) throws Throwable {
-		String gameId = majiangActionResult.getMajiangGame().getGameId();
-		PanActionFrame panActionFrame = majiangActionResult.getPanActionFrame();
-		majiangGameDboDao.update(gameId, panActionFrame.toByteArray(1024 * 8));
 
 		MajiangGameValueObject majiangGame = majiangActionResult.getMajiangGame();
 		Map<String, PlayerInfo> playerInfoMap = new HashMap<>();
 		majiangGame.allPlayerIds().forEach((playerId) -> playerInfoMap.put(playerId, playerInfoDao.findById(playerId)));
 		MajiangGameDbo majiangGameDbo = new MajiangGameDbo(majiangGame, playerInfoMap);
 		majiangGameDboDao.save(majiangGameDbo);
+
+		String gameId = majiangActionResult.getMajiangGame().getGameId();
+		PanActionFrame panActionFrame = majiangActionResult.getPanActionFrame();
+		majiangGameDboDao.update(gameId, panActionFrame.toByteArray(1024 * 8));
+		// TODO 记录一条Frame，回放的时候要做
 
 		// 盘出结果的话要记录结果
 		RuianMajiangPanResult ruianMajiangPanResult = majiangActionResult.getPanResult();
@@ -104,7 +106,6 @@ public class MajiangPlayQueryService {
 			}
 		}
 
-		// TODO 记录一条Frame，回放的时候要做
 	}
 
 	public PanResultDbo findPanResultDbo(String gameId, int panNo) {

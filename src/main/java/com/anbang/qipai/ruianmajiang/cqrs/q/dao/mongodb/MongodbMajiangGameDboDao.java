@@ -7,7 +7,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
 
-import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangGameState;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dao.MajiangGameDboDao;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dao.mongodb.repository.MajiangGameDboRepository;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameDbo;
@@ -36,12 +35,6 @@ public class MongodbMajiangGameDboDao implements MajiangGameDboDao {
 	public void update(String id, byte[] latestPanActionFrameData) {
 		mongoTemplate.updateFirst(new Query(Criteria.where("id").is(id)),
 				new Update().set("latestPanActionFrameData", latestPanActionFrameData), MajiangGameDbo.class);
-	}
-
-	@Override
-	public void update(String id, MajiangGameState state) {
-		mongoTemplate.updateFirst(new Query(Criteria.where("id").is(id)), new Update().set("state", state),
-				MajiangGameDbo.class);
 	}
 
 	@Override
