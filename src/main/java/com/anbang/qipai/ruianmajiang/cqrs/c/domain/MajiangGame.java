@@ -127,6 +127,7 @@ public class MajiangGame {
 	}
 
 	public PanActionFrame readyToNextPan(String playerId) throws Exception {
+		playerStateMap.put(playerId, MajiangGamePlayerState.readyToStart);
 		AllPlayersReadyCreateNextPanDeterminer createNextPanDeterminer = (AllPlayersReadyCreateNextPanDeterminer) ju
 				.getCreateNextPanDeterminer();
 		createNextPanDeterminer.playerReady(playerId);
@@ -134,7 +135,7 @@ public class MajiangGame {
 		if (ju.determineToCreateNextPan()) {
 			ju.startNextPan();
 			state = MajiangGameState.playing;
-			playerStateMap.keySet().forEach((pid) -> playerStateMap.put(pid, MajiangGamePlayerState.readyToStart));
+			playerStateMap.keySet().forEach((pid) -> playerStateMap.put(pid, MajiangGamePlayerState.playing));
 			// 必然庄家已经先摸了一张牌了
 			return ju.getCurrentPan().findLatestActionFrame();
 		} else {
