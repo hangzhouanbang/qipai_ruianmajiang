@@ -45,9 +45,10 @@ public class MajiangGameDbo {
 			playerDbo.setOnlineState(playerOnlineStateMap.get(playerId));
 			playerDbo.setPlayerId(playerId);
 			playerDbo.setState(playerStateMap.get(playerId));
-			if(playeTotalScoreMap.get(playerId)!=null) {
+			if (playeTotalScoreMap.get(playerId) != null) {
 				playerDbo.setTotalScore(playeTotalScoreMap.get(playerId));
 			}
+			players.add(playerDbo);
 		});
 
 	}
