@@ -118,6 +118,7 @@ public class MajiangGame {
 			playerStateMap.keySet().forEach((pid) -> playerStateMap.put(pid, MajiangGamePlayerState.finished));
 			result.setJuResult((RuianMajiangJuResult) ju.getJuResult());
 		}
+		result.setMajiangGame(new MajiangGameValueObject(this));
 		return result;
 	}
 

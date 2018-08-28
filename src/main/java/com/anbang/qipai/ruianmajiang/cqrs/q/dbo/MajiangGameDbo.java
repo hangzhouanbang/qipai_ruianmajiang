@@ -19,7 +19,6 @@ public class MajiangGameDbo {
 	private boolean dapao;
 	private MajiangGameState state;
 	private List<MajiangGamePlayerDbo> players;
-	private byte[] latestPanActionFrameData;// TODO 要按规范拆分重构
 
 	public MajiangGameDbo() {
 	}
@@ -124,14 +123,6 @@ public class MajiangGameDbo {
 
 	public void setPlayers(List<MajiangGamePlayerDbo> players) {
 		this.players = players;
-	}
-
-	public byte[] getLatestPanActionFrameData() {
-		return latestPanActionFrameData;
-	}
-
-	public void setLatestPanActionFrameData(byte[] latestPanActionFrameData) {
-		this.latestPanActionFrameData = latestPanActionFrameData;
 	}
 
 }

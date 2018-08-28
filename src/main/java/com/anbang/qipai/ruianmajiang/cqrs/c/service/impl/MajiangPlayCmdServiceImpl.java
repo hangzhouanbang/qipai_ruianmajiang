@@ -4,10 +4,8 @@ import org.springframework.stereotype.Component;
 
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangActionResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangGameManager;
-import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangGameValueObject;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyToNextPanResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.MajiangPlayCmdService;
-import com.dml.mpgame.game.GameValueObject;
 import com.dml.mpgame.game.PlayerNotInGameException;
 import com.dml.mpgame.server.GameServer;
 
@@ -27,15 +25,9 @@ public class MajiangPlayCmdServiceImpl extends CmdServiceBase implements Majiang
 		MajiangActionResult majiangActionResult = majiangGameManager.majiangAction(playerId, gameId, actionId,
 				actionTime);
 
-		GameValueObject gameValueObject;
 		if (majiangActionResult.getJuResult() != null) {// 全部结束
-			gameValueObject = gameServer.finishGameImmediately(gameId);
-		} else {
-			gameValueObject = gameServer.findGame(gameId);
+			gameServer.finishGameImmediately(gameId);
 		}
-
-		MajiangGameValueObject majiangGameValueObject = majiangGameManager.updateMajiangGameByGame(gameValueObject);
-		majiangActionResult.setMajiangGame(majiangGameValueObject);
 
 		return majiangActionResult;
 
