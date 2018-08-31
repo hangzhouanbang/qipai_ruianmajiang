@@ -9,8 +9,6 @@ public interface MajiangGameDboDao {
 
 	void save(MajiangGameDbo majiangGameDbo);
 
-	void update(String id, byte[] latestPanActionFrameData);
-
 	void updatePlayerOnlineState(String id, String playerId, GamePlayerOnlineState onlineState);
 
 }

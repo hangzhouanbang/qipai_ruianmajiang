@@ -118,6 +118,7 @@ public class MajiangGame {
 			playerStateMap.keySet().forEach((pid) -> playerStateMap.put(pid, MajiangGamePlayerState.finished));
 			result.setJuResult((RuianMajiangJuResult) ju.getJuResult());
 		}
+		result.setMajiangGame(new MajiangGameValueObject(this));
 		return result;
 	}
 
@@ -169,8 +170,7 @@ public class MajiangGame {
 			} else if (gamePlayerState.equals(GamePlayerState.joined)) {
 				playerStateMap.put(playerId, MajiangGamePlayerState.joined);
 			} else if (gamePlayerState.equals(GamePlayerState.playing)) {
-				if (playerStateMap.get(playerId) == null
-						|| !playerStateMap.get(playerId).equals(MajiangGamePlayerState.panFinished)) {
+				if (!state.equals(MajiangGameState.waitingNextPan)) {
 					playerStateMap.put(playerId, MajiangGamePlayerState.playing);
 				}
 			} else if (gamePlayerState.equals(GamePlayerState.readyToStart)) {
