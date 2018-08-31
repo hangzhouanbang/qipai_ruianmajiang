@@ -8,7 +8,6 @@ import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
 
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.GameCmdService;
-import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangGameQueryService;
 import com.anbang.qipai.ruianmajiang.msg.channel.GameRoomSink;
 import com.anbang.qipai.ruianmajiang.msg.msjobj.CommonMO;
 import com.dml.mpgame.game.GameValueObject;
@@ -19,9 +18,6 @@ public class GameRoomMsgReceiver {
 
 	@Autowired
 	private GameCmdService gameCmdService;
-
-	@Autowired
-	private MajiangGameQueryService majiangGameQueryService;
 
 	private Gson gson = new Gson();
 
