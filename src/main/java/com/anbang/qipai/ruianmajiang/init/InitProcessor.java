@@ -11,6 +11,8 @@ import com.anbang.qipai.ruianmajiang.cqrs.c.service.disruptor.CoreSnapshot;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.disruptor.FileUtil;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.disruptor.ProcessCoreCommandEventHandler;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.disruptor.SnapshotJsonUtil;
+import com.dml.majiang.player.shoupai.gouxing.GouXingCalculator;
+import com.dml.majiang.player.shoupai.gouxing.GouXingCalculatorHelper;
 import com.highto.framework.ddd.Command;
 import com.highto.framework.ddd.CommonCommand;
 import com.highto.framework.ddd.SingletonEntityRepository;
@@ -63,13 +65,8 @@ public class InitProcessor {
 			e.printStackTrace();
 		}
 
-		try {
-			Class.forName("com.dml.majiang.player.shoupai.gouxing.GouXingCalculator");
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-		// 过滤掉一些不可能胡的构型，以节约内存
-		filterGouXingCalculator();
+		// 内存共享模式要改为从web上下文里取
+		GouXingCalculatorHelper.gouXingCalculator = new GouXingCalculator(17, 3);
 
 		try {
 			recover();
@@ -77,11 +74,6 @@ public class InitProcessor {
 			throwable.printStackTrace();
 			System.exit(0);
 		}
-	}
-
-	// 过滤掉一些不可能胡的构型，以节约内存
-	private void filterGouXingCalculator() {
-		// TODO
 	}
 
 	private void recover() throws Throwable {

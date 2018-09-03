@@ -17,7 +17,7 @@ public class JuResultDbo {
 		this.gameId = gameId;
 		this.lastPanResult = lastPanResult;
 		this.juResult = juResult;
-		finishTime=System.currentTimeMillis();
+		finishTime = System.currentTimeMillis();
 	}
 
 	public String getId() {
