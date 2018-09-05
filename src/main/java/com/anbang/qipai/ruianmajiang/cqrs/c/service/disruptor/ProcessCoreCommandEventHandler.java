@@ -48,7 +48,7 @@ public class ProcessCoreCommandEventHandler implements EventHandler<CommandEvent
 
 			String recentFileName = fileUtil.getRecentFileName(jFileBasePath);
 			if (recentFileName == null || recentFileName.equals("")) {
-				recentFileName = "" + System.currentTimeMillis();
+				recentFileName = jFileBasePath + "/" + System.currentTimeMillis();
 			}
 			jFile = new JournalFile(recentFileName);
 			reuseByteBuffer = new ReuseByteBuffer(ByteBuffer.allocateDirect(1024 * 1024));
@@ -72,7 +72,7 @@ public class ProcessCoreCommandEventHandler implements EventHandler<CommandEvent
 			try {
 				saveSnapshot();
 				jFile.close();
-				jFile = new JournalFile("" + System.currentTimeMillis());
+				jFile = new JournalFile(jFileBasePath + "/" + System.currentTimeMillis());
 			} catch (Throwable e) {
 				System.out.println("System.exit(0)  " + e.getMessage());
 				System.exit(0);// 任何失败系统停机。
