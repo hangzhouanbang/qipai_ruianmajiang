@@ -4,6 +4,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import com.anbang.qipai.ruianmajiang.plan.bean.PlayerInfo;
 
-public interface PlayerInfoRopository extends MongoRepository<PlayerInfo, String> {
+public interface PlayerInfoRepository extends MongoRepository<PlayerInfo, String> {
 
 }

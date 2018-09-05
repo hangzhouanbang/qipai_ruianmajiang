@@ -5,13 +5,13 @@ import org.springframework.stereotype.Component;
 
 import com.anbang.qipai.ruianmajiang.plan.bean.PlayerInfo;
 import com.anbang.qipai.ruianmajiang.plan.dao.PlayerInfoDao;
-import com.anbang.qipai.ruianmajiang.plan.dao.mongodb.repository.PlayerInfoRopository;
+import com.anbang.qipai.ruianmajiang.plan.dao.mongodb.repository.PlayerInfoRepository;
 
 @Component
 public class MongodbPlayerInfoDao implements PlayerInfoDao {
 
 	@Autowired
-	private PlayerInfoRopository repository;
+	private PlayerInfoRepository repository;
 
 	@Override
 	public PlayerInfo findById(String id) {
