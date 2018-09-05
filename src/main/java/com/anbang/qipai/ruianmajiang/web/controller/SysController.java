@@ -23,7 +23,7 @@ public class SysController {
 			vo.setSuccess(false);
 			return vo;
 		}
-		ServletContext sc = request.getServletContext().getContext("/gxc");
+		ServletContext sc = request.getServletContext().getContext("/majiang-gouxing-service");
 		GouXingCalculatorHelper.gouXingCalculator = (GouXingCalculator) sc.getAttribute("17_3");
 		return vo;
 	}

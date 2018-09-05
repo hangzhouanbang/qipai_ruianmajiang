@@ -5,10 +5,13 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import com.anbang.qipai.ruianmajiang.conf.FilePathConfig;
 import com.anbang.qipai.ruianmajiang.cqrs.c.repository.SingletonEntityFactoryImpl;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.disruptor.CoreSnapshotFactory;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.disruptor.ProcessCoreCommandEventHandler;
@@ -19,7 +22,12 @@ import com.highto.framework.ddd.SingletonEntityRepository;
 
 @SpringBootApplication
 @EnableScheduling
-public class QipaiRuianmajiangApplication {
+public class QipaiRuianmajiangApplication extends SpringBootServletInitializer {
+
+	@Override
+	protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
+		return builder.sources(QipaiRuianmajiangApplication.class);
+	}
 
 	@Autowired
 	private SnapshotJsonUtil snapshotJsonUtil;
@@ -29,6 +37,9 @@ public class QipaiRuianmajiangApplication {
 
 	@Autowired
 	private CoreSnapshotFactory coreSnapshotFactory;
+
+	@Autowired
+	private FilePathConfig filePathConfig;
 
 	@Bean
 	public HttpClient httpClient() {
@@ -54,7 +65,7 @@ public class QipaiRuianmajiangApplication {
 
 	@Bean
 	public ProcessCoreCommandEventHandler processCoreCommandEventHandler() {
-		return new ProcessCoreCommandEventHandler(coreSnapshotFactory, snapshotJsonUtil);
+		return new ProcessCoreCommandEventHandler(coreSnapshotFactory, snapshotJsonUtil, filePathConfig);
 	}
 
 	@Bean
