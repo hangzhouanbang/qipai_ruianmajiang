@@ -45,14 +45,14 @@ spring:
             partitionCount: 1
         members:
           destination: members
-          group: qipai_ruianmajiang
+          group: qipai-ruianmajiang
           consumer:
             concurrency: 1
             partitioned: false
           contentType: application/json
         ruianGameRoom:
           destination: ruianGameRoom
-          group: qipai_ruianmajiang
+          group: qipai-ruianmajiang
           consumer:
             concurrency: 1
             partitioned: false
@@ -60,3 +60,7 @@ spring:
       
 server:
   port: 2001
+  
+filepath:
+  snapshotFileBasePath: /usr/local/app/qipai_ruianmajiang/server1/snapshot
+  jFileBasePath: /usr/local/app/qipai_ruianmajiang/server1/journal
