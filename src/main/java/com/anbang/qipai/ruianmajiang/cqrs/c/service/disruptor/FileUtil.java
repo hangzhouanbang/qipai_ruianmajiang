@@ -50,7 +50,7 @@ public class FileUtil {
 		String fileName = getRecentFileName(fileBasePath);
 		List<Command> commands = new ArrayList<>();
 		if (fileName != null) {
-			RandomAccessFile file = new RandomAccessFile(fileBasePath + fileName, "r");
+			RandomAccessFile file = new RandomAccessFile(fileBasePath + "/" + fileName, "r");
 			FileChannel channel = file.getChannel();
 			long size = channel.size();
 			ByteBuffer buffer = ByteBuffer.allocate((int) size);

@@ -524,7 +524,8 @@ public class RuianMajiangJiesuanCalculator {
 		return huPaiShoupaiPaiXingList;
 	}
 
-	private static List<ShoupaiWithGuipaiDangGouXingZu> calculateShoupaiWithGuipaiDangGouXingZuList(
+	private static List<ShoupaiWithGuipaiDangGouXingZu> calculateShoupaiWithGuipaiDangGouXingZuList(// TODO
+																									// 鬼牌当可以抽象到majiang.dml
 			List<MajiangPai> guipaiList, MajiangPai[] paiTypesForGuipaiAct, ShoupaiCalculator shoupaiCalculator) {
 		List<ShoupaiWithGuipaiDangGouXingZu> shoupaiWithGuipaiDangGouXingZuList = new ArrayList<>();
 		int guipaiCount = guipaiList.size();
