@@ -1,5 +1,6 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.service.impl;
 
+import com.dml.mpgame.game.finish.vote.*;
 import org.springframework.stereotype.Component;
 
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.FinishResult;
@@ -12,10 +13,6 @@ import com.dml.majiang.pan.frame.PanActionFrame;
 import com.dml.mpgame.game.Game;
 import com.dml.mpgame.game.GameState;
 import com.dml.mpgame.game.GameValueObject;
-import com.dml.mpgame.game.finish.vote.MostPlayersWinVoteCalculator;
-import com.dml.mpgame.game.finish.vote.VoteAfterStartedGameFinishStrategy;
-import com.dml.mpgame.game.finish.vote.VoteAfterStartedGameFinishStrategyValueObject;
-import com.dml.mpgame.game.finish.vote.VoteOption;
 import com.dml.mpgame.game.join.FixedNumberOfPlayersGameJoinStrategy;
 import com.dml.mpgame.game.leave.HostGameLeaveStrategy;
 import com.dml.mpgame.game.ready.FixedNumberOfPlayersGameReadyStrategy;
@@ -103,6 +100,13 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
 	public FinishResult finish(String playerId) throws Exception {
 		FinishResult result = new FinishResult();
 		GameServer gameServer = singletonEntityRepository.getEntity(GameServer.class);
+		Game game=gameServer.findGamePlayerPlaying(playerId);
+		//修复VoteAlreadyExistsException
+		final VoteAfterStartedGameFinishStrategy finishStrategy= (VoteAfterStartedGameFinishStrategy) game.getFinishStrategy();
+        final GameFinishVote vote=finishStrategy.getVote();
+        if (vote!=null && vote.getResult()!=null){
+            finishStrategy.setVote(null);
+        }
 		GameValueObject gameValueObject = gameServer.finishGame(playerId);
 		result.setVoteFinishStrategy(
 				(VoteAfterStartedGameFinishStrategyValueObject) gameValueObject.getFinishStrategy());
