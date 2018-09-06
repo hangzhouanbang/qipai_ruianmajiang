@@ -308,6 +308,7 @@ public class GameController {
 				});
 			} else {
 				data.put("queryScope", null);
+				gameMsgService.gameFinished(gameId);
 				// 通知其他人来查询
 				majiangGameValueObject.allPlayerIds().forEach((otherPlayerId) -> {
 					if (!otherPlayerId.equals(playerId)) {
