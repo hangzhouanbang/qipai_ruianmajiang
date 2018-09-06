@@ -202,7 +202,7 @@ public class RuianMajiangJiesuanCalculator {
 		RuianMajiangTaishu taishu = new RuianMajiangTaishu();
 		hushu.setTaishu(taishu);
 		taishu.setBaibanShu(shoupaixingWuguanJiesuancanshu.getBaibanShu());
-		taishu.setDanzhangdiaoHu(shoupaixingWuguanJiesuancanshu.getFangruShoupaiCount() == 1);
+		taishu.setDanzhangdiaoHu(hu && shoupaixingWuguanJiesuancanshu.getFangruShoupaiCount() == 1);
 		taishu.setDiHu(couldDihu);
 		int shoupaiShunziCount = shoupaiPaiXing.countShunzi();
 		if (hu) {
