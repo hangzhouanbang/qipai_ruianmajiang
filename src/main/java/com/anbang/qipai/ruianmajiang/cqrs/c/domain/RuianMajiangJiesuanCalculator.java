@@ -217,10 +217,10 @@ public class RuianMajiangJiesuanCalculator {
 		taishu.setHongzhongAnke(hongzhongAnke);
 		taishu.setHongzhongGang(shoupaixingWuguanJiesuancanshu.isGangchuHongzhong());
 		taishu.setHongzhongPeng(shoupaixingWuguanJiesuancanshu.isPengchuHongzhong());
-		taishu.setHunyiseHu(shoupaixingWuguanJiesuancanshu.isHunyise());
+		taishu.setHunyiseHu(hu && shoupaixingWuguanJiesuancanshu.isHunyise());
 		int shoupaiKeziCount = shoupaiPaiXing.countKezi();
 		int shoupaiGangziCount = shoupaiPaiXing.countGangzi();
-		ShoupaiDuiziZu huPaiDuiziZu = null;
+		ShoupaiDuiziZu huPaiDuiziZu = shoupaiPaiXing.findDuiziZuHasLastActionPai();
 		boolean allShunzi = (shoupaixingWuguanJiesuancanshu.getPengchupaiZuCount() == 0
 				&& shoupaixingWuguanJiesuancanshu.getGangchupaiZuCount() == 0 && shoupaiKeziCount == 0
 				&& shoupaiGangziCount == 0);
@@ -233,7 +233,6 @@ public class RuianMajiangJiesuanCalculator {
 			boolean menFengPaiDuizi = shoupaiDuiziZu.getDuiziType()
 					.equals(shoupaixingWuguanJiesuancanshu.getMenFengPai());
 			if (!hongzhongDuizi && !facaiDuizi && !menFengPaiDuizi) {
-				huPaiDuiziZu = shoupaiPaiXing.findDuiziZuHasLastActionPai();
 				if (huPaiDuiziZu == null) {
 					ShoupaiShunziZu huPaiShunziZu = shoupaiPaiXing.findShunziZuHasLastActionPai();
 					if (huPaiShunziZu != null) {
@@ -266,7 +265,7 @@ public class RuianMajiangJiesuanCalculator {
 			}
 		}
 		taishu.setQianggangHu(qianggangHu);
-		taishu.setQingyiseHu(shoupaixingWuguanJiesuancanshu.isQingyise());
+		taishu.setQingyiseHu(hu && shoupaixingWuguanJiesuancanshu.isQingyise());
 		taishu.setSancaishenHu(shoupaixingWuguanJiesuancanshu.getCaishenShu() == 3);
 		taishu.setShuangCaisheng(shoupaixingWuguanJiesuancanshu.getCaishenShu() == 2);
 		taishu.setSifengqiHu(false);// TODO 用统计器来做

@@ -36,7 +36,7 @@ public class RuianMajiangPanPlayerResultVO {
 	private List<GangchuPaiZuVO> gangchuList = new ArrayList<>();
 
 	/**
-	 * 这个是打了几炮
+	 * 这个是炮分
 	 */
 	private int pao;
 
@@ -65,11 +65,11 @@ public class RuianMajiangPanPlayerResultVO {
 		RuianMajiangPanPlayerScore ruianMajiangPanPlayerScore = panPlayerResult.getScore();
 		RuianMajiangPao ruianMajiangPao = ruianMajiangPanPlayerScore.getPao();
 		if (ruianMajiangPao != null) {
-			pao = ruianMajiangPao.getValue();
+			pao = ruianMajiangPao.getValue() * 10;
 		}
 		hushu = ruianMajiangPanPlayerScore.getHushu().quzhengValue();
 		taishu = new RuianMajiangTaishuVO(ruianMajiangPanPlayerScore.getHushu().getTaishu());
-		score = ruianMajiangPanPlayerScore.quzhengJiesuanScore() / 10;
+		score = ruianMajiangPanPlayerScore.getJiesuanScore();
 
 		List<ChichuPaiZu> chichuPaiZuList = panPlayerResult.getChichupaiZuList();
 		for (ChichuPaiZu chichuPaiZu : chichuPaiZuList) {
