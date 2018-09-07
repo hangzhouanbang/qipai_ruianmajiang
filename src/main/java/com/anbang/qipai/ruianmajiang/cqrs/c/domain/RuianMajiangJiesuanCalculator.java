@@ -217,7 +217,7 @@ public class RuianMajiangJiesuanCalculator {
 		taishu.setHongzhongAnke(hongzhongAnke);
 		taishu.setHongzhongGang(shoupaixingWuguanJiesuancanshu.isGangchuHongzhong());
 		taishu.setHongzhongPeng(shoupaixingWuguanJiesuancanshu.isPengchuHongzhong());
-		taishu.setHunyiseHu(shoupaixingWuguanJiesuancanshu.isHunyise());
+		taishu.setHunyiseHu(hu && shoupaixingWuguanJiesuancanshu.isHunyise());
 		int shoupaiKeziCount = shoupaiPaiXing.countKezi();
 		int shoupaiGangziCount = shoupaiPaiXing.countGangzi();
 		ShoupaiDuiziZu huPaiDuiziZu = null;
@@ -266,7 +266,7 @@ public class RuianMajiangJiesuanCalculator {
 			}
 		}
 		taishu.setQianggangHu(qianggangHu);
-		taishu.setQingyiseHu(shoupaixingWuguanJiesuancanshu.isQingyise());
+		taishu.setQingyiseHu(hu && shoupaixingWuguanJiesuancanshu.isQingyise());
 		taishu.setSancaishenHu(shoupaixingWuguanJiesuancanshu.getCaishenShu() == 3);
 		taishu.setShuangCaisheng(shoupaixingWuguanJiesuancanshu.getCaishenShu() == 2);
 		taishu.setSifengqiHu(false);// TODO 用统计器来做
