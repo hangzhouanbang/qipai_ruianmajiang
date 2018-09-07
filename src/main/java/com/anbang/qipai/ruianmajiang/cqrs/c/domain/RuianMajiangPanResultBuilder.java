@@ -26,7 +26,7 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 		Map<String, Integer> playerTotalScoreMap = new HashMap<>();
 		if (latestFinishedPanResult != null) {
 			for (RuianMajiangPanPlayerResult panPlayerResult : latestFinishedPanResult.getPlayerResultList()) {
-				playerTotalScoreMap.put(panPlayerResult.getPlayerId(), panPlayerResult.getTotalScore()/10);
+				playerTotalScoreMap.put(panPlayerResult.getPlayerId(), panPlayerResult.getTotalScore() / 10);
 			}
 		}
 
@@ -67,8 +67,8 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 						score1.jiesuanPao(score2.getPao());
 						score2.jiesuanPao(score1.getPao());
 					}
+					int jiesuanHushu = huPlayerScore.getHushu().quzhengValue();
 					if (playerId1.equals(huPlayer.getId())) {// 1胡2不胡
-						int jiesuanHushu = quzheng(huPlayerScore.getValue());
 						// 是不是庄家胡
 						boolean zhuangHu = currentPan.getZhuangPlayerId().equals(playerId1);
 						if (zhuangHu) {// 闲家输庄家
@@ -81,13 +81,12 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 								score1.jiesuanHushu(jiesuanHushu);
 								score2.jiesuanHushu(jiesuanHushu * -1);
 							} else {// 闲家输闲家
-								jiesuanHushu = quzheng(huPlayerScore.getValue() / 2);
+								jiesuanHushu = quzheng(jiesuanHushu / 2);
 								score1.jiesuanHushu(jiesuanHushu);
 								score2.jiesuanHushu(jiesuanHushu * -1);
 							}
 						}
 					} else if (playerId2.equals(huPlayer.getId())) {// 2胡1不胡
-						int jiesuanHushu = quzheng(huPlayerScore.getValue());
 						// 是不是庄家胡
 						boolean zhuangHu = currentPan.getZhuangPlayerId().equals(playerId2);
 						if (zhuangHu) {// 闲家输庄家
@@ -100,7 +99,7 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 								score2.jiesuanHushu(jiesuanHushu);
 								score1.jiesuanHushu(jiesuanHushu * -1);
 							} else {// 闲家输闲家
-								jiesuanHushu = quzheng(huPlayerScore.getValue() / 2);
+								jiesuanHushu = quzheng(jiesuanHushu / 2);
 								score2.jiesuanHushu(jiesuanHushu);
 								score1.jiesuanHushu(jiesuanHushu * -1);
 							}
@@ -111,17 +110,17 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 								|| currentPan.getZhuangPlayerId().equals(playerId2);
 						if (zhuangxianjiesuan) {
 							RuianMajiangHushu hushu1 = score1.getHushu();
-							int jiesuanHushu1 = quzheng(hushu1.getValue());
+							int jiesuanHushu1 = hushu1.quzhengValue();
 							RuianMajiangHushu hushu2 = score2.getHushu();
-							int jiesuanHushu2 = quzheng(hushu2.getValue());
+							int jiesuanHushu2 = hushu2.quzhengValue();
 							int delta = jiesuanHushu1 - jiesuanHushu2;
 							score1.jiesuanHushu(delta);
 							score2.jiesuanHushu(delta * -1);
 						} else {
 							RuianMajiangHushu hushu1 = score1.getHushu();
-							int jiesuanHushu1 = quzheng(hushu1.getValue());
+							int jiesuanHushu1 = hushu1.quzhengValue();
 							RuianMajiangHushu hushu2 = score2.getHushu();
-							int jiesuanHushu2 = quzheng(hushu2.getValue());
+							int jiesuanHushu2 = hushu2.quzhengValue();
 							int delta = quzheng((jiesuanHushu1 - jiesuanHushu2) / 2);
 							score1.jiesuanHushu(delta);
 							score2.jiesuanHushu(delta * -1);
@@ -137,9 +136,9 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 				// 计算累计总分
 				if (latestFinishedPanResult != null) {
 					playerResult.setTotalScore(playerTotalScoreMap.get(playerResult.getPlayerId())
-							+ playerResult.getScore().getJiesuanScore()/10);
+							+ playerResult.getScore().getJiesuanScore() / 10);
 				} else {
-					playerResult.setTotalScore(playerResult.getScore().getJiesuanScore()/10);
+					playerResult.setTotalScore(playerResult.getScore().getJiesuanScore() / 10);
 				}
 				playerResult.setMenFeng(player.getMenFeng());
 				// 吃碰杠出去的要加到结果
@@ -198,9 +197,9 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 				// 计算累计总分
 				if (latestFinishedPanResult != null) {
 					playerResult.setTotalScore(playerTotalScoreMap.get(playerResult.getPlayerId())
-							+ playerResult.getScore().getJiesuanScore()/10);
+							+ playerResult.getScore().getJiesuanScore() / 10);
 				} else {
-					playerResult.setTotalScore(playerResult.getScore().getJiesuanScore()/10);
+					playerResult.setTotalScore(playerResult.getScore().getJiesuanScore() / 10);
 				}
 				playerResult.setMenFeng(player.getMenFeng());
 				// 吃碰杠出去的要加到结果

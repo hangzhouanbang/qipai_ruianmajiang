@@ -36,7 +36,12 @@ public class FileUtil {
 				}
 			}
 		}
-		return recentFileName;
+		if (recentFileName != null) {
+			return fileBasePath + "/" + recentFileName;
+		} else {
+			return null;
+		}
+
 	}
 
 	/**

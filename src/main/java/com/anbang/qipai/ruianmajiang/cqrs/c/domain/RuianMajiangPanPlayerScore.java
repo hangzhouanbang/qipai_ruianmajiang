@@ -21,7 +21,7 @@ public class RuianMajiangPanPlayerScore {
 	private int value;
 
 	public void jiesuan() {
-		jiesuanScore = jiesuanHushu + jiesuanPao * 100;//TODO 一炮10或者5要配置
+		jiesuanScore = (jiesuanHushu / 10) + (jiesuanPao * 10);// TODO 一炮10或者5要配置
 	}
 
 	public void jiesuanHushu(int delta) {
@@ -32,10 +32,6 @@ public class RuianMajiangPanPlayerScore {
 		if (pao != null) {
 			jiesuanPao += pao.jiesuan(anotherPlayerPao);
 		}
-	}
-
-	public int quzhengJiesuanScore() {
-		return quzheng(jiesuanScore);
 	}
 
 	private int quzheng(int value) {
