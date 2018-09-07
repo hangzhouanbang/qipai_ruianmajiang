@@ -220,7 +220,7 @@ public class RuianMajiangJiesuanCalculator {
 		taishu.setHunyiseHu(hu && shoupaixingWuguanJiesuancanshu.isHunyise());
 		int shoupaiKeziCount = shoupaiPaiXing.countKezi();
 		int shoupaiGangziCount = shoupaiPaiXing.countGangzi();
-		ShoupaiDuiziZu huPaiDuiziZu = null;
+		ShoupaiDuiziZu huPaiDuiziZu = shoupaiPaiXing.findDuiziZuHasLastActionPai();
 		boolean allShunzi = (shoupaixingWuguanJiesuancanshu.getPengchupaiZuCount() == 0
 				&& shoupaixingWuguanJiesuancanshu.getGangchupaiZuCount() == 0 && shoupaiKeziCount == 0
 				&& shoupaiGangziCount == 0);
@@ -233,7 +233,6 @@ public class RuianMajiangJiesuanCalculator {
 			boolean menFengPaiDuizi = shoupaiDuiziZu.getDuiziType()
 					.equals(shoupaixingWuguanJiesuancanshu.getMenFengPai());
 			if (!hongzhongDuizi && !facaiDuizi && !menFengPaiDuizi) {
-				huPaiDuiziZu = shoupaiPaiXing.findDuiziZuHasLastActionPai();
 				if (huPaiDuiziZu == null) {
 					ShoupaiShunziZu huPaiShunziZu = shoupaiPaiXing.findShunziZuHasLastActionPai();
 					if (huPaiShunziZu != null) {

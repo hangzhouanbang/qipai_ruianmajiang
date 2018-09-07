@@ -89,22 +89,29 @@ public class ShoupaixingWuguanJiesuancanshu {
 		}
 		yijiuminggangShu = 0;
 		for (int i = 0; i < yijiupaiArray.length; i++) {
-			if (player.ifGangchu(yijiupaiArray[i])) {
+			if (player.ifGangchu(yijiupaiArray[i], GangType.gangdachu)
+					|| player.ifGangchu(yijiupaiArray[i], GangType.kezigangmo)
+					|| player.ifGangchu(yijiupaiArray[i], GangType.kezigangshoupai)) {
 				yijiuminggangShu++;
 			}
 		}
 		erbaminggangShu = 0;
 		for (int i = 0; i < erbapaiArray.length; i++) {
-			if (player.ifGangchu(erbapaiArray[i])) {
+			if (player.ifGangchu(erbapaiArray[i], GangType.gangdachu)
+					|| player.ifGangchu(erbapaiArray[i], GangType.kezigangmo)
+					|| player.ifGangchu(erbapaiArray[i], GangType.kezigangshoupai)) {
 				erbaminggangShu++;
 			}
 		}
 		fengziminggangShu = 0;
 		for (int i = 0; i < fengzipaiArray.length; i++) {
-			if (player.ifGangchu(fengzipaiArray[i])) {
+			if (player.ifGangchu(fengzipaiArray[i], GangType.gangdachu)
+					|| player.ifGangchu(fengzipaiArray[i], GangType.kezigangmo)
+					|| player.ifGangchu(fengzipaiArray[i], GangType.kezigangshoupai)) {
 				fengziminggangShu++;
 			}
 		}
+		// TODO 明杠暗杠概念考虑抽象到通用
 		fangruShoupaiCount = player.countFangruShoupai();
 		chichupaiZuCount = player.countChichupaiZu();
 		pengchupaiZuCount = player.countPengchupaiZu();

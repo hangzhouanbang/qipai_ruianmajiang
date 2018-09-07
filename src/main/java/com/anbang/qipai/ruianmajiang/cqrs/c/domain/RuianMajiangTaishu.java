@@ -56,7 +56,7 @@ public class RuianMajiangTaishu {
 		}
 		tai += baibanShu;
 		if (danzhangdiaoHu) {
-			tai++;
+			tai += 3;
 		}
 		if (pingHu) {
 			tai++;
