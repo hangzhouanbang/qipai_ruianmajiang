@@ -53,6 +53,7 @@ public class RuianMajiangDaActionUpdater implements MajiangPlayerDaActionUpdater
 					xiajiaPlayer.getShoupaiCalculator().removePai(daAction.getPai());
 					if (bestHu != null) {
 						bestHu.setZimo(false);
+						bestHu.setDianpao(true);
 						bestHu.setDianpaoPlayerId(daPlayer.getId());
 						xiajiaPlayer.addActionCandidate(new MajiangHuAction(xiajiaPlayer.getId(), bestHu));
 						anyPlayerHu = true;

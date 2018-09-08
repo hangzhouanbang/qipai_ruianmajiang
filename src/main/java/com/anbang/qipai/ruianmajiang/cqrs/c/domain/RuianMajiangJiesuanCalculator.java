@@ -45,7 +45,7 @@ public class RuianMajiangJiesuanCalculator {
 			RuianMajiangPanPlayerScore bestScore = null;
 			ShoupaiPaiXing bestHuShoupaiPaiXing = null;
 			for (ShoupaiPaiXing shoupaiPaiXing : huPaiShoupaiPaiXingList) {
-				RuianMajiangPanPlayerScore score = calculateScoreForShoupaiPaiXing(couldTianhu, false,
+				RuianMajiangPanPlayerScore score = calculateScoreForShoupaiPaiXing(false, couldTianhu, false,
 						shoupaixingWuguanJiesuancanshu, shoupaiPaiXing, true,
 						moAction.getReason().getName().equals(GanghouBupai.name), true, false, dihu, dapao);
 				if (bestScore == null || bestScore.getValue() < score.getValue()) {
@@ -76,7 +76,7 @@ public class RuianMajiangJiesuanCalculator {
 			RuianMajiangPanPlayerScore bestScore = null;
 			ShoupaiPaiXing bestHuShoupaiPaiXing = null;
 			for (ShoupaiPaiXing shoupaiPaiXing : huPaiShoupaiPaiXingList) {
-				RuianMajiangPanPlayerScore score = calculateScoreForShoupaiPaiXing(false, false,
+				RuianMajiangPanPlayerScore score = calculateScoreForShoupaiPaiXing(true, false, false,
 						shoupaixingWuguanJiesuancanshu, shoupaiPaiXing, true, false, true, true, dihu, dapao);
 				if (bestScore == null || bestScore.getValue() < score.getValue()) {
 					bestScore = score;
@@ -106,7 +106,7 @@ public class RuianMajiangJiesuanCalculator {
 			RuianMajiangPanPlayerScore bestScore = null;
 			ShoupaiPaiXing bestHuShoupaiPaiXing = null;
 			for (ShoupaiPaiXing shoupaiPaiXing : huPaiShoupaiPaiXingList) {
-				RuianMajiangPanPlayerScore score = calculateScoreForShoupaiPaiXing(false, couldDihu,
+				RuianMajiangPanPlayerScore score = calculateScoreForShoupaiPaiXing(true, false, couldDihu,
 						shoupaixingWuguanJiesuancanshu, shoupaiPaiXing, true, false, false, false, dihu, dapao);
 				if (bestScore == null || bestScore.getValue() < score.getValue()) {
 					bestScore = score;
@@ -132,7 +132,7 @@ public class RuianMajiangJiesuanCalculator {
 		ShoupaixingWuguanJiesuancanshu shoupaixingWuguanJiesuancanshu = new ShoupaixingWuguanJiesuancanshu(player);
 		RuianMajiangPanPlayerScore bestScore = null;
 		for (ShoupaiPaiXing shoupaiPaiXing : shoupaiPaiXingList) {
-			RuianMajiangPanPlayerScore score = calculateScoreForShoupaiPaiXing(false, false,
+			RuianMajiangPanPlayerScore score = calculateScoreForShoupaiPaiXing(false, false, false,
 					shoupaixingWuguanJiesuancanshu, shoupaiPaiXing, false, false, false, false, dihu, dapao);
 			if (bestScore == null || bestScore.getValue() < score.getValue()) {
 				bestScore = score;
@@ -141,12 +141,13 @@ public class RuianMajiangJiesuanCalculator {
 		return bestScore;
 	}
 
-	private static RuianMajiangPanPlayerScore calculateScoreForShoupaiPaiXing(boolean couldTianhu, boolean couldDihu,
-			ShoupaixingWuguanJiesuancanshu shoupaixingWuguanJiesuancanshu, ShoupaiPaiXing shoupaiPaiXing, boolean hu,
-			boolean gangkaiHu, boolean zimoHu, boolean qianggangHu, int dihu, boolean dapao) {
+	private static RuianMajiangPanPlayerScore calculateScoreForShoupaiPaiXing(boolean dianpao, boolean couldTianhu,
+			boolean couldDihu, ShoupaixingWuguanJiesuancanshu shoupaixingWuguanJiesuancanshu,
+			ShoupaiPaiXing shoupaiPaiXing, boolean hu, boolean gangkaiHu, boolean zimoHu, boolean qianggangHu, int dihu,
+			boolean dapao) {
 		RuianMajiangPanPlayerScore score = new RuianMajiangPanPlayerScore();
-		RuianMajiangHushu hushu = calculateHushu(couldTianhu, couldDihu, hu, gangkaiHu, zimoHu, qianggangHu, dihu,
-				shoupaixingWuguanJiesuancanshu, shoupaiPaiXing);
+		RuianMajiangHushu hushu = calculateHushu(dianpao, couldTianhu, couldDihu, hu, gangkaiHu, zimoHu, qianggangHu,
+				dihu, shoupaixingWuguanJiesuancanshu, shoupaiPaiXing);
 		score.setHushu(hushu);
 		if (dapao) {
 			RuianMajiangPao pao = calculatePao(shoupaixingWuguanJiesuancanshu, shoupaiPaiXing, hu);
@@ -194,7 +195,7 @@ public class RuianMajiangJiesuanCalculator {
 		return pao;
 	}
 
-	private static RuianMajiangHushu calculateHushu(boolean couldTianhu, boolean couldDihu, boolean hu,
+	private static RuianMajiangHushu calculateHushu(boolean dianpao, boolean couldTianhu, boolean couldDihu, boolean hu,
 			boolean gangkaiHu, boolean zimoHu, boolean qianggangHu, int dihu,
 			ShoupaixingWuguanJiesuancanshu shoupaixingWuguanJiesuancanshu, ShoupaiPaiXing shoupaiPaiXing) {
 		RuianMajiangHushu hushu = new RuianMajiangHushu();
@@ -282,45 +283,77 @@ public class RuianMajiangJiesuanCalculator {
 		hushu.setErbaangangShu(shoupaixingWuguanJiesuancanshu.getErbaangangCount());
 
 		int erbaankeShu = 0;
+		int erbapengShu = shoupaixingWuguanJiesuancanshu.getErbapengShu();
 		for (int j = 0; j < shoupaixingWuguanJiesuancanshu.getErbapaiArray().length; j++) {
-			if (shoupaiPaiXing.hasKeziForPaiType(shoupaixingWuguanJiesuancanshu.getErbapaiArray()[j])) {
-				erbaankeShu++;
+			ShoupaiKeziZu shoupaiKeziZu = shoupaiPaiXing
+					.findYuanPaiKeziZuForPaiType(shoupaixingWuguanJiesuancanshu.getErbapaiArray()[j]);
+			if (shoupaiKeziZu != null) {
+				if (dianpao) {
+					if (shoupaiKeziZu.containsLastActionPai()) {
+						erbapengShu++;
+					} else {
+						erbaankeShu++;
+					}
+				} else {
+					erbaankeShu++;
+				}
 			}
 		}
 		hushu.setErbaankeShu(erbaankeShu);
+		hushu.setErbapengShu(erbapengShu);
 
 		hushu.setErbaminggangShu(shoupaixingWuguanJiesuancanshu.getErbaminggangShu());
-		hushu.setErbapengShu(shoupaixingWuguanJiesuancanshu.getErbapengShu());
 		hushu.setFacaiDuizi(shoupaiPaiXing.hasDuiziForPaiType(MajiangPai.facai));
 
 		hushu.setFengziangangShu(shoupaixingWuguanJiesuancanshu.getFengziangangCount());
 
 		int fengziankeShu = 0;
+		int fengzipengShu = shoupaixingWuguanJiesuancanshu.getFengzipengShu();
 		for (int j = 0; j < shoupaixingWuguanJiesuancanshu.getFengzipaiArray().length; j++) {
-			if (shoupaiPaiXing.hasKeziForPaiType(shoupaixingWuguanJiesuancanshu.getFengzipaiArray()[j])) {
-				fengziankeShu++;
+			ShoupaiKeziZu shoupaiKeziZu = shoupaiPaiXing
+					.findYuanPaiKeziZuForPaiType(shoupaixingWuguanJiesuancanshu.getFengzipaiArray()[j]);
+			if (shoupaiKeziZu != null) {
+				if (dianpao) {
+					if (shoupaiKeziZu.containsLastActionPai()) {
+						fengzipengShu++;
+					} else {
+						fengziankeShu++;
+					}
+				} else {
+					fengziankeShu++;
+				}
 			}
 		}
 		hushu.setFengziankeShu(fengziankeShu);
+		hushu.setFengzipengShu(fengzipengShu);
 
 		hushu.setFengziminggangShu(shoupaixingWuguanJiesuancanshu.getFengziminggangShu());
-		hushu.setFengzipengShu(shoupaixingWuguanJiesuancanshu.getFengzipengShu());
 		hushu.setHongzhongDuizi(shoupaiPaiXing.hasDuiziForPaiType(MajiangPai.hongzhong));
 		hushu.setHu(hu);
 		hushu.setQiandangHu(qiandangHu);
 
 		hushu.setYijiuangangShu(shoupaixingWuguanJiesuancanshu.getYijiuangangCount());
-
 		int yijiuankeShu = 0;
+		int yijiupengShu = shoupaixingWuguanJiesuancanshu.getYijiupengShu();
 		for (int j = 0; j < shoupaixingWuguanJiesuancanshu.getYijiupaiArray().length; j++) {
-			if (shoupaiPaiXing.hasKeziForPaiType(shoupaixingWuguanJiesuancanshu.getYijiupaiArray()[j])) {
-				yijiuankeShu++;
+			ShoupaiKeziZu shoupaiKeziZu = shoupaiPaiXing
+					.findYuanPaiKeziZuForPaiType(shoupaixingWuguanJiesuancanshu.getYijiupaiArray()[j]);
+			if (shoupaiKeziZu != null) {
+				if (dianpao) {
+					if (shoupaiKeziZu.containsLastActionPai()) {
+						yijiupengShu++;
+					} else {
+						yijiuankeShu++;
+					}
+				} else {
+					yijiuankeShu++;
+				}
 			}
 		}
 		hushu.setYijiuankeShu(yijiuankeShu);
+		hushu.setYijiupengShu(yijiupengShu);
 
 		hushu.setYijiuminggangShu(shoupaixingWuguanJiesuancanshu.getYijiuminggangShu());
-		hushu.setYijiupengShu(shoupaixingWuguanJiesuancanshu.getYijiupengShu());
 		hushu.setZimoHu(zimoHu);
 		hushu.setZuofengDuizi(shoupaiPaiXing.hasDuiziForPaiType(shoupaixingWuguanJiesuancanshu.getMenFengPai()));
 
