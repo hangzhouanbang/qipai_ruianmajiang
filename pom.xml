@@ -5,8 +5,8 @@
 	<groupId>qipai_ruianmajiang</groupId>
 	<artifactId>qipai_ruianmajiang</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
-	<!--<packaging>jar</packaging> -->
+	<!--<packaging>war</packaging> -->
+	<packaging>jar</packaging>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -22,12 +22,13 @@
 
 	<dependencies>
 
-		<!--因配置外部TOMCAT 而配置 -->
+		<!--因配置外部TOMCAT 而配置 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-tomcat</artifactId>
 			<scope>provided</scope>
 		</dependency>
+		-->
 
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
