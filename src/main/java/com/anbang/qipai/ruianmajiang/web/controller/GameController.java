@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.dml.mpgame.game.finish.vote.VoteAfterStartedGameFinishStrategy;
+import com.dml.mpgame.game.finish.vote.VoteAfterStartedGameFinishStrategyValueObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -32,7 +34,7 @@ import com.anbang.qipai.ruianmajiang.websocket.QueryScope;
 
 /**
  * 游戏框架相关
- * 
+ *
  * @author neo
  *
  */
@@ -185,7 +187,7 @@ public class GameController {
 
 	/**
 	 * 游戏的所有信息,不包含局
-	 * 
+	 *
 	 * @param gameId
 	 * @return
 	 */
@@ -203,7 +205,7 @@ public class GameController {
 
 	/**
 	 * 最开始的准备,不适用下一盘的准备
-	 * 
+	 *
 	 * @param token
 	 * @return
 	 */
@@ -290,6 +292,7 @@ public class GameController {
 
 		if (majiangGameValueObject.getState().equals(MajiangGameState.finished)) {
 			data.put("queryScope", QueryScope.gameInfo);
+            gameMsgService.gameFinished(gameId);
 			// 通知其他人来查询
 			majiangGameValueObject.allPlayerIds().forEach((otherPlayerId) -> {
 				if (!otherPlayerId.equals(playerId)) {
@@ -308,7 +311,6 @@ public class GameController {
 				});
 			} else {
 				data.put("queryScope", null);
-				gameMsgService.gameFinished(gameId);
 				// 通知其他人来查询
 				majiangGameValueObject.allPlayerIds().forEach((otherPlayerId) -> {
 					if (!otherPlayerId.equals(playerId)) {
@@ -374,7 +376,6 @@ public class GameController {
 		data.put("vote", gameFinishVoteDbo.getVote());
 		vo.setData(data);
 		return vo;
-
 	}
 
 }
