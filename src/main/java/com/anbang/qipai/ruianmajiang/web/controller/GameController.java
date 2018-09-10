@@ -292,6 +292,7 @@ public class GameController {
 
 		if (majiangGameValueObject.getState().equals(MajiangGameState.finished)) {
 			data.put("queryScope", QueryScope.gameInfo);
+            gameMsgService.gameFinished(gameId);
 			// 通知其他人来查询
 			majiangGameValueObject.allPlayerIds().forEach((otherPlayerId) -> {
 				if (!otherPlayerId.equals(playerId)) {
@@ -300,8 +301,7 @@ public class GameController {
 			});
 		} else {
 			// 游戏没结束有两种可能：一种是发起了投票。还有一种是游戏没开始，解散发起人又不是房主，那就自己走人。
-			final VoteAfterStartedGameFinishStrategyValueObject finishStrategy=finishResult.getVoteFinishStrategy();
-			if (finishStrategy.getVote()!=null) {
+			if (majiangGameValueObject.allPlayerIds().contains(playerId)) {
 				data.put("queryScope", QueryScope.gameFinishVote);
 				// 通知其他人来查询
 				majiangGameValueObject.allPlayerIds().forEach((otherPlayerId) -> {
@@ -311,7 +311,6 @@ public class GameController {
 				});
 			} else {
 				data.put("queryScope", null);
-				gameMsgService.gameFinished(gameId);
 				// 通知其他人来查询
 				majiangGameValueObject.allPlayerIds().forEach((otherPlayerId) -> {
 					if (!otherPlayerId.equals(playerId)) {
