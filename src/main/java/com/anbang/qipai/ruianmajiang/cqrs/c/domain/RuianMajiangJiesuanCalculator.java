@@ -496,7 +496,7 @@ public class RuianMajiangJiesuanCalculator {
 		// 计算牌型
 		List<PaiXing> paiXingList = shoupaiCalculator.calculateAllPaiXingFromGouXing(gouXing);
 		for (PaiXing paiXing : paiXingList) {
-			List<ShoupaiPaiXing> shoupaiPaiXingList = paiXing.generateShoupaiPaiXingByGuipaiDangPai(guipaiDangPaiArray);
+			List<ShoupaiPaiXing> shoupaiPaiXingList = paiXing.generateShoupaiPaiXingByDangPai(guipaiDangPaiArray);
 			// 过滤暗杠或暗刻有两个财神当的
 			Iterator<ShoupaiPaiXing> i = shoupaiPaiXingList.iterator();
 			while (i.hasNext()) {
@@ -533,7 +533,7 @@ public class RuianMajiangJiesuanCalculator {
 		// 计算牌型
 		List<PaiXing> paiXingList = shoupaiCalculator.calculateAllPaiXingFromGouXing(gouXing);
 		for (PaiXing paiXing : paiXingList) {
-			List<ShoupaiPaiXing> shoupaiPaiXingList = paiXing.generateShoupaiPaiXingByGuipaiDangPai(guipaiDangPaiArray);
+			List<ShoupaiPaiXing> shoupaiPaiXingList = paiXing.generateShoupaiPaiXingByDangPai(guipaiDangPaiArray);
 			// 过滤暗杠或暗刻有两个财神当的
 			Iterator<ShoupaiPaiXing> i = shoupaiPaiXingList.iterator();
 			while (i.hasNext()) {
