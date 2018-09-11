@@ -108,7 +108,7 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 						player.addActionCandidate(new MajiangDaAction(player.getId(), pai));
 					}
 				}
-				if (MajiangPai.isFengpai(gangmoShoupai) && juezhangStatisticsListener.ifJuezhang(gangmoShoupai)) {
+				if (MajiangPai.isZipai(gangmoShoupai) && juezhangStatisticsListener.ifJuezhang(gangmoShoupai)) {
 					player.addActionCandidate(new MajiangDaAction(player.getId(), gangmoShoupai));
 				}
 				if (player.getActionCandidates().isEmpty()) {
