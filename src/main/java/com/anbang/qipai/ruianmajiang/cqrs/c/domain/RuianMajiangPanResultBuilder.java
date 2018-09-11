@@ -26,7 +26,7 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 		Map<String, Integer> playerTotalScoreMap = new HashMap<>();
 		if (latestFinishedPanResult != null) {
 			for (RuianMajiangPanPlayerResult panPlayerResult : latestFinishedPanResult.getPlayerResultList()) {
-				playerTotalScoreMap.put(panPlayerResult.getPlayerId(), panPlayerResult.getTotalScore() / 10);
+				playerTotalScoreMap.put(panPlayerResult.getPlayerId(), panPlayerResult.getTotalScore());
 			}
 		}
 
@@ -136,9 +136,9 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 				// 计算累计总分
 				if (latestFinishedPanResult != null) {
 					playerResult.setTotalScore(playerTotalScoreMap.get(playerResult.getPlayerId())
-							+ playerResult.getScore().getJiesuanScore() / 10);
+							+ playerResult.getScore().getJiesuanScore());
 				} else {
-					playerResult.setTotalScore(playerResult.getScore().getJiesuanScore() / 10);
+					playerResult.setTotalScore(playerResult.getScore().getJiesuanScore());
 				}
 				playerResult.setMenFeng(player.getMenFeng());
 				// 吃碰杠出去的要加到结果
@@ -197,9 +197,9 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 				// 计算累计总分
 				if (latestFinishedPanResult != null) {
 					playerResult.setTotalScore(playerTotalScoreMap.get(playerResult.getPlayerId())
-							+ playerResult.getScore().getJiesuanScore() / 10);
+							+ playerResult.getScore().getJiesuanScore());
 				} else {
-					playerResult.setTotalScore(playerResult.getScore().getJiesuanScore() / 10);
+					playerResult.setTotalScore(playerResult.getScore().getJiesuanScore());
 				}
 				playerResult.setMenFeng(player.getMenFeng());
 				// 吃碰杠出去的要加到结果
