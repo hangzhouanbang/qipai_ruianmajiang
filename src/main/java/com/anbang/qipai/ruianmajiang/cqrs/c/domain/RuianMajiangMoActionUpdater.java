@@ -67,7 +67,7 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 
 			boolean couldTianhu = false;
 			if (currentPan.getZhuangPlayerId().equals(player.getId())) {
-				if (player.countFangruShoupai() == 0) {
+				if (player.countAllFangruShoupai() == 0) {
 					couldTianhu = true;
 				}
 			}

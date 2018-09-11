@@ -7,7 +7,7 @@ import com.dml.majiang.player.action.listener.peng.MajiangPlayerPengActionStatis
 import com.dml.majiang.player.action.peng.MajiangPengAction;
 
 /**
- * 统计拆字牌
+ * 统计拆字牌(带风牌)
  * 
  * @author Neo
  *

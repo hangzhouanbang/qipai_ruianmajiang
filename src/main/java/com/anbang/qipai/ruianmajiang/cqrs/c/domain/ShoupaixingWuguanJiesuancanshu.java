@@ -112,7 +112,7 @@ public class ShoupaixingWuguanJiesuancanshu {
 			}
 		}
 		// TODO 明杠暗杠概念考虑抽象到通用
-		fangruShoupaiCount = player.countFangruShoupai();
+		fangruShoupaiCount = player.countAllFangruShoupai();
 		chichupaiZuCount = player.countChichupaiZu();
 		pengchupaiZuCount = player.countPengchupaiZu();
 		gangchupaiZuCount = player.countGangchupaiZu();
