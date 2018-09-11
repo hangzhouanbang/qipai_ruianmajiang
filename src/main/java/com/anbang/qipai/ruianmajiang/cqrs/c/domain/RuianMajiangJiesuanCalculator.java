@@ -285,17 +285,19 @@ public class RuianMajiangJiesuanCalculator {
 		int erbaankeShu = 0;
 		int erbapengShu = shoupaixingWuguanJiesuancanshu.getErbapengShu();
 		for (int j = 0; j < shoupaixingWuguanJiesuancanshu.getErbapaiArray().length; j++) {
-			ShoupaiKeziZu shoupaiKeziZu = shoupaiPaiXing
-					.findYuanPaiKeziZuForPaiType(shoupaixingWuguanJiesuancanshu.getErbapaiArray()[j]);
-			if (shoupaiKeziZu != null) {
-				if (dianpao) {
-					if (shoupaiKeziZu.containsLastActionPai()) {
-						erbapengShu++;
+			List<ShoupaiKeziZu> shoupaiKeziZuList = shoupaiPaiXing
+					.findAllKeziZuForPaiType(shoupaixingWuguanJiesuancanshu.getErbapaiArray()[j]);
+			if (!shoupaiKeziZuList.isEmpty()) {
+				for (ShoupaiKeziZu shoupaiKeziZu : shoupaiKeziZuList) {
+					if (dianpao) {
+						if (shoupaiKeziZu.containsLastActionPai()) {
+							erbapengShu++;
+						} else {
+							erbaankeShu++;
+						}
 					} else {
 						erbaankeShu++;
 					}
-				} else {
-					erbaankeShu++;
 				}
 			}
 		}
@@ -310,17 +312,19 @@ public class RuianMajiangJiesuanCalculator {
 		int fengziankeShu = 0;
 		int fengzipengShu = shoupaixingWuguanJiesuancanshu.getFengzipengShu();
 		for (int j = 0; j < shoupaixingWuguanJiesuancanshu.getFengzipaiArray().length; j++) {
-			ShoupaiKeziZu shoupaiKeziZu = shoupaiPaiXing
-					.findYuanPaiKeziZuForPaiType(shoupaixingWuguanJiesuancanshu.getFengzipaiArray()[j]);
-			if (shoupaiKeziZu != null) {
-				if (dianpao) {
-					if (shoupaiKeziZu.containsLastActionPai()) {
-						fengzipengShu++;
+			List<ShoupaiKeziZu> shoupaiKeziZuList = shoupaiPaiXing
+					.findAllKeziZuForPaiType(shoupaixingWuguanJiesuancanshu.getFengzipaiArray()[j]);
+			if (!shoupaiKeziZuList.isEmpty()) {
+				for (ShoupaiKeziZu shoupaiKeziZu : shoupaiKeziZuList) {
+					if (dianpao) {
+						if (shoupaiKeziZu.containsLastActionPai()) {
+							fengzipengShu++;
+						} else {
+							fengziankeShu++;
+						}
 					} else {
 						fengziankeShu++;
 					}
-				} else {
-					fengziankeShu++;
 				}
 			}
 		}
@@ -336,17 +340,19 @@ public class RuianMajiangJiesuanCalculator {
 		int yijiuankeShu = 0;
 		int yijiupengShu = shoupaixingWuguanJiesuancanshu.getYijiupengShu();
 		for (int j = 0; j < shoupaixingWuguanJiesuancanshu.getYijiupaiArray().length; j++) {
-			ShoupaiKeziZu shoupaiKeziZu = shoupaiPaiXing
-					.findYuanPaiKeziZuForPaiType(shoupaixingWuguanJiesuancanshu.getYijiupaiArray()[j]);
-			if (shoupaiKeziZu != null) {
-				if (dianpao) {
-					if (shoupaiKeziZu.containsLastActionPai()) {
-						yijiupengShu++;
+			List<ShoupaiKeziZu> shoupaiKeziZuList = shoupaiPaiXing
+					.findAllKeziZuForPaiType(shoupaixingWuguanJiesuancanshu.getYijiupaiArray()[j]);
+			if (!shoupaiKeziZuList.isEmpty()) {
+				for (ShoupaiKeziZu shoupaiKeziZu : shoupaiKeziZuList) {
+					if (dianpao) {
+						if (shoupaiKeziZu.containsLastActionPai()) {
+							yijiupengShu++;
+						} else {
+							yijiuankeShu++;
+						}
 					} else {
 						yijiuankeShu++;
 					}
-				} else {
-					yijiuankeShu++;
 				}
 			}
 		}
