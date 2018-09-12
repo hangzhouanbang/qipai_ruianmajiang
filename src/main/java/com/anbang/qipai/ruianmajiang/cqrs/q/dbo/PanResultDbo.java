@@ -14,7 +14,7 @@ public class PanResultDbo {
 	private boolean hu;
 	private boolean zimo;
 	private String dianpaoPlayerId;
-	private List<RuianMajiangPanPlayerResult> playerResultList;
+	private List<RuianMajiangPanPlayerResultDbo> playerResultList;
 	private long finishTime;
 
 	public PanResultDbo() {
@@ -22,12 +22,20 @@ public class PanResultDbo {
 
 	public PanResultDbo(String gameId, RuianMajiangPanResult ruianMajiangPanResult) {
 		this.gameId = gameId;
-		panNo = ruianMajiangPanResult.getPanNo();
-		zhuangPlayerId = ruianMajiangPanResult.getZhuangPlayerId();
+		panNo = ruianMajiangPanResult.getPan().getNo();
+		zhuangPlayerId = ruianMajiangPanResult.findZhuangPlayerId();
 		hu = ruianMajiangPanResult.isHu();
 		zimo = ruianMajiangPanResult.isZimo();
 		dianpaoPlayerId = ruianMajiangPanResult.getDianpaoPlayerId();
-		playerResultList = new ArrayList<>(ruianMajiangPanResult.getPlayerResultList());
+		playerResultList = new ArrayList<>();
+		for (RuianMajiangPanPlayerResult playerResult : ruianMajiangPanResult.getPanPlayerResultList()) {
+			RuianMajiangPanPlayerResultDbo dbo = new RuianMajiangPanPlayerResultDbo();
+			dbo.setPlayerId(playerResult.getPlayerId());
+			dbo.setPlayerResult(playerResult);
+			dbo.setPlayer(ruianMajiangPanResult.findPlayer(playerResult.getPlayerId()));
+			playerResultList.add(dbo);
+		}
+
 		finishTime = ruianMajiangPanResult.getPanFinishTime();
 	}
 
@@ -87,11 +95,11 @@ public class PanResultDbo {
 		this.dianpaoPlayerId = dianpaoPlayerId;
 	}
 
-	public List<RuianMajiangPanPlayerResult> getPlayerResultList() {
+	public List<RuianMajiangPanPlayerResultDbo> getPlayerResultList() {
 		return playerResultList;
 	}
 
-	public void setPlayerResultList(List<RuianMajiangPanPlayerResult> playerResultList) {
+	public void setPlayerResultList(List<RuianMajiangPanPlayerResultDbo> playerResultList) {
 		this.playerResultList = playerResultList;
 	}
 

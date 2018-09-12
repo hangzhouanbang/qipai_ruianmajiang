@@ -2,13 +2,13 @@ package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
 import com.dml.majiang.ju.Ju;
 import com.dml.majiang.pai.MajiangPai;
 import com.dml.majiang.pan.Pan;
+import com.dml.majiang.pan.frame.PanValueObject;
 import com.dml.majiang.pan.result.CurrentPanResultBuilder;
 import com.dml.majiang.pan.result.PanResult;
 import com.dml.majiang.player.MajiangPlayer;
@@ -25,7 +25,7 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 		RuianMajiangPanResult latestFinishedPanResult = (RuianMajiangPanResult) ju.findLatestFinishedPanResult();
 		Map<String, Integer> playerTotalScoreMap = new HashMap<>();
 		if (latestFinishedPanResult != null) {
-			for (RuianMajiangPanPlayerResult panPlayerResult : latestFinishedPanResult.getPlayerResultList()) {
+			for (RuianMajiangPanPlayerResult panPlayerResult : latestFinishedPanResult.getPanPlayerResultList()) {
 				playerTotalScoreMap.put(panPlayerResult.getPlayerId(), panPlayerResult.getTotalScore());
 			}
 		}
@@ -39,17 +39,15 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 			ShoupaiPaiXing huShoupaiPaiXing = hu.getShoupaiPaiXing();
 
 			// 两两结算RuianMajiangPanPlayerScore
-			List<String> playerIdList = currentPan.sortedPlayerIdList();
 			List<RuianMajiangPanPlayerResult> playerResultList = new ArrayList<>();
-			playerIdList.forEach((playerId) -> {
-				RuianMajiangPanPlayerResult playerResult = new RuianMajiangPanPlayerResult();
-				playerResult.setPlayerId(playerId);
-				if (playerId.equals(huPlayer.getId())) {
+			currentPan.getMajiangPlayerIdMajiangPlayerMap().values().forEach((player) -> {
+				RuianMajiangPanPlayerResult playerResult = new RuianMajiangPanPlayerResult(player.getId());
+				if (player.getId().equals(huPlayer.getId())) {
 					playerResult.setScore(huPlayerScore);
 				} else {
 					// 计算非胡玩家分数
 					playerResult.setScore(RuianMajiangJiesuanCalculator.calculateBestScoreForBuhuPlayer(dapao, dihu,
-							currentPan.findPlayerById(playerId), baibanIsGuipai));
+							player, baibanIsGuipai));
 				}
 				playerResultList.add(playerResult);
 			});
@@ -140,40 +138,23 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 				} else {
 					playerResult.setTotalScore(playerResult.getScore().getJiesuanScore());
 				}
-				playerResult.setMenFeng(player.getMenFeng());
-				// 吃碰杠出去的要加到结果
-				playerResult.setPublicPaiList(new ArrayList<>(player.getPublicPaiList()));
-				playerResult.setChichupaiZuList(new ArrayList<>(player.getChichupaiZuList()));
-				playerResult.setPengchupaiZuList(new ArrayList<>(player.getPengchupaiZuList()));
-				playerResult.setGangchupaiZuList(new ArrayList<>(player.getGangchupaiZuList()));
-				playerResult.setGuipaiTypeSet(new HashSet<>(player.getGuipaiTypeSet()));
-				playerResult.setShoupaiList(new ArrayList<>(player.getFangruShoupaiList()));
-				if (playerResult.getPlayerId().equals(huPlayer.getId())) {
-					playerResult.setHu(true);
-					playerResult.setBestShoupaiPaiXing(huShoupaiPaiXing);
-				} else {
-					playerResult.setHu(false);
-				}
 			});
 
 			RuianMajiangPanResult ruianMajiangPanResult = new RuianMajiangPanResult();
-			ruianMajiangPanResult.setPanNo(currentPan.getNo());
+			ruianMajiangPanResult.setPan(new PanValueObject(currentPan));
 			ruianMajiangPanResult.setPanFinishTime(panFinishTime);
-			ruianMajiangPanResult.setZhuangPlayerId(currentPan.getZhuangPlayerId());
-			ruianMajiangPanResult.setPlayerResultList(playerResultList);
+			ruianMajiangPanResult.setPanPlayerResultList(playerResultList);
 			ruianMajiangPanResult.setHu(true);
 			ruianMajiangPanResult.setZimo(hu.isZimo());
 			ruianMajiangPanResult.setDianpaoPlayerId(hu.getDianpaoPlayerId());
 			return ruianMajiangPanResult;
 		} else {// 流局
 
-			List<String> playerIdList = currentPan.sortedPlayerIdList();
 			List<RuianMajiangPanPlayerResult> playerResultList = new ArrayList<>();
-			playerIdList.forEach((playerId) -> {
-				RuianMajiangPanPlayerResult playerResult = new RuianMajiangPanPlayerResult();
-				playerResult.setPlayerId(playerId);
-				playerResult.setScore(RuianMajiangJiesuanCalculator.calculateBestScoreForBuhuPlayer(dapao, dihu,
-						currentPan.findPlayerById(playerId), baibanIsGuipai));
+			currentPan.getMajiangPlayerIdMajiangPlayerMap().values().forEach((player) -> {
+				RuianMajiangPanPlayerResult playerResult = new RuianMajiangPanPlayerResult(player.getId());
+				playerResult.setScore(RuianMajiangJiesuanCalculator.calculateBestScoreForBuhuPlayer(dapao, dihu, player,
+						baibanIsGuipai));
 				playerResultList.add(playerResult);
 			});
 			if (dapao) {
@@ -190,9 +171,7 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 				}
 			}
 
-			// shoupailist放入结果
 			playerResultList.forEach((playerResult) -> {
-				MajiangPlayer player = currentPan.findPlayerById(playerResult.getPlayerId());
 				playerResult.getScore().jiesuan();
 				// 计算累计总分
 				if (latestFinishedPanResult != null) {
@@ -201,22 +180,12 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 				} else {
 					playerResult.setTotalScore(playerResult.getScore().getJiesuanScore());
 				}
-				playerResult.setMenFeng(player.getMenFeng());
-				// 吃碰杠出去的要加到结果
-				playerResult.setPublicPaiList(new ArrayList<>(player.getPublicPaiList()));
-				playerResult.setChichupaiZuList(new ArrayList<>(player.getChichupaiZuList()));
-				playerResult.setPengchupaiZuList(new ArrayList<>(player.getPengchupaiZuList()));
-				playerResult.setGangchupaiZuList(new ArrayList<>(player.getGangchupaiZuList()));
-				playerResult.setGuipaiTypeSet(new HashSet<>(player.getGuipaiTypeSet()));
-				playerResult.setShoupaiList(new ArrayList<>(player.getFangruShoupaiList()));
-				playerResult.setHu(false);
 			});
 
 			RuianMajiangPanResult ruianMajiangPanResult = new RuianMajiangPanResult();
-			ruianMajiangPanResult.setPanNo(currentPan.getNo());
+			ruianMajiangPanResult.setPan(new PanValueObject(currentPan));
 			ruianMajiangPanResult.setPanFinishTime(panFinishTime);
-			ruianMajiangPanResult.setZhuangPlayerId(currentPan.getZhuangPlayerId());
-			ruianMajiangPanResult.setPlayerResultList(playerResultList);
+			ruianMajiangPanResult.setPanPlayerResultList(playerResultList);
 			ruianMajiangPanResult.setHu(false);
 
 			return ruianMajiangPanResult;

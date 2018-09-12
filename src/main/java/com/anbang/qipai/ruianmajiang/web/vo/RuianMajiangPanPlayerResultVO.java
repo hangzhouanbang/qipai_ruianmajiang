@@ -2,12 +2,11 @@ package com.anbang.qipai.ruianmajiang.web.vo;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
-import com.anbang.qipai.ruianmajiang.cqrs.c.domain.RuianMajiangPanPlayerResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.RuianMajiangPanPlayerScore;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.RuianMajiangPao;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGamePlayerDbo;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.RuianMajiangPanPlayerResultDbo;
 import com.dml.majiang.pai.MajiangPai;
 import com.dml.majiang.pai.fenzu.Shunzi;
 import com.dml.majiang.player.chupaizu.ChichuPaiZu;
@@ -53,16 +52,16 @@ public class RuianMajiangPanPlayerResultVO {
 	private int score;
 
 	public RuianMajiangPanPlayerResultVO(MajiangGamePlayerDbo gamePlayerDbo, String zhuangPlayerId, boolean zimo,
-			String dianpaoPlayerId, RuianMajiangPanPlayerResult panPlayerResult) {
+			String dianpaoPlayerId, RuianMajiangPanPlayerResultDbo panPlayerResultDbo) {
 		playerId = gamePlayerDbo.getPlayerId();
 		nickname = gamePlayerDbo.getNickname();
 		headimgurl = gamePlayerDbo.getHeadimgurl();
 		if (playerId.equals(zhuangPlayerId)) {
 			zhuang = true;
 		}
-		hu = panPlayerResult.isHu();
-		publicPaiList = new ArrayList<>(panPlayerResult.getPublicPaiList());
-		RuianMajiangPanPlayerScore ruianMajiangPanPlayerScore = panPlayerResult.getScore();
+		hu = panPlayerResultDbo.getPlayer().getHu() != null;
+		publicPaiList = new ArrayList<>(panPlayerResultDbo.getPlayer().getPublicPaiList());
+		RuianMajiangPanPlayerScore ruianMajiangPanPlayerScore = panPlayerResultDbo.getPlayerResult().getScore();
 		RuianMajiangPao ruianMajiangPao = ruianMajiangPanPlayerScore.getPao();
 		if (ruianMajiangPao != null) {
 			pao = ruianMajiangPao.getValue() * 10;
@@ -71,24 +70,24 @@ public class RuianMajiangPanPlayerResultVO {
 		taishu = new RuianMajiangTaishuVO(ruianMajiangPanPlayerScore.getHushu().getTaishu());
 		score = ruianMajiangPanPlayerScore.getJiesuanScore();
 
-		List<ChichuPaiZu> chichuPaiZuList = panPlayerResult.getChichupaiZuList();
+		List<ChichuPaiZu> chichuPaiZuList = panPlayerResultDbo.getPlayer().getChichupaiZuList();
 		for (ChichuPaiZu chichuPaiZu : chichuPaiZuList) {
 			shunziList.add(chichuPaiZu.getShunzi());
 		}
 
-		List<PengchuPaiZu> pengchupaiZuList = panPlayerResult.getPengchupaiZuList();
+		List<PengchuPaiZu> pengchupaiZuList = panPlayerResultDbo.getPlayer().getPengchupaiZuList();
 		for (PengchuPaiZu pengchuPaiZu : pengchupaiZuList) {
 			keziTypeList.add(pengchuPaiZu.getKezi().getPaiType());
 		}
 
-		List<GangchuPaiZu> gangchupaiZuList = panPlayerResult.getGangchupaiZuList();
+		List<GangchuPaiZu> gangchupaiZuList = panPlayerResultDbo.getPlayer().getGangchupaiZuList();
 		for (GangchuPaiZu gangchuPaiZu : gangchupaiZuList) {
 			gangchuList.add(new GangchuPaiZuVO(gangchuPaiZu));
 		}
 
 		if (hu) {
 			this.zimo = zimo;
-			ShoupaiPaiXing shoupaiPaiXing = panPlayerResult.getBestShoupaiPaiXing();
+			ShoupaiPaiXing shoupaiPaiXing = panPlayerResultDbo.getPlayer().getHu().getShoupaiPaiXing();
 			List<ShoupaiShunziZu> shunziList = shoupaiPaiXing.getShunziList();
 			for (ShoupaiShunziZu shoupaiShunziZu : shunziList) {
 				List<ResultShoupaiVO> shoupaiList = new ArrayList<>();
@@ -131,17 +130,12 @@ public class RuianMajiangPanPlayerResultVO {
 					dianpao = true;
 				}
 			}
-			List<MajiangPai> shoupaiList = panPlayerResult.getShoupaiList();
-			Set<MajiangPai> guipaiTypeSet = panPlayerResult.getGuipaiTypeSet();
-			caishenList = new ArrayList<>();
+			List<MajiangPai> shoupaiList = panPlayerResultDbo.getPlayer().getFangruShoupaiList();
+			caishenList = new ArrayList<>(panPlayerResultDbo.getPlayer().getFangruGuipaiList());
 			List<ResultShoupaiVO> list = new ArrayList<>();
 			resultShoupaiZuList.add(list);
 			for (MajiangPai pai : shoupaiList) {
-				if (guipaiTypeSet.contains(pai)) {
-					caishenList.add(pai);
-				} else {
-					list.add(new ResultShoupaiVO(pai));
-				}
+				list.add(new ResultShoupaiVO(pai));
 			}
 		}
 	}

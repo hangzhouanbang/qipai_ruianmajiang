@@ -19,17 +19,18 @@ public class RuianMajiangJuResultBuilder implements JuResultBuilder {
 			Map<String, RuianMajiangJuPlayerResult> juPlayerResultMap = new HashMap<>();
 			for (PanResult panResult : ju.getFinishedPanResultList()) {
 				RuianMajiangPanResult ruianMajiangPanResult = (RuianMajiangPanResult) panResult;
-				for (RuianMajiangPanPlayerResult panPlayerResult : ruianMajiangPanResult.getPlayerResultList()) {
+				for (RuianMajiangPanPlayerResult panPlayerResult : ruianMajiangPanResult.getPanPlayerResultList()) {
 					RuianMajiangJuPlayerResult juPlayerResult = juPlayerResultMap.get(panPlayerResult.getPlayerId());
 					if (juPlayerResult == null) {
 						juPlayerResult = new RuianMajiangJuPlayerResult();
 						juPlayerResult.setPlayerId(panPlayerResult.getPlayerId());
 						juPlayerResultMap.put(panPlayerResult.getPlayerId(), juPlayerResult);
 					}
-					if (panPlayerResult.isHu()) {
+					if (ruianMajiangPanResult.ifPlayerHu(panPlayerResult.getPlayerId())) {
 						juPlayerResult.increaseHuCount();
 					}
-					juPlayerResult.increaseCaishenCount(panPlayerResult.countCaishen());
+					juPlayerResult.increaseCaishenCount(
+							ruianMajiangPanResult.playerGuipaiCount(panPlayerResult.getPlayerId()));
 					if (panPlayerResult.getScore().getPao() != null) {
 						juPlayerResult.increaseDapaoCount(panPlayerResult.getScore().getPao().getValue());
 					}

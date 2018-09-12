@@ -109,9 +109,11 @@ public class MajiangGame {
 			state = MajiangGameState.waitingNextPan;
 			playerStateMap.keySet().forEach((pid) -> playerStateMap.put(pid, MajiangGamePlayerState.panFinished));
 			RuianMajiangPanResult panResult = (RuianMajiangPanResult) ju.findLatestFinishedPanResult();
-			panResult.getPlayerResultList()
-					.forEach((pr) -> playeTotalScoreMap.put(pr.getPlayerId(), pr.getTotalScore()));
-			result.setPanResult(panResult);
+			for (RuianMajiangPanPlayerResult ruianMajiangPanPlayerResult : panResult.getPanPlayerResultList()) {
+				playeTotalScoreMap.put(ruianMajiangPanPlayerResult.getPlayerId(),
+						ruianMajiangPanPlayerResult.getTotalScore());
+
+			}
 		}
 		if (ju.getJuResult() != null) {// 局结束了
 			state = MajiangGameState.finished;

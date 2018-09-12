@@ -1,15 +1,10 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.dml.majiang.pan.result.PanResult;
-import com.dml.majiang.position.MajiangPosition;
-import com.dml.majiang.position.MajiangPositionUtil;
 
 public class RuianMajiangPanResult extends PanResult {
-
-	private String zhuangPlayerId;
 
 	private boolean hu;
 
@@ -17,70 +12,7 @@ public class RuianMajiangPanResult extends PanResult {
 
 	private String dianpaoPlayerId;
 
-	private List<RuianMajiangPanPlayerResult> playerResultList;
-
-	@Override
-	public List<String> allPlayerIds() {
-		List<String> allPlayerIds = new ArrayList<>();
-		playerResultList.forEach((playerResult) -> allPlayerIds.add(playerResult.getPlayerId()));
-		return allPlayerIds;
-	}
-
-	@Override
-	public String findZhuangPlayerId() {
-		return zhuangPlayerId;
-	}
-
-	@Override
-	public boolean ifPlayerHu(String playerId) {
-		for (RuianMajiangPanPlayerResult playerResult : playerResultList) {
-			if (playerResult.getPlayerId().equals(playerId)) {
-				return playerResult.isHu();
-			}
-		}
-		return false;
-	}
-
-	@Override
-	public MajiangPosition playerMenFeng(String playerId) {
-		for (RuianMajiangPanPlayerResult playerResult : playerResultList) {
-			if (playerResult.getPlayerId().equals(playerId)) {
-				return playerResult.getMenFeng();
-			}
-		}
-		return null;
-	}
-
-	@Override
-	public String findXiajiaPlayerId(String playerId) {
-
-		MajiangPosition playerMenFeng = playerMenFeng(playerId);
-		MajiangPosition xiajiaMenFeng = MajiangPositionUtil.nextPositionAntiClockwise(playerMenFeng);
-		String xiajiaPlayerId = findPlayerIdByMenFeng(xiajiaMenFeng);
-		while (xiajiaPlayerId == null) {
-			xiajiaMenFeng = MajiangPositionUtil.nextPositionAntiClockwise(xiajiaMenFeng);
-			xiajiaPlayerId = findPlayerIdByMenFeng(xiajiaMenFeng);
-		}
-		return xiajiaPlayerId;
-
-	}
-
-	private String findPlayerIdByMenFeng(MajiangPosition menFeng) {
-		for (RuianMajiangPanPlayerResult playerResult : playerResultList) {
-			if (playerResult.getMenFeng().equals(menFeng)) {
-				return playerResult.getPlayerId();
-			}
-		}
-		return null;
-	}
-
-	public String getZhuangPlayerId() {
-		return zhuangPlayerId;
-	}
-
-	public void setZhuangPlayerId(String zhuangPlayerId) {
-		this.zhuangPlayerId = zhuangPlayerId;
-	}
+	private List<RuianMajiangPanPlayerResult> panPlayerResultList;
 
 	public boolean isHu() {
 		return hu;
@@ -106,12 +38,12 @@ public class RuianMajiangPanResult extends PanResult {
 		this.dianpaoPlayerId = dianpaoPlayerId;
 	}
 
-	public List<RuianMajiangPanPlayerResult> getPlayerResultList() {
-		return playerResultList;
+	public List<RuianMajiangPanPlayerResult> getPanPlayerResultList() {
+		return panPlayerResultList;
 	}
 
-	public void setPlayerResultList(List<RuianMajiangPanPlayerResult> playerResultList) {
-		this.playerResultList = playerResultList;
+	public void setPanPlayerResultList(List<RuianMajiangPanPlayerResult> panPlayerResultList) {
+		this.panPlayerResultList = panPlayerResultList;
 	}
 
 }
