@@ -12,7 +12,6 @@ import com.dml.majiang.pan.frame.PanValueObject;
 import com.dml.majiang.pan.result.CurrentPanResultBuilder;
 import com.dml.majiang.pan.result.PanResult;
 import com.dml.majiang.player.MajiangPlayer;
-import com.dml.majiang.player.shoupai.ShoupaiPaiXing;
 
 public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 
@@ -36,7 +35,6 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 		if (huPlayer != null) {// 正常有人胡结束
 			RuianMajiangHu hu = (RuianMajiangHu) huPlayer.getHu();
 			RuianMajiangPanPlayerScore huPlayerScore = hu.getScore();
-			ShoupaiPaiXing huShoupaiPaiXing = hu.getShoupaiPaiXing();
 
 			// 两两结算RuianMajiangPanPlayerScore
 			List<RuianMajiangPanPlayerResult> playerResultList = new ArrayList<>();

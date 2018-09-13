@@ -112,8 +112,8 @@ public class MajiangGame {
 			for (RuianMajiangPanPlayerResult ruianMajiangPanPlayerResult : panResult.getPanPlayerResultList()) {
 				playeTotalScoreMap.put(ruianMajiangPanPlayerResult.getPlayerId(),
 						ruianMajiangPanPlayerResult.getTotalScore());
-
 			}
+			result.setPanResult(panResult);
 		}
 		if (ju.getJuResult() != null) {// 局结束了
 			state = MajiangGameState.finished;

@@ -27,7 +27,7 @@ public class RuianMajiangJuResultBuilder implements JuResultBuilder {
 						juPlayerResultMap.put(panPlayerResult.getPlayerId(), juPlayerResult);
 					}
 					if (ruianMajiangPanResult.ifPlayerHu(panPlayerResult.getPlayerId())) {
-						juPlayerResult.increaseHuCount();
+						juPlayerResult.increaseHuCount();// TODO 胡几次，鬼牌个数这些通用的统计安排在juresult?
 					}
 					juPlayerResult.increaseCaishenCount(
 							ruianMajiangPanResult.playerGuipaiCount(panPlayerResult.getPlayerId()));

@@ -129,7 +129,7 @@ public class GamePlayWsController extends TextWebSocketHandler {
 		}
 		wsNotifier.bindPlayer(session.getId(), playerId);
 		gameCmdService.bindPlayer(playerId, gameId);
-		// 给用户安排query scope
+		// 给用户安排query scope TODO 这块逻辑要随着MajiangGame的通用化抽象而抽象，玩家查什么要变成对象的内在状态？
 		MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
 		if (majiangGameDbo != null) {
 			if (!majiangGameDbo.getState().equals(MajiangGameState.finished)) {
