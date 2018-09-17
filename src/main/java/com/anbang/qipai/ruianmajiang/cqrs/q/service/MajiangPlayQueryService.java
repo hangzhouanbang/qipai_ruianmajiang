@@ -105,6 +105,7 @@ public class MajiangPlayQueryService {
 		RuianMajiangPanResult ruianMajiangPanResult = majiangActionResult.getPanResult();
 		if (ruianMajiangPanResult != null) {
 			PanResultDbo panResultDbo = new PanResultDbo(gameId, ruianMajiangPanResult);
+			panResultDbo.setPanActionFrame(panActionFrame);
 			panResultDboDao.save(panResultDbo);
 			if (majiangActionResult.getJuResult() != null) {// 一切都结束了
 				// 要记录局结果
