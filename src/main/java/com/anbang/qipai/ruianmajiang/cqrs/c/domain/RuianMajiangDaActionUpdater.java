@@ -31,33 +31,29 @@ public class RuianMajiangDaActionUpdater implements MajiangPlayerDaActionUpdater
 		// 下家可以吃
 		xiajiaPlayer.tryChiAndGenerateCandidateActions(daAction.getActionPlayerId(), daAction.getPai());
 
-		boolean anyPlayerHu = false;
 		while (true) {
 			if (!xiajiaPlayer.getId().equals(daAction.getActionPlayerId())) {
 				// 其他的可以碰杠胡
 				xiajiaPlayer.tryPengAndGenerateCandidateAction(daAction.getActionPlayerId(), daAction.getPai());
 				xiajiaPlayer.tryGangdachuAndGenerateCandidateAction(daAction.getActionPlayerId(), daAction.getPai());
 
-				if (!anyPlayerHu) {
-					// 点炮胡
-					RuianMajiangPanResultBuilder ruianMajiangJuResultBuilder = (RuianMajiangPanResultBuilder) ju
-							.getCurrentPanResultBuilder();
-					int dihu = ruianMajiangJuResultBuilder.getDihu();
-					boolean dapao = ruianMajiangJuResultBuilder.isDapao();
-					GouXingPanHu gouXingPanHu = ju.getGouXingPanHu();
-					// 先把这张牌放入计算器
-					xiajiaPlayer.getShoupaiCalculator().addPai(daAction.getPai());
-					RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestDianpaoHu(couldDihu, dapao, dihu,
-							gouXingPanHu, xiajiaPlayer, baibanIsGuipai, daAction.getPai());
-					// 再把这张牌拿出计算器
-					xiajiaPlayer.getShoupaiCalculator().removePai(daAction.getPai());
-					if (bestHu != null) {
-						bestHu.setZimo(false);
-						bestHu.setDianpao(true);
-						bestHu.setDianpaoPlayerId(daPlayer.getId());
-						xiajiaPlayer.addActionCandidate(new MajiangHuAction(xiajiaPlayer.getId(), bestHu));
-						anyPlayerHu = true;
-					}
+				// 点炮胡
+				RuianMajiangPanResultBuilder ruianMajiangJuResultBuilder = (RuianMajiangPanResultBuilder) ju
+						.getCurrentPanResultBuilder();
+				int dihu = ruianMajiangJuResultBuilder.getDihu();
+				boolean dapao = ruianMajiangJuResultBuilder.isDapao();
+				GouXingPanHu gouXingPanHu = ju.getGouXingPanHu();
+				// 先把这张牌放入计算器
+				xiajiaPlayer.getShoupaiCalculator().addPai(daAction.getPai());
+				RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestDianpaoHu(couldDihu, dapao, dihu,
+						gouXingPanHu, xiajiaPlayer, baibanIsGuipai, daAction.getPai());
+				// 再把这张牌拿出计算器
+				xiajiaPlayer.getShoupaiCalculator().removePai(daAction.getPai());
+				if (bestHu != null) {
+					bestHu.setZimo(false);
+					bestHu.setDianpao(true);
+					bestHu.setDianpaoPlayerId(daPlayer.getId());
+					xiajiaPlayer.addActionCandidate(new MajiangHuAction(xiajiaPlayer.getId(), bestHu));
 				}
 
 				xiajiaPlayer.checkAndGenerateGuoCandidateAction();
