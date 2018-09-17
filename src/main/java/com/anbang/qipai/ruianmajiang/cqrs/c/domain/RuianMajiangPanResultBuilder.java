@@ -127,7 +127,6 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 
 			// 胡的那家shoupaixing放入结果，其余不胡的shoupailist放入结果
 			playerResultList.forEach((playerResult) -> {
-				MajiangPlayer player = currentPan.findPlayerById(playerResult.getPlayerId());
 				playerResult.getScore().jiesuan();
 				// 计算累计总分
 				if (latestFinishedPanResult != null) {

@@ -27,10 +27,6 @@ public class RuianMajiangJuPlayerResult {
 		dapaoCount += amount;
 	}
 
-	public void increaseTotalScore(int amount) {
-		totalScore += amount;
-	}
-
 	public String getPlayerId() {
 		return playerId;
 	}
