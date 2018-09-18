@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangActionResult;
-import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangGameState;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangGameValueObject;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyForGameResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyToNextPanResult;
@@ -24,6 +23,7 @@ import com.anbang.qipai.ruianmajiang.plan.bean.PlayerInfo;
 import com.anbang.qipai.ruianmajiang.plan.dao.PlayerInfoDao;
 import com.dml.majiang.pan.frame.LiangangangPanActionFramePlayerViewFilter;
 import com.dml.majiang.pan.frame.PanActionFrame;
+import com.dml.mpgame.game.Playing;
 
 @Component
 public class MajiangPlayQueryService {
@@ -47,7 +47,7 @@ public class MajiangPlayQueryService {
 
 	public PanActionFrame findAndFilterCurrentPanValueObjectForPlayer(String gameId, String playerId) throws Exception {
 		MajiangGameDbo majiangGameDbo = majiangGameDboDao.findById(gameId);
-		if (!majiangGameDbo.getState().equals(MajiangGameState.playing)) {
+		if (!majiangGameDbo.getState().name().equals(Playing.name)) {
 			throw new Exception("game not playing");
 		}
 
@@ -65,7 +65,7 @@ public class MajiangPlayQueryService {
 		MajiangGameDbo majiangGameDbo = new MajiangGameDbo(majiangGame, playerInfoMap);
 		majiangGameDboDao.save(majiangGameDbo);
 
-		if (majiangGame.getState().equals(MajiangGameState.playing)) {
+		if (majiangGame.getState().name().equals(Playing.name)) {
 			PanActionFrame panActionFrame = readyForGameResult.getFirstActionFrame();
 			gameLatestPanActionFrameDboDao.save(majiangGame.getGameId(), panActionFrame.toByteArray(1024 * 8));
 			// TODO 记录一条Frame，回放的时候要做
@@ -105,6 +105,7 @@ public class MajiangPlayQueryService {
 		RuianMajiangPanResult ruianMajiangPanResult = majiangActionResult.getPanResult();
 		if (ruianMajiangPanResult != null) {
 			PanResultDbo panResultDbo = new PanResultDbo(gameId, ruianMajiangPanResult);
+			panResultDbo.setPanActionFrame(panActionFrame);
 			panResultDboDao.save(panResultDbo);
 			if (majiangActionResult.getJuResult() != null) {// 一切都结束了
 				// 要记录局结果
