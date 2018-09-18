@@ -99,16 +99,16 @@ public class MajiangGame extends FixedPlayersMultipanAndVotetofinishGame {
 
 		checkAndFinishPan();
 
-		if (state.name().equals(WaitingNextPan.name)) {// 盘结束了
+		if (state.name().equals(WaitingNextPan.name) || state.name().equals(Finished.name)) {// 盘结束了
 			RuianMajiangPanResult panResult = (RuianMajiangPanResult) ju.findLatestFinishedPanResult();
 			for (RuianMajiangPanPlayerResult ruianMajiangPanPlayerResult : panResult.getPanPlayerResultList()) {
 				playeTotalScoreMap.put(ruianMajiangPanPlayerResult.getPlayerId(),
 						ruianMajiangPanPlayerResult.getTotalScore());
 			}
 			result.setPanResult(panResult);
-		}
-		if (state.name().equals(Finished.name)) {// 局结束了
-			result.setJuResult((RuianMajiangJuResult) ju.getJuResult());
+			if (state.name().equals(Finished.name)) {// 局结束了
+				result.setJuResult((RuianMajiangJuResult) ju.getJuResult());
+			}
 		}
 		result.setMajiangGame(new MajiangGameValueObject(this));
 		return result;
