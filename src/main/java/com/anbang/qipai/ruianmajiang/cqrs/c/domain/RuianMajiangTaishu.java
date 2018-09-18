@@ -74,7 +74,11 @@ public class RuianMajiangTaishu {
 			tai += 2;
 		}
 		if (sifengqiHu) {
-			tai += 3;
+			if (zuofengPeng || zuofengAnke || zuofengGang) {
+				tai += 2;
+			} else {
+				tai += 3;
+			}
 		}
 		if (sancaishenHu) {
 			tai += 3;

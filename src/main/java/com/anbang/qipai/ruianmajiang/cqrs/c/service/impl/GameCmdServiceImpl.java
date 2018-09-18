@@ -9,7 +9,6 @@ import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyForGameResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.RuianMajiangJuResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.GameCmdService;
 import com.dml.majiang.pan.frame.PanActionFrame;
-import com.dml.mpgame.game.Finished;
 import com.dml.mpgame.game.Game;
 import com.dml.mpgame.game.Playing;
 import com.dml.mpgame.game.WaitingStart;
@@ -118,7 +117,7 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
 
 		result.setMajiangGameValueObject(majiangGameValueObject);
 
-		if (majiangGameValueObject.getState().name().equals(Finished.name)) {
+		if (majiangGameValueObject.getState().name().equals(FinishedByVote.name)) {
 			majiangGame.finishJu();
 			RuianMajiangJuResult juResult = (RuianMajiangJuResult) majiangGame.finishJu();
 			result.setJuResult(juResult);
