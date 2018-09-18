@@ -268,7 +268,7 @@ public class RuianMajiangJiesuanCalculator {
 		taishu.setQianggangHu(qianggangHu);
 		taishu.setQingyiseHu(hu && shoupaixingWuguanJiesuancanshu.isQingyise());
 		taishu.setSancaishenHu(shoupaixingWuguanJiesuancanshu.getCaishenShu() == 3);
-		taishu.setShuangCaisheng(shoupaixingWuguanJiesuancanshu.getCaishenShu() == 2);
+		taishu.setShuangCaishengHu(hu && shoupaixingWuguanJiesuancanshu.getCaishenShu() == 2);
 		taishu.setSifengqiHu(false);// TODO 用统计器来做
 		taishu.setTianHu(couldTianhu);
 		boolean zuofengAnke = shoupaiPaiXing.hasKeziForPaiType(shoupaixingWuguanJiesuancanshu.getMenFengPai());

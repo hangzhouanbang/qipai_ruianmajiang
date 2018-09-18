@@ -22,7 +22,7 @@ public class RuianMajiangTaishu {
 	private boolean tianHu;
 	private boolean diHu;
 	private boolean qingyiseHu;
-	private boolean shuangCaisheng;
+	private boolean shuangCaishengHu;
 	private int value;
 
 	public void calculate() {
@@ -88,7 +88,7 @@ public class RuianMajiangTaishu {
 		if (qingyiseHu) {
 			tai += 3;
 		}
-		if (shuangCaisheng) {
+		if (shuangCaishengHu) {
 			tai++;
 		}
 		value = tai;
@@ -262,12 +262,12 @@ public class RuianMajiangTaishu {
 		this.qingyiseHu = qingyiseHu;
 	}
 
-	public boolean isShuangCaisheng() {
-		return shuangCaisheng;
+	public boolean isShuangCaishengHu() {
+		return shuangCaishengHu;
 	}
 
-	public void setShuangCaisheng(boolean shuangCaisheng) {
-		this.shuangCaisheng = shuangCaisheng;
+	public void setShuangCaishengHu(boolean shuangCaishengHu) {
+		this.shuangCaishengHu = shuangCaishengHu;
 	}
 
 	public int getValue() {
