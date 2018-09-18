@@ -12,13 +12,24 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangGameState;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangGameValueObject;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.GameCmdService;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.PlayerAuthService;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangGameQueryService;
 import com.anbang.qipai.ruianmajiang.msg.service.RuianMajiangGameMsgService;
+import com.dml.mpgame.game.Canceled;
+import com.dml.mpgame.game.Finished;
+import com.dml.mpgame.game.GameState;
+import com.dml.mpgame.game.Playing;
+import com.dml.mpgame.game.WaitingStart;
+import com.dml.mpgame.game.extend.fpmpv.VotingWhenWaitingNextPan;
+import com.dml.mpgame.game.extend.multipan.WaitingNextPan;
+import com.dml.mpgame.game.extend.multipan.player.PlayerPanFinished;
+import com.dml.mpgame.game.extend.vote.FinishedByVote;
+import com.dml.mpgame.game.extend.vote.VotingWhenPlaying;
+import com.dml.mpgame.game.player.GamePlayerState;
+import com.dml.mpgame.game.player.PlayerReadyToStart;
 import com.google.gson.Gson;
 
 @Component
@@ -70,8 +81,6 @@ public class GamePlayWsController extends TextWebSocketHandler {
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
 		String closedPlayerId = wsNotifier.findPlayerIdBySessionId(session.getId());
-		// TODO 测试代码
-		System.out.println("连接断了 <" + closedPlayerId + "> (" + System.currentTimeMillis() + ")");
 		wsNotifier.removeSession(session.getId());
 		MajiangGameValueObject majiangGameValueObject = gameCmdService.leaveGame(closedPlayerId);
 		if (majiangGameValueObject != null) {
@@ -81,8 +90,6 @@ public class GamePlayWsController extends TextWebSocketHandler {
 			majiangGameValueObject.allPlayerIds().forEach((playerId) -> {
 				if (!playerId.equals(closedPlayerId)) {
 					wsNotifier.notifyToQuery(playerId, QueryScope.gameInfo.name());
-					// TODO 测试代码
-					System.out.println("通知 ConnectionClosed <" + playerId + "> (" + System.currentTimeMillis() + ")");
 				}
 			});
 		}
@@ -129,14 +136,38 @@ public class GamePlayWsController extends TextWebSocketHandler {
 		}
 		wsNotifier.bindPlayer(session.getId(), playerId);
 		gameCmdService.bindPlayer(playerId, gameId);
-		// 给用户安排query scope TODO 这块逻辑要随着MajiangGame的通用化抽象而抽象，玩家查什么要变成对象的内在状态？
+		// 给用户安排query scope
 		MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
 		if (majiangGameDbo != null) {
-			if (!majiangGameDbo.getState().equals(MajiangGameState.finished)) {
+
+			GameState gameState = majiangGameDbo.getState();
+			GamePlayerState playerState = majiangGameDbo.findPlayer(playerId).getState();
+
+			if (gameState.name().equals(WaitingStart.name)) {
 				wsNotifier.notifyToQuery(playerId, QueryScope.gameInfo.name());
-				if (majiangGameDbo.getState().equals(MajiangGameState.playing)) {
-					wsNotifier.notifyToQuery(playerId, QueryScope.panForMe.name());
+			} else if (gameState.name().equals(Canceled.name)) {
+				wsNotifier.notifyToQuery(playerId, QueryScope.gameInfo.name());
+			} else if (gameState.name().equals(Playing.name)) {
+				wsNotifier.notifyToQuery(playerId, QueryScope.gameInfo.name());
+				wsNotifier.notifyToQuery(playerId, QueryScope.panForMe.name());
+			} else if (gameState.name().equals(VotingWhenPlaying.name)) {
+				wsNotifier.notifyToQuery(playerId, QueryScope.gameInfo.name());
+				wsNotifier.notifyToQuery(playerId, QueryScope.panForMe.name());
+				wsNotifier.notifyToQuery(playerId, QueryScope.gameFinishVote.name());
+			} else if (gameState.name().equals(FinishedByVote.name)) {
+				wsNotifier.notifyToQuery(playerId, QueryScope.juResult.name());
+			} else if (gameState.name().equals(WaitingNextPan.name)) {
+				if (playerState.name().equals(PlayerPanFinished.name)) {
+					wsNotifier.notifyToQuery(playerId, QueryScope.gameInfo.name());
+					wsNotifier.notifyToQuery(playerId, QueryScope.panResult.name());
+				} else if (playerState.name().equals(PlayerReadyToStart.name)) {
+					wsNotifier.notifyToQuery(playerId, QueryScope.gameInfo.name());
 				}
+			} else if (gameState.name().equals(VotingWhenWaitingNextPan.name)) {
+				wsNotifier.notifyToQuery(playerId, QueryScope.gameInfo.name());
+				wsNotifier.notifyToQuery(playerId, QueryScope.gameFinishVote.name());
+			} else if (gameState.name().equals(Finished.name)) {
+				wsNotifier.notifyToQuery(playerId, QueryScope.juResult.name());
 			}
 		}
 

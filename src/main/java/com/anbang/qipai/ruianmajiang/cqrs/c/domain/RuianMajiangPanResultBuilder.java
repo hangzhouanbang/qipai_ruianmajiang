@@ -1,6 +1,7 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,16 +30,41 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 			}
 		}
 
-		MajiangPlayer huPlayer = currentPan.findHuPlayer();
+		List<MajiangPlayer> huPlayers = currentPan.findAllHuPlayers();
 		boolean baibanIsGuipai = currentPan.getPublicGuipaiSet().contains(MajiangPai.baiban);
 
-		if (huPlayer != null) {// 正常有人胡结束
+		if (huPlayers.size() > 0) {// 正常有人胡结束
+			MajiangPlayer huPlayer = huPlayers.get(0);
 			RuianMajiangHu hu = (RuianMajiangHu) huPlayer.getHu();
+			if (huPlayers.size() == 1) {// 一人胡
+
+			} else {
+				String dianpaoPlayerId = hu.getDianpaoPlayerId();
+				MajiangPlayer xiajiaPlayer = currentPan.findPlayerById(dianpaoPlayerId);
+				// 按点炮者开始遍历出最先胡并把其他胡变为null
+				boolean anyPlayerHu = false;
+				while (true) {
+					if (!xiajiaPlayer.getId().equals(dianpaoPlayerId)) {
+						RuianMajiangHu hu1 = (RuianMajiangHu) xiajiaPlayer.getHu();
+						if (!anyPlayerHu && hu1 != null) {
+							huPlayer = xiajiaPlayer;
+							hu = hu1;
+							anyPlayerHu = true;
+						} else {
+							xiajiaPlayer.setHu(null);
+						}
+					} else {
+						break;
+					}
+					xiajiaPlayer = currentPan.findXiajia(xiajiaPlayer);
+				}
+			}
 			RuianMajiangPanPlayerScore huPlayerScore = hu.getScore();
 
 			// 两两结算RuianMajiangPanPlayerScore
 			List<RuianMajiangPanPlayerResult> playerResultList = new ArrayList<>();
-			currentPan.getMajiangPlayerIdMajiangPlayerMap().values().forEach((player) -> {
+			Collection<MajiangPlayer> players = currentPan.getMajiangPlayerIdMajiangPlayerMap().values();
+			for (MajiangPlayer player : players) {
 				RuianMajiangPanPlayerResult playerResult = new RuianMajiangPanPlayerResult(player.getId());
 				if (player.getId().equals(huPlayer.getId())) {
 					playerResult.setScore(huPlayerScore);
@@ -48,7 +74,7 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 							player, baibanIsGuipai));
 				}
 				playerResultList.add(playerResult);
-			});
+			}
 
 			for (int i = 0; i < playerResultList.size(); i++) {
 				RuianMajiangPanPlayerResult playerResult1 = playerResultList.get(i);
@@ -127,7 +153,6 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 
 			// 胡的那家shoupaixing放入结果，其余不胡的shoupailist放入结果
 			playerResultList.forEach((playerResult) -> {
-				MajiangPlayer player = currentPan.findPlayerById(playerResult.getPlayerId());
 				playerResult.getScore().jiesuan();
 				// 计算累计总分
 				if (latestFinishedPanResult != null) {

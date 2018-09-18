@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.RuianMajiangPanPlayerResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.RuianMajiangPanResult;
+import com.dml.majiang.pan.frame.PanActionFrame;
 
 public class PanResultDbo {
 	private String id;
@@ -16,6 +17,7 @@ public class PanResultDbo {
 	private String dianpaoPlayerId;
 	private List<RuianMajiangPanPlayerResultDbo> playerResultList;
 	private long finishTime;
+	private PanActionFrame panActionFrame;
 
 	public PanResultDbo() {
 	}
@@ -109,6 +111,14 @@ public class PanResultDbo {
 
 	public void setFinishTime(long finishTime) {
 		this.finishTime = finishTime;
+	}
+
+	public PanActionFrame getPanActionFrame() {
+		return panActionFrame;
+	}
+
+	public void setPanActionFrame(PanActionFrame panActionFrame) {
+		this.panActionFrame = panActionFrame;
 	}
 
 }

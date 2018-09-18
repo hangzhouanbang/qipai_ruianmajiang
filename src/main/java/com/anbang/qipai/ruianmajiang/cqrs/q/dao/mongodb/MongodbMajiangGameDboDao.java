@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dao.MajiangGameDboDao;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dao.mongodb.repository.MajiangGameDboRepository;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameDbo;
-import com.dml.mpgame.game.GamePlayerOnlineState;
+import com.dml.mpgame.game.player.GamePlayerOnlineState;
 
 @Component
 public class MongodbMajiangGameDboDao implements MajiangGameDboDao {
