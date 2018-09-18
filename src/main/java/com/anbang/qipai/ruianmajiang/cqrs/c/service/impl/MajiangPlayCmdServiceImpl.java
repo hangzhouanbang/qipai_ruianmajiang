@@ -8,6 +8,7 @@ import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangGameValueObject;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyToNextPanResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.MajiangPlayCmdService;
 import com.dml.majiang.pan.frame.PanActionFrame;
+import com.dml.mpgame.game.Playing;
 import com.dml.mpgame.game.player.PlayerNotInGameException;
 import com.dml.mpgame.server.GameServer;
 
@@ -46,8 +47,10 @@ public class MajiangPlayCmdServiceImpl extends CmdServiceBase implements Majiang
 
 		ReadyToNextPanResult readyToNextPanResult = new ReadyToNextPanResult();
 		majiangGame.readyToNextPan(playerId);
-		PanActionFrame firstActionFrame = majiangGame.getJu().getCurrentPan().findLatestActionFrame();
-		readyToNextPanResult.setFirstActionFrame(firstActionFrame);
+		if (majiangGame.getState().name().equals(Playing.name)) {// 开始下一盘了
+			PanActionFrame firstActionFrame = majiangGame.getJu().getCurrentPan().findLatestActionFrame();
+			readyToNextPanResult.setFirstActionFrame(firstActionFrame);
+		}
 		readyToNextPanResult.setMajiangGame(new MajiangGameValueObject(majiangGame));
 		return readyToNextPanResult;
 

@@ -16,6 +16,7 @@ public class MajiangGameDbo {
 	private int panshu;
 	private int renshu;
 	private boolean dapao;
+	private int panNo;
 	private GameState state;// 原来是 waitingStart, playing, waitingNextPan, finished
 	private List<MajiangGamePlayerDbo> players;
 
@@ -29,6 +30,7 @@ public class MajiangGameDbo {
 		panshu = majiangGame.getPanshu();
 		renshu = majiangGame.getRenshu();
 		dapao = majiangGame.isDapao();
+		panNo = majiangGame.getPanNo();
 		state = majiangGame.getState();
 
 		players = new ArrayList<>();
@@ -106,6 +108,14 @@ public class MajiangGameDbo {
 
 	public void setDapao(boolean dapao) {
 		this.dapao = dapao;
+	}
+
+	public int getPanNo() {
+		return panNo;
+	}
+
+	public void setPanNo(int panNo) {
+		this.panNo = panNo;
 	}
 
 	public GameState getState() {
