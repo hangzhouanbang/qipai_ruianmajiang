@@ -42,7 +42,7 @@ public class RuianMajiangGangActionUpdater implements MajiangPlayerGangActionUpd
 					break;
 				}
 				RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestQianggangHu(gangAction.getPai(),
-						dapao, dihu, gouXingPanHu, player, baibanIsGuipai);
+						dapao, dihu, gouXingPanHu, xiajia, baibanIsGuipai);
 				if (bestHu != null) {
 					bestHu.setQianggang(true);
 					xiajia.addActionCandidate(new MajiangHuAction(xiajia.getId(), bestHu));

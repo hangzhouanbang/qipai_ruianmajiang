@@ -40,7 +40,8 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 
 			} else {
 				String dianpaoPlayerId = hu.getDianpaoPlayerId();
-				MajiangPlayer xiajiaPlayer = currentPan.findPlayerById(dianpaoPlayerId);
+				MajiangPlayer dianpaoPlayer = currentPan.findPlayerById(dianpaoPlayerId);
+				MajiangPlayer xiajiaPlayer = currentPan.findXiajia(dianpaoPlayer);
 				// 按点炮者开始遍历出最先胡并把其他胡变为null
 				boolean anyPlayerHu = false;
 				while (true) {
