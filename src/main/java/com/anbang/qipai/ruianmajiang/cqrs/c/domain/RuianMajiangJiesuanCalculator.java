@@ -66,7 +66,7 @@ public class RuianMajiangJiesuanCalculator {
 		List<MajiangPai> guipaiList = player.findGuipaiList();// TODO 也可以用统计器做
 		shoupaiCalculator.addPai(gangPai);
 		List<ShoupaiPaiXing> huPaiShoupaiPaiXingList = calculateZimoHuPaiShoupaiPaiXingList(guipaiList, baibanIsGuipai,
-				shoupaiCalculator, player, gouXingPanHu, player.getGangmoShoupai());
+				shoupaiCalculator, player, gouXingPanHu, gangPai);
 		shoupaiCalculator.removePai(gangPai);
 		if (!huPaiShoupaiPaiXingList.isEmpty()) {// 有胡牌型
 
