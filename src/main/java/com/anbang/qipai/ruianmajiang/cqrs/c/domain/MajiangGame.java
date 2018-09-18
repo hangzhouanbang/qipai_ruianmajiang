@@ -32,6 +32,7 @@ import com.dml.mpgame.game.Finished;
 import com.dml.mpgame.game.Playing;
 import com.dml.mpgame.game.extend.fpmpv.FixedPlayersMultipanAndVotetofinishGame;
 import com.dml.mpgame.game.extend.multipan.WaitingNextPan;
+import com.dml.mpgame.game.player.PlayerPlaying;
 
 public class MajiangGame extends FixedPlayersMultipanAndVotetofinishGame {
 	private int difen;
@@ -188,6 +189,7 @@ public class MajiangGame extends FixedPlayersMultipanAndVotetofinishGame {
 	protected void startNextPan() throws Exception {
 		ju.startNextPan();
 		state = new Playing();
+		updateAllPlayersState(new PlayerPlaying());
 	}
 
 	@Override
@@ -206,6 +208,7 @@ public class MajiangGame extends FixedPlayersMultipanAndVotetofinishGame {
 	@Override
 	public void start() throws Exception {
 		state = new Playing();
+		updateAllPlayersState(new PlayerPlaying());
 	}
 
 }
