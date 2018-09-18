@@ -48,7 +48,7 @@ public class MajiangGameQueryService {
 	}
 
 	public void backToGame(String playerId, MajiangGameValueObject majiangGameValueObject) {
-		majiangGameDboDao.updatePlayerOnlineState(majiangGameValueObject.getGameId(), playerId,
+		majiangGameDboDao.updatePlayerOnlineState(majiangGameValueObject.getId(), playerId,
 				majiangGameValueObject.findPlayerOnlineState(playerId));
 	}
 
@@ -68,11 +68,11 @@ public class MajiangGameQueryService {
 
 	public void finish(FinishResult finishResult) {
 		MajiangGameValueObject majiangGameValueObject = finishResult.getMajiangGameValueObject();
-		gameFinishVoteDboDao.removeGameFinishVoteDboByGameId(majiangGameValueObject.getGameId());
+		gameFinishVoteDboDao.removeGameFinishVoteDboByGameId(majiangGameValueObject.getId());
 		GameFinishVoteValueObject gameFinishVoteValueObject = majiangGameValueObject.getVote();
 		GameFinishVoteDbo gameFinishVoteDbo = new GameFinishVoteDbo();
 		gameFinishVoteDbo.setVote(gameFinishVoteValueObject);
-		gameFinishVoteDbo.setGameId(majiangGameValueObject.getGameId());
+		gameFinishVoteDbo.setGameId(majiangGameValueObject.getId());
 		gameFinishVoteDboDao.save(gameFinishVoteDbo);
 
 		Map<String, PlayerInfo> playerInfoMap = new HashMap<>();
@@ -83,7 +83,7 @@ public class MajiangGameQueryService {
 
 		RuianMajiangJuResult ruianMajiangJuResult = finishResult.getJuResult();
 		if (ruianMajiangJuResult != null) {
-			JuResultDbo juResultDbo = new JuResultDbo(majiangGameValueObject.getGameId(), null, ruianMajiangJuResult);
+			JuResultDbo juResultDbo = new JuResultDbo(majiangGameValueObject.getId(), null, ruianMajiangJuResult);
 			juResultDboDao.save(juResultDbo);
 		}
 	}
@@ -91,7 +91,7 @@ public class MajiangGameQueryService {
 	public void voteToFinish(FinishResult finishResult) {
 		MajiangGameValueObject majiangGameValueObject = finishResult.getMajiangGameValueObject();
 		GameFinishVoteValueObject gameFinishVoteValueObject = majiangGameValueObject.getVote();
-		gameFinishVoteDboDao.update(majiangGameValueObject.getGameId(), gameFinishVoteValueObject);
+		gameFinishVoteDboDao.update(majiangGameValueObject.getId(), gameFinishVoteValueObject);
 
 		Map<String, PlayerInfo> playerInfoMap = new HashMap<>();
 		majiangGameValueObject.allPlayerIds()
@@ -101,7 +101,7 @@ public class MajiangGameQueryService {
 
 		RuianMajiangJuResult ruianMajiangJuResult = finishResult.getJuResult();
 		if (ruianMajiangJuResult != null) {
-			JuResultDbo juResultDbo = new JuResultDbo(majiangGameValueObject.getGameId(), null, ruianMajiangJuResult);
+			JuResultDbo juResultDbo = new JuResultDbo(majiangGameValueObject.getId(), null, ruianMajiangJuResult);
 			juResultDboDao.save(juResultDbo);
 		}
 	}

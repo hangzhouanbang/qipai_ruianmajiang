@@ -23,7 +23,7 @@ public class MajiangGameDbo {
 	}
 
 	public MajiangGameDbo(MajiangGameValueObject majiangGame, Map<String, PlayerInfo> playerInfoMap) {
-		id = majiangGame.getGameId();
+		id = majiangGame.getId();
 		difen = majiangGame.getDifen();
 		taishu = majiangGame.getTaishu();
 		panshu = majiangGame.getPanshu();

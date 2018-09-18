@@ -170,13 +170,13 @@ public class MajiangController {
 					}
 				}
 				MajiangGameDbo majiangGameDbo = majiangGameQueryService
-						.findMajiangGameDboById(majiangActionResult.getMajiangGame().getGameId());
+						.findMajiangGameDboById(majiangActionResult.getMajiangGame().getId());
 				JuResultDbo juResultDbo = majiangPlayQueryService
-						.findJuResultDbo(majiangActionResult.getMajiangGame().getGameId());
+						.findJuResultDbo(majiangActionResult.getMajiangGame().getId());
 				JuResultVO juResult = new JuResultVO(juResultDbo, majiangGameDbo);
 				ruianMajiangResultMsgService.recordJuResult(juResult);
 
-				gameMsgService.gameFinished(majiangActionResult.getMajiangGame().getGameId());
+				gameMsgService.gameFinished(majiangActionResult.getMajiangGame().getId());
 				data.put("queryScope", QueryScope.juResult);
 			} else {
 				for (String otherPlayerId : majiangActionResult.getMajiangGame().allPlayerIds()) {

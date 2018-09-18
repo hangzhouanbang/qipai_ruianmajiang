@@ -6,8 +6,6 @@ import java.util.Map;
 import com.dml.mpgame.game.extend.fpmpv.FixedPlayersMultipanAndVotetofinishGameValueObject;
 
 public class MajiangGameValueObject extends FixedPlayersMultipanAndVotetofinishGameValueObject {
-
-	private String gameId;
 	private int difen;
 	private int taishu;
 	private int panshu;
@@ -23,14 +21,6 @@ public class MajiangGameValueObject extends FixedPlayersMultipanAndVotetofinishG
 		renshu = majiangGame.getRenshu();
 		dapao = majiangGame.isDapao();
 		playeTotalScoreMap.putAll(majiangGame.getPlayeTotalScoreMap());
-	}
-
-	public String getGameId() {
-		return gameId;
-	}
-
-	public void setGameId(String gameId) {
-		this.gameId = gameId;
 	}
 
 	public int getDifen() {

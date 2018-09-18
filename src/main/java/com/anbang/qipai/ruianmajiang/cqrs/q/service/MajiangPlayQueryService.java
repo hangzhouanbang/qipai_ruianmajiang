@@ -67,7 +67,7 @@ public class MajiangPlayQueryService {
 
 		if (majiangGame.getState().name().equals(Playing.name)) {
 			PanActionFrame panActionFrame = readyForGameResult.getFirstActionFrame();
-			gameLatestPanActionFrameDboDao.save(majiangGame.getGameId(), panActionFrame.toByteArray(1024 * 8));
+			gameLatestPanActionFrameDboDao.save(majiangGame.getId(), panActionFrame.toByteArray(1024 * 8));
 			// TODO 记录一条Frame，回放的时候要做
 		}
 	}
@@ -81,7 +81,7 @@ public class MajiangPlayQueryService {
 		majiangGameDboDao.save(majiangGameDbo);
 
 		if (readyToNextPanResult.getFirstActionFrame() != null) {
-			gameLatestPanActionFrameDboDao.save(majiangGame.getGameId(),
+			gameLatestPanActionFrameDboDao.save(majiangGame.getId(),
 					readyToNextPanResult.getFirstActionFrame().toByteArray(1024 * 8));
 			// TODO 记录一条Frame，回放的时候要做
 		}
@@ -96,7 +96,7 @@ public class MajiangPlayQueryService {
 		MajiangGameDbo majiangGameDbo = new MajiangGameDbo(majiangGame, playerInfoMap);
 		majiangGameDboDao.save(majiangGameDbo);
 
-		String gameId = majiangActionResult.getMajiangGame().getGameId();
+		String gameId = majiangActionResult.getMajiangGame().getId();
 		PanActionFrame panActionFrame = majiangActionResult.getPanActionFrame();
 		gameLatestPanActionFrameDboDao.save(gameId, panActionFrame.toByteArray(1024 * 8));
 		// TODO 记录一条Frame，回放的时候要做

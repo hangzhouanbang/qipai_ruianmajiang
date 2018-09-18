@@ -195,7 +195,7 @@ public class GameController {
 	public CommonVO info(String gameId) {
 		CommonVO vo = new CommonVO();
 		MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
-		GameVO gameVO = new GameVO(majiangGameDbo); 
+		GameVO gameVO = new GameVO(majiangGameDbo);
 		Map data = new HashMap();
 		data.put("game", gameVO);
 		vo.setData(data);
@@ -279,7 +279,7 @@ public class GameController {
 		}
 		majiangGameQueryService.finish(finishResult);
 		MajiangGameValueObject majiangGameValueObject = finishResult.getMajiangGameValueObject();
-		String gameId = majiangGameValueObject.getGameId();
+		String gameId = majiangGameValueObject.getId();
 		JuResultDbo juResultDbo = majiangPlayQueryService.findJuResultDbo(gameId);
 		// 记录战绩
 		if (juResultDbo != null) {
@@ -343,7 +343,7 @@ public class GameController {
 			vo.setMsg(e.getClass().getName());
 			return vo;
 		}
-		String gameId = finishResult.getMajiangGameValueObject().getGameId();
+		String gameId = finishResult.getMajiangGameValueObject().getId();
 		majiangGameQueryService.voteToFinish(finishResult);
 		JuResultDbo juResultDbo = majiangPlayQueryService.findJuResultDbo(gameId);
 		// 记录战绩

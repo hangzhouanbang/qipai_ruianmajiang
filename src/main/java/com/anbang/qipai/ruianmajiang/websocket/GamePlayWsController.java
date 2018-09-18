@@ -26,10 +26,10 @@ import com.dml.mpgame.game.WaitingStart;
 import com.dml.mpgame.game.extend.fpmpv.VotingWhenWaitingNextPan;
 import com.dml.mpgame.game.extend.multipan.WaitingNextPan;
 import com.dml.mpgame.game.extend.multipan.player.PlayerPanFinished;
+import com.dml.mpgame.game.extend.multipan.player.PlayerReadyToStartNextPan;
 import com.dml.mpgame.game.extend.vote.FinishedByVote;
 import com.dml.mpgame.game.extend.vote.VotingWhenPlaying;
 import com.dml.mpgame.game.player.GamePlayerState;
-import com.dml.mpgame.game.player.PlayerReadyToStart;
 import com.google.gson.Gson;
 
 @Component
@@ -160,7 +160,7 @@ public class GamePlayWsController extends TextWebSocketHandler {
 				if (playerState.name().equals(PlayerPanFinished.name)) {
 					wsNotifier.notifyToQuery(playerId, QueryScope.gameInfo.name());
 					wsNotifier.notifyToQuery(playerId, QueryScope.panResult.name());
-				} else if (playerState.name().equals(PlayerReadyToStart.name)) {
+				} else if (playerState.name().equals(PlayerReadyToStartNextPan.name)) {
 					wsNotifier.notifyToQuery(playerId, QueryScope.gameInfo.name());
 				}
 			} else if (gameState.name().equals(VotingWhenWaitingNextPan.name)) {

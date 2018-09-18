@@ -30,12 +30,18 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
 		GameServer gameServer = singletonEntityRepository.getEntity(GameServer.class);
 
 		MajiangGame newGame = new MajiangGame();
+		newGame.setDapao(dapao);
+		newGame.setDifen(difen);
+		newGame.setFixedPlayerCount(renshu);
+		newGame.setPanshu(panshu);
+		newGame.setRenshu(renshu);
+		newGame.setTaishu(taishu);
+
 		newGame.setJoinStrategy(new FixedNumberOfPlayersGameJoinStrategy(renshu));
 		newGame.setReadyStrategy(new FixedNumberOfPlayersGameReadyStrategy(renshu));
 		newGame.setLeaveStrategy(new HostGameLeaveStrategy(playerId));
-		gameServer.playerCreateGame(newGame, playerId);
-
 		newGame.create(gameId, playerId);
+		gameServer.playerCreateGame(newGame, playerId);
 
 		return new MajiangGameValueObject(newGame);
 	}
@@ -56,6 +62,7 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
 
 		MajiangGame majiangGame = (MajiangGame) gameServer.findGamePlayerPlaying(playerId);
 		MajiangGameValueObject majiangGameValueObject = new MajiangGameValueObject(majiangGame);
+		result.setMajiangGame(majiangGameValueObject);
 
 		if (majiangGameValueObject.getState().name().equals(Playing.name)) {
 			PanActionFrame firstActionFrame = majiangGame.createJuAndStartFirstPan(currentTime);

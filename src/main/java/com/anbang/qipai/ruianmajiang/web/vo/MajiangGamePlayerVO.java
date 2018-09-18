@@ -6,6 +6,7 @@ import com.dml.mpgame.game.extend.fpmpv.player.PlayerPanFinishedAndVoting;
 import com.dml.mpgame.game.extend.fpmpv.player.PlayerReadyToStartNextPanAndVoted;
 import com.dml.mpgame.game.extend.fpmpv.player.PlayerReadyToStartNextPanAndVoting;
 import com.dml.mpgame.game.extend.multipan.player.PlayerPanFinished;
+import com.dml.mpgame.game.extend.multipan.player.PlayerReadyToStartNextPan;
 import com.dml.mpgame.game.player.PlayerFinished;
 import com.dml.mpgame.game.player.PlayerJoined;
 import com.dml.mpgame.game.player.PlayerPlaying;
@@ -46,6 +47,8 @@ public class MajiangGamePlayerVO {
 		} else if (sn.equals(PlayerPlaying.name)) {
 			state = "playing";
 		} else if (sn.equals(PlayerReadyToStart.name)) {
+			state = "readyToStart";
+		} else if (sn.equals(PlayerReadyToStartNextPan.name)) {
 			state = "readyToStart";
 		} else if (sn.equals(PlayerPanFinishedAndVoted.name)) {
 			state = "panFinished";
