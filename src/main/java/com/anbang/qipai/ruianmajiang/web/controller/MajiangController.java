@@ -136,6 +136,8 @@ public class MajiangController {
 	public CommonVO action(String token, int id) {
 		CommonVO vo = new CommonVO();
 		Map data = new HashMap();
+		List<String> queryScopes = new ArrayList<>();
+		data.put("queryScopes", queryScopes);
 		vo.setData(data);
 		String playerId = playerAuthService.getPlayerIdByToken(token);
 		if (playerId == null) {
@@ -168,7 +170,7 @@ public class MajiangController {
 				}
 			}
 
-			data.put("queryScope", QueryScope.panForMe);
+			queryScopes.add(QueryScope.panForMe.name());
 
 		} else {// 盘结束了
 
@@ -186,14 +188,16 @@ public class MajiangController {
 				ruianMajiangResultMsgService.recordJuResult(juResult);
 
 				gameMsgService.gameFinished(majiangActionResult.getMajiangGame().getId());
-				data.put("queryScope", QueryScope.juResult);
+				queryScopes.add(QueryScope.juResult.name());
 			} else {
 				for (String otherPlayerId : majiangActionResult.getMajiangGame().allPlayerIds()) {
 					if (!otherPlayerId.equals(playerId)) {
 						wsNotifier.notifyToQuery(otherPlayerId, QueryScope.panResult.name());
+						wsNotifier.notifyToQuery(otherPlayerId, QueryScope.gameInfo.name());
 					}
 				}
-				data.put("queryScope", QueryScope.panResult);
+				queryScopes.add(QueryScope.panResult.name());
+				queryScopes.add(QueryScope.gameInfo.name());
 			}
 			gameMsgService.panFinished(majiangActionResult.getMajiangGame(),
 					majiangActionResult.getPanActionFrame().getPanAfterAction());
