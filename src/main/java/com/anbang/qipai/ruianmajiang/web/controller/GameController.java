@@ -28,8 +28,9 @@ import com.anbang.qipai.ruianmajiang.web.vo.GameVO;
 import com.anbang.qipai.ruianmajiang.web.vo.JuResultVO;
 import com.anbang.qipai.ruianmajiang.websocket.GamePlayWsNotifier;
 import com.anbang.qipai.ruianmajiang.websocket.QueryScope;
-import com.dml.mpgame.game.Finished;
+import com.dml.mpgame.game.Canceled;
 import com.dml.mpgame.game.Playing;
+import com.dml.mpgame.game.extend.vote.FinishedByVote;
 
 /**
  * 游戏框架相关
@@ -289,7 +290,8 @@ public class GameController {
 			gameMsgService.gameFinished(gameId);
 		}
 
-		if (majiangGameValueObject.getState().name().equals(Finished.name)) {
+		if (majiangGameValueObject.getState().name().equals(FinishedByVote.name)
+				|| majiangGameValueObject.getState().name().equals(Canceled.name)) {
 			data.put("queryScope", QueryScope.gameInfo);
 			gameMsgService.gameFinished(gameId);
 			// 通知其他人来查询

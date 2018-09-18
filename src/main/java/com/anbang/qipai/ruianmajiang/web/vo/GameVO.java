@@ -34,11 +34,11 @@ public class GameVO {
 		majiangGameDbo.getPlayers().forEach((dbo) -> playerList.add(new MajiangGamePlayerVO(dbo)));
 		String sn = majiangGameDbo.getState().name();
 		if (sn.equals(Canceled.name)) {
-			state = Canceled.name;
+			state = "finished";
 		} else if (sn.equals(Finished.name)) {
 			state = "finished";
 		} else if (sn.equals(FinishedByVote.name)) {
-			state = FinishedByVote.name;
+			state = "finished";
 		} else if (sn.equals(Playing.name)) {
 			state = "playing";
 		} else if (sn.equals(VotingWhenPlaying.name)) {

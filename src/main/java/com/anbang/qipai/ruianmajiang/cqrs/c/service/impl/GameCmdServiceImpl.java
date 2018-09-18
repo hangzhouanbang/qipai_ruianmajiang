@@ -118,7 +118,6 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
 		result.setMajiangGameValueObject(majiangGameValueObject);
 
 		if (majiangGameValueObject.getState().name().equals(FinishedByVote.name)) {
-			majiangGame.finishJu();
 			RuianMajiangJuResult juResult = (RuianMajiangJuResult) majiangGame.finishJu();
 			result.setJuResult(juResult);
 		}
