@@ -12,11 +12,11 @@ import com.dml.majiang.pan.frame.PanActionFrame;
 import com.dml.mpgame.game.Game;
 import com.dml.mpgame.game.Playing;
 import com.dml.mpgame.game.WaitingStart;
+import com.dml.mpgame.game.extend.fpmpv.leave.FpmpvLeaveWithVoteStrategy;
 import com.dml.mpgame.game.extend.vote.FinishedByVote;
 import com.dml.mpgame.game.extend.vote.MostPlayersWinVoteCalculator;
 import com.dml.mpgame.game.extend.vote.VoteOption;
 import com.dml.mpgame.game.join.FixedNumberOfPlayersGameJoinStrategy;
-import com.dml.mpgame.game.leave.HostGameLeaveStrategy;
 import com.dml.mpgame.game.ready.FixedNumberOfPlayersGameReadyStrategy;
 import com.dml.mpgame.server.GameServer;
 
@@ -38,7 +38,7 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
 
 		newGame.setJoinStrategy(new FixedNumberOfPlayersGameJoinStrategy(renshu));
 		newGame.setReadyStrategy(new FixedNumberOfPlayersGameReadyStrategy(renshu));
-		newGame.setLeaveStrategy(new HostGameLeaveStrategy(playerId));
+		newGame.setLeaveStrategy(new FpmpvLeaveWithVoteStrategy(playerId));
 		newGame.create(gameId, playerId);
 		gameServer.playerCreateGame(newGame, playerId);
 
