@@ -137,17 +137,21 @@ public class MajiangGame extends FixedPlayersMultipanAndVotetofinishGame {
 	}
 
 	@Override
+	protected void updatePlayerToExtendedVotingState(GamePlayer player) {
+	}
+
+	@Override
 	protected void recoveryStateFromExtendedVoting() throws Exception {
+	}
+
+	@Override
+	protected void recoveryPlayersStateFromExtendedVoting() throws Exception {
 	}
 
 	@Override
 	public void start() throws Exception {
 		state = new Playing();
 		updateAllPlayersState(new PlayerPlaying());
-	}
-
-	@Override
-	protected void updatePlayerToExtendedVotingState(GamePlayer player) {
 	}
 
 	@Override
