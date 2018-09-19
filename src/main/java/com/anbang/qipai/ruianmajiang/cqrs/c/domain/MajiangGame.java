@@ -32,6 +32,7 @@ import com.dml.mpgame.game.Finished;
 import com.dml.mpgame.game.Playing;
 import com.dml.mpgame.game.extend.fpmpv.FixedPlayersMultipanAndVotetofinishGame;
 import com.dml.mpgame.game.extend.multipan.WaitingNextPan;
+import com.dml.mpgame.game.player.GamePlayer;
 import com.dml.mpgame.game.player.PlayerPlaying;
 
 public class MajiangGame extends FixedPlayersMultipanAndVotetofinishGame {
@@ -114,6 +115,45 @@ public class MajiangGame extends FixedPlayersMultipanAndVotetofinishGame {
 		return result;
 	}
 
+	@Override
+	protected boolean checkToFinishGame() throws Exception {
+		return ju.getJuResult() != null;
+	}
+
+	@Override
+	protected boolean checkToFinishCurrentPan() throws Exception {
+		return ju.getCurrentPan() == null;
+	}
+
+	@Override
+	protected void startNextPan() throws Exception {
+		ju.startNextPan();
+		state = new Playing();
+		updateAllPlayersState(new PlayerPlaying());
+	}
+
+	@Override
+	protected void updateToExtendedVotingState() {
+	}
+
+	@Override
+	protected void recoveryStateFromExtendedVoting() throws Exception {
+	}
+
+	@Override
+	public void start() throws Exception {
+		state = new Playing();
+		updateAllPlayersState(new PlayerPlaying());
+	}
+
+	@Override
+	protected void updatePlayerToExtendedVotingState(GamePlayer player) {
+	}
+
+	@Override
+	protected void updatePlayerToExtendedVotedState(GamePlayer player) {
+	}
+
 	public JuResult finishJu() {
 		ju.finish();
 		return ju.getJuResult();
@@ -173,42 +213,6 @@ public class MajiangGame extends FixedPlayersMultipanAndVotetofinishGame {
 
 	public void setPlayeTotalScoreMap(Map<String, Integer> playeTotalScoreMap) {
 		this.playeTotalScoreMap = playeTotalScoreMap;
-	}
-
-	@Override
-	protected boolean checkToFinishGame() throws Exception {
-		return ju.getJuResult() != null;
-	}
-
-	@Override
-	protected boolean checkToFinishCurrentPan() throws Exception {
-		return ju.getCurrentPan() == null;
-	}
-
-	@Override
-	protected void startNextPan() throws Exception {
-		ju.startNextPan();
-		state = new Playing();
-		updateAllPlayersState(new PlayerPlaying());
-	}
-
-	@Override
-	protected void updateToExtendedVotingState() {
-	}
-
-	@Override
-	protected boolean ifInExtendedVotingState() {
-		return false;
-	}
-
-	@Override
-	protected void recoveryExtendedStateFromVoting() throws Exception {
-	}
-
-	@Override
-	public void start() throws Exception {
-		state = new Playing();
-		updateAllPlayersState(new PlayerPlaying());
 	}
 
 }
