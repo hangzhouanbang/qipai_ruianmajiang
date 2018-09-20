@@ -25,7 +25,7 @@ public class RuianMajiangTaishuVO {
 	private boolean tianHu;
 	private boolean diHu;
 	private boolean qingyiseHu;
-	private boolean shuangCaisheng;
+	private boolean shuangCaishengHu;
 	private int value;
 
 	public RuianMajiangTaishuVO(RuianMajiangTaishu taishu) {
@@ -50,7 +50,7 @@ public class RuianMajiangTaishuVO {
 		tianHu = taishu.isTianHu();
 		diHu = taishu.isDiHu();
 		qingyiseHu = taishu.isQingyiseHu();
-		shuangCaisheng = taishu.isShuangCaisheng();
+		shuangCaishengHu = taishu.isShuangCaishengHu();
 		value = taishu.getValue();
 	}
 
@@ -142,8 +142,8 @@ public class RuianMajiangTaishuVO {
 		return qingyiseHu;
 	}
 
-	public boolean isShuangCaisheng() {
-		return shuangCaisheng;
+	public boolean isShuangCaishengHu() {
+		return shuangCaishengHu;
 	}
 
 }

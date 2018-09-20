@@ -10,7 +10,6 @@ import com.dml.majiang.player.action.da.MajiangDaAction;
 import com.dml.majiang.player.action.hu.MajiangHuAction;
 import com.dml.majiang.player.action.listener.comprehensive.JuezhangStatisticsListener;
 import com.dml.majiang.player.action.listener.gang.GangCounter;
-import com.dml.majiang.player.action.listener.mo.MoGuipaiCounter;
 import com.dml.majiang.player.action.mo.LundaoMopai;
 import com.dml.majiang.player.action.mo.MajiangMoAction;
 import com.dml.majiang.player.action.mo.MajiangPlayerMoActionUpdater;
@@ -79,9 +78,8 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 				player.addActionCandidate(new MajiangHuAction(player.getId(), bestHu));
 			} else {
 				// 非胡牌型特殊胡-三财神
-				MoGuipaiCounter moGuipaiCounter = ju.getActionStatisticsListenerManager()
-						.findListener(MoGuipaiCounter.class);
-				if (moGuipaiCounter.getCount() == 3) {
+				int guipaiCount = player.countGuipai();
+				if (guipaiCount == 3) {
 					RuianMajiangPanPlayerScore score = RuianMajiangJiesuanCalculator
 							.calculateBestScoreForBuhuPlayer(dapao, dihu, player, baibanIsGuipai);
 					RuianMajiangHu sancaishenHu = new RuianMajiangHu(score);

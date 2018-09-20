@@ -29,7 +29,8 @@ public class RuianMajiangGangActionUpdater implements MajiangPlayerGangActionUpd
 
 		// 看看是不是有其他玩家可以抢杠胡
 		boolean qiangganghu = false;
-		if (gangAction.getGangType().equals(GangType.kezigangmo)) {
+		if (gangAction.getGangType().equals(GangType.kezigangmo)
+				|| gangAction.getGangType().equals(GangType.kezigangshoupai)) {
 			RuianMajiangPanResultBuilder ruianMajiangPanResultBuilder = (RuianMajiangPanResultBuilder) ju
 					.getCurrentPanResultBuilder();
 			int dihu = ruianMajiangPanResultBuilder.getDihu();
@@ -42,7 +43,7 @@ public class RuianMajiangGangActionUpdater implements MajiangPlayerGangActionUpd
 					break;
 				}
 				RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestQianggangHu(gangAction.getPai(),
-						dapao, dihu, gouXingPanHu, player, baibanIsGuipai);
+						dapao, dihu, gouXingPanHu, xiajia, baibanIsGuipai);
 				if (bestHu != null) {
 					bestHu.setQianggang(true);
 					xiajia.addActionCandidate(new MajiangHuAction(xiajia.getId(), bestHu));

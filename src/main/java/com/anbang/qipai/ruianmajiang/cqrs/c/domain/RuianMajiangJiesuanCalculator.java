@@ -66,7 +66,7 @@ public class RuianMajiangJiesuanCalculator {
 		List<MajiangPai> guipaiList = player.findGuipaiList();// TODO 也可以用统计器做
 		shoupaiCalculator.addPai(gangPai);
 		List<ShoupaiPaiXing> huPaiShoupaiPaiXingList = calculateZimoHuPaiShoupaiPaiXingList(guipaiList, baibanIsGuipai,
-				shoupaiCalculator, player, gouXingPanHu, player.getGangmoShoupai());
+				shoupaiCalculator, player, gouXingPanHu, gangPai);
 		shoupaiCalculator.removePai(gangPai);
 		if (!huPaiShoupaiPaiXingList.isEmpty()) {// 有胡牌型
 
@@ -268,7 +268,7 @@ public class RuianMajiangJiesuanCalculator {
 		taishu.setQianggangHu(qianggangHu);
 		taishu.setQingyiseHu(hu && shoupaixingWuguanJiesuancanshu.isQingyise());
 		taishu.setSancaishenHu(shoupaixingWuguanJiesuancanshu.getCaishenShu() == 3);
-		taishu.setShuangCaisheng(shoupaixingWuguanJiesuancanshu.getCaishenShu() == 2);
+		taishu.setShuangCaishengHu(hu && shoupaixingWuguanJiesuancanshu.getCaishenShu() == 2);
 		taishu.setSifengqiHu(false);// TODO 用统计器来做
 		taishu.setTianHu(couldTianhu);
 		boolean zuofengAnke = shoupaiPaiXing.hasKeziForPaiType(shoupaixingWuguanJiesuancanshu.getMenFengPai());

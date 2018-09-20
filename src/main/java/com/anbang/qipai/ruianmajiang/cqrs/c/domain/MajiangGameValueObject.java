@@ -1,51 +1,26 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import com.dml.mpgame.game.GamePlayerOnlineState;
+import com.dml.mpgame.game.extend.fpmpv.FixedPlayersMultipanAndVotetofinishGameValueObject;
 
-public class MajiangGameValueObject {
-
-	private String gameId;
+public class MajiangGameValueObject extends FixedPlayersMultipanAndVotetofinishGameValueObject {
 	private int difen;
 	private int taishu;
 	private int panshu;
 	private int renshu;
 	private boolean dapao;
-	private MajiangGameState state;
-	private Map<String, MajiangGamePlayerState> playerStateMap = new HashMap<>();
-	private Map<String, GamePlayerOnlineState> playerOnlineStateMap = new HashMap<>();
 	private Map<String, Integer> playeTotalScoreMap = new HashMap<>();
 
-	public MajiangGameValueObject() {
-	}
-
 	public MajiangGameValueObject(MajiangGame majiangGame) {
-		gameId = majiangGame.getGameId();
+		super(majiangGame);
 		difen = majiangGame.getDifen();
 		taishu = majiangGame.getTaishu();
 		panshu = majiangGame.getPanshu();
 		renshu = majiangGame.getRenshu();
 		dapao = majiangGame.isDapao();
-		state = majiangGame.getState();
-		playerStateMap.putAll(majiangGame.getPlayerStateMap());
-		playerOnlineStateMap.putAll(majiangGame.getPlayerOnlineStateMap());
 		playeTotalScoreMap.putAll(majiangGame.getPlayeTotalScoreMap());
-	}
-
-	public List<String> allPlayerIds() {
-		return new ArrayList<>(playerStateMap.keySet());
-	}
-
-	public String getGameId() {
-		return gameId;
-	}
-
-	public void setGameId(String gameId) {
-		this.gameId = gameId;
 	}
 
 	public int getDifen() {
@@ -86,30 +61,6 @@ public class MajiangGameValueObject {
 
 	public void setDapao(boolean dapao) {
 		this.dapao = dapao;
-	}
-
-	public MajiangGameState getState() {
-		return state;
-	}
-
-	public void setState(MajiangGameState state) {
-		this.state = state;
-	}
-
-	public Map<String, MajiangGamePlayerState> getPlayerStateMap() {
-		return playerStateMap;
-	}
-
-	public void setPlayerStateMap(Map<String, MajiangGamePlayerState> playerStateMap) {
-		this.playerStateMap = playerStateMap;
-	}
-
-	public Map<String, GamePlayerOnlineState> getPlayerOnlineStateMap() {
-		return playerOnlineStateMap;
-	}
-
-	public void setPlayerOnlineStateMap(Map<String, GamePlayerOnlineState> playerOnlineStateMap) {
-		this.playerOnlineStateMap = playerOnlineStateMap;
 	}
 
 	public Map<String, Integer> getPlayeTotalScoreMap() {

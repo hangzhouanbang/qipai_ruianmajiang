@@ -3,7 +3,6 @@ package com.anbang.qipai.ruianmajiang.cqrs.c.service;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.FinishResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangGameValueObject;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyForGameResult;
-import com.dml.mpgame.game.GameValueObject;
 
 public interface GameCmdService {
 
@@ -24,5 +23,5 @@ public interface GameCmdService {
 
 	FinishResult voteToFinish(String playerId, Boolean yes) throws Exception;
 
-	GameValueObject finishGameImmediately(String gameId) throws Exception;
+	MajiangGameValueObject finishGameImmediately(String gameId) throws Exception;
 }
