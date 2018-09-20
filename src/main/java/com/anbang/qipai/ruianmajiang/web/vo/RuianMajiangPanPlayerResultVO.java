@@ -64,7 +64,7 @@ public class RuianMajiangPanPlayerResultVO {
 		RuianMajiangPanPlayerScore ruianMajiangPanPlayerScore = panPlayerResultDbo.getPlayerResult().getScore();
 		RuianMajiangPao ruianMajiangPao = ruianMajiangPanPlayerScore.getPao();
 		if (ruianMajiangPao != null) {
-			pao = ruianMajiangPao.getValue() * 10;
+			pao = ruianMajiangPao.getValue() * 5;
 		}
 		hushu = ruianMajiangPanPlayerScore.getHushu().quzhengValue();
 		taishu = new RuianMajiangTaishuVO(ruianMajiangPanPlayerScore.getHushu().getTaishu());
