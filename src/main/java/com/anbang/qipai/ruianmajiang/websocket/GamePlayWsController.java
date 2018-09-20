@@ -15,9 +15,13 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangGameValueObject;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.GameCmdService;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.PlayerAuthService;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.JuResultDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangGameQueryService;
+import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangPlayQueryService;
 import com.anbang.qipai.ruianmajiang.msg.service.RuianMajiangGameMsgService;
+import com.anbang.qipai.ruianmajiang.msg.service.RuianMajiangResultMsgService;
+import com.anbang.qipai.ruianmajiang.web.vo.JuResultVO;
 import com.dml.mpgame.game.Canceled;
 import com.dml.mpgame.game.Finished;
 import com.dml.mpgame.game.GameState;
@@ -47,7 +51,13 @@ public class GamePlayWsController extends TextWebSocketHandler {
 	private MajiangGameQueryService majiangGameQueryService;
 
 	@Autowired
+	private MajiangPlayQueryService majiangPlayQueryService;
+
+	@Autowired
 	private RuianMajiangGameMsgService gameMsgService;
+
+	@Autowired
+	private RuianMajiangResultMsgService ruianMajiangResultMsgService;
 
 	private ExecutorService executorService = Executors.newCachedThreadPool();
 
@@ -86,10 +96,21 @@ public class GamePlayWsController extends TextWebSocketHandler {
 		if (majiangGameValueObject != null) {
 			majiangGameQueryService.leaveGame(majiangGameValueObject);
 			gameMsgService.gamePlayerLeave(majiangGameValueObject, closedPlayerId);
+
+			String gameId = majiangGameValueObject.getId();
+			if (majiangGameValueObject.getState().name().equals(FinishedByVote.name)) {
+				JuResultDbo juResultDbo = majiangPlayQueryService.findJuResultDbo(gameId);
+				MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
+				JuResultVO juResult = new JuResultVO(juResultDbo, majiangGameDbo);
+				ruianMajiangResultMsgService.recordJuResult(juResult);
+				gameMsgService.gameFinished(gameId);
+			}
+
 			// 通知其他玩家
 			majiangGameValueObject.allPlayerIds().forEach((playerId) -> {
 				if (!playerId.equals(closedPlayerId)) {
 					wsNotifier.notifyToQuery(playerId, QueryScope.gameInfo.name());
+					wsNotifier.notifyToQuery(playerId, QueryScope.gameFinishVote.name()); // 离开的那人可能投了弃权
 					if (majiangGameValueObject.getState().name().equals(FinishedByVote.name)) {
 						wsNotifier.notifyToQuery(playerId, QueryScope.juResult.name());
 					}
