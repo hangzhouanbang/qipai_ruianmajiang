@@ -1,6 +1,7 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
 import java.util.List;
+import java.util.Set;
 
 import com.dml.majiang.ju.Ju;
 import com.dml.majiang.pai.MajiangPai;
@@ -27,6 +28,9 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 		Pan currentPan = ju.getCurrentPan();
 		boolean baibanIsGuipai = currentPan.getPublicGuipaiSet().contains(MajiangPai.baiban);
 		MajiangPlayer player = currentPan.findPlayerById(moAction.getActionPlayerId());
+		List<MajiangPai> fangruShoupaiList = player.getFangruShoupaiList();
+		Set<MajiangPai> guipaiTypeSet = player.getGuipaiTypeSet();
+		MajiangPai gangmoShoupai = player.getGangmoShoupai();
 		player.clearActionCandidates();
 		int playersCount = currentPan.countPlayers();
 		int avaliablePaiLeft = currentPan.countAvaliablePai();
@@ -34,7 +38,6 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 			// 当然啥也不干了
 		} else {
 			// 摸到公开牌了要补牌(继续摸牌)
-			MajiangPai gangmoShoupai = player.getGangmoShoupai();
 			if (baibanIsGuipai) {// 白板是鬼牌
 				if (gangmoShoupai.equals(MajiangPai.hongzhong)) {// 红中是公开牌
 					player.addActionCandidate(new MajiangMoAction(player.getId(), new RuianBupai()));
@@ -87,8 +90,12 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 				}
 			}
 
-			// 需要有“过”
-			player.checkAndGenerateGuoCandidateAction();
+			if (guipaiTypeSet.contains(gangmoShoupai) && fangruShoupaiList.size() == 0) {
+				// 当手上没有除鬼牌之外的牌时不能过
+			} else {
+				// 需要有“过”
+				player.checkAndGenerateGuoCandidateAction();
+			}
 
 			if ((avaliablePaiLeft - liupai) < playersCount) {// 进入流局前最后4张
 				// 啥也不能干，下家摸牌
@@ -98,7 +105,6 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 				}
 			} else {
 				// 啥也不能干，那只能打出牌
-				List<MajiangPai> fangruShoupaiList = player.getFangruShoupaiList();
 				JuezhangStatisticsListener juezhangStatisticsListener = ju.getActionStatisticsListenerManager()
 						.findListener(JuezhangStatisticsListener.class);
 				for (MajiangPai pai : fangruShoupaiList) {
