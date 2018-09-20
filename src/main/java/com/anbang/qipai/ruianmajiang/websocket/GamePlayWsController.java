@@ -90,6 +90,9 @@ public class GamePlayWsController extends TextWebSocketHandler {
 			majiangGameValueObject.allPlayerIds().forEach((playerId) -> {
 				if (!playerId.equals(closedPlayerId)) {
 					wsNotifier.notifyToQuery(playerId, QueryScope.gameInfo.name());
+					if (majiangGameValueObject.getState().name().equals(FinishedByVote.name)) {
+						wsNotifier.notifyToQuery(playerId, QueryScope.juResult.name());
+					}
 				}
 			});
 		}

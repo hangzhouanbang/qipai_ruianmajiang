@@ -7,7 +7,6 @@ import com.dml.majiang.ju.Ju;
 import com.dml.majiang.ju.finish.FixedPanNumbersJuFinishiDeterminer;
 import com.dml.majiang.ju.firstpan.ClassicStartFirstPanProcess;
 import com.dml.majiang.ju.nextpan.ClassicStartNextPanProcess;
-import com.dml.majiang.ju.result.JuResult;
 import com.dml.majiang.pan.avaliablepai.NoHuapaiRandomAvaliablePaiFiller;
 import com.dml.majiang.pan.frame.PanActionFrame;
 import com.dml.majiang.pan.guipai.RandomGuipaiDeterminer;
@@ -158,9 +157,9 @@ public class MajiangGame extends FixedPlayersMultipanAndVotetofinishGame {
 	protected void updatePlayerToExtendedVotedState(GamePlayer player) {
 	}
 
-	public JuResult finishJu() {
+	@Override
+	public void finish() throws Exception {
 		ju.finish();
-		return ju.getJuResult();
 	}
 
 	public int getDifen() {

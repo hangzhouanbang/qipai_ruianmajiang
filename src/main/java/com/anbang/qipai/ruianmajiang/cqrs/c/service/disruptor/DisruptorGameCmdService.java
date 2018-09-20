@@ -3,7 +3,6 @@ package com.anbang.qipai.ruianmajiang.cqrs.c.service.disruptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.anbang.qipai.ruianmajiang.cqrs.c.domain.FinishResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangGameValueObject;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyForGameResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.GameCmdService;
@@ -114,12 +113,13 @@ public class DisruptorGameCmdService extends DisruptorCmdServiceBase implements 
 	}
 
 	@Override
-	public FinishResult finish(String playerId) throws Exception {
-		CommonCommand cmd = new CommonCommand(GameCmdServiceImpl.class.getName(), "launchFinishVote", playerId);
-		DeferredResult<FinishResult> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd, () -> {
-			FinishResult voteToFinishResult = gameCmdServiceImpl.finish(cmd.getParameter());
-			return voteToFinishResult;
-		});
+	public MajiangGameValueObject finish(String playerId) throws Exception {
+		CommonCommand cmd = new CommonCommand(GameCmdServiceImpl.class.getName(), "finish", playerId);
+		DeferredResult<MajiangGameValueObject> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd,
+				() -> {
+					MajiangGameValueObject majiangGameValueObject = gameCmdServiceImpl.finish(cmd.getParameter());
+					return majiangGameValueObject;
+				});
 		try {
 			return result.getResult();
 		} catch (Exception e) {
@@ -128,12 +128,14 @@ public class DisruptorGameCmdService extends DisruptorCmdServiceBase implements 
 	}
 
 	@Override
-	public FinishResult voteToFinish(String playerId, Boolean yes) throws Exception {
+	public MajiangGameValueObject voteToFinish(String playerId, Boolean yes) throws Exception {
 		CommonCommand cmd = new CommonCommand(GameCmdServiceImpl.class.getName(), "voteToFinish", playerId, yes);
-		DeferredResult<FinishResult> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd, () -> {
-			FinishResult voteToFinishResult = gameCmdServiceImpl.voteToFinish(cmd.getParameter(), cmd.getParameter());
-			return voteToFinishResult;
-		});
+		DeferredResult<MajiangGameValueObject> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd,
+				() -> {
+					MajiangGameValueObject majiangGameValueObject = gameCmdServiceImpl.voteToFinish(cmd.getParameter(),
+							cmd.getParameter());
+					return majiangGameValueObject;
+				});
 		try {
 			return result.getResult();
 		} catch (Exception e) {
