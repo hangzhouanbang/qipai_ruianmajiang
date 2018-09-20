@@ -219,14 +219,14 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 	}
 
 	private int quzheng(int value) {
-		int shang = value / 10;
-		int yu = value % 10;
-		if (yu > 0) {
-			return (shang + 1) ;
-		} else if (yu < 0){
-			return (shang - 1) ;
-		} else {
-		    return shang ;
+        int shang = value / 10;
+        int yu = value % 10;
+        if (yu > 0) {
+            return (shang + 1) * 10;
+        } else if (yu < 0){
+            return (shang - 1) * 10;
+        } else {
+            return shang * 10;
         }
 	}
 
