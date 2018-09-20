@@ -144,7 +144,8 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 							int jiesuanHushu1 = hushu1.quzhengValue();
 							RuianMajiangHushu hushu2 = score2.getHushu();
 							int jiesuanHushu2 = hushu2.quzhengValue();
-							int delta = quzheng((jiesuanHushu1 - jiesuanHushu2) / 2);
+							int _delta = quzheng((jiesuanHushu1 - jiesuanHushu2) / 2);
+							int delta = _delta/10;
 							score1.jiesuanHushu(delta);
 							score2.jiesuanHushu(delta * -1);
 						}
@@ -223,9 +224,11 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 		int yu = value % 10;
 		if (yu > 0) {
 			return (shang + 1) * 10;
+		} else if (yu < 0){
+			return (shang - 1) * 10;
 		} else {
-			return shang * 10;
-		}
+		    return shang * 10;
+        }
 	}
 
 	public int getDihu() {
