@@ -3,7 +3,14 @@ spring:
     default-domain: qipai_ruianmajiang
   data:
     mongodb:
-      uri: mongodb://localhost:27017/qipai_ruianmajiang
+      database: qipai_ruianmajiang
+      host: 172.16.21.50
+      port: 27017
+      username: root
+      password: '''~kkO837/FZ.'
+      authentication-database: admin
+      repositories:
+        enabled: true
   cloud:
     stream:
       kafka:
@@ -64,5 +71,5 @@ server:
   port: 2001
   
 filepath:
-  snapshotFileBasePath: /usr/local/app/qipai_ruianmajiang/server1/snapshot
-  jFileBasePath: /usr/local/app/qipai_ruianmajiang/server1/journal
+  snapshotFileBasePath: /data/app/qipai_ruianmajiang/server1/snapshot
+  jFileBasePath: /data/app/qipai_ruianmajiang/server1/journal
