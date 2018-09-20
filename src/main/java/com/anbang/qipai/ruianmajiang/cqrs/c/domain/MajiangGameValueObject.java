@@ -23,7 +23,9 @@ public class MajiangGameValueObject extends FixedPlayersMultipanAndVotetofinishG
 		renshu = majiangGame.getRenshu();
 		dapao = majiangGame.isDapao();
 		playeTotalScoreMap.putAll(majiangGame.getPlayeTotalScoreMap());
-		juResult = majiangGame.getJu().getJuResult();
+		if (majiangGame.getJu() != null) {
+			juResult = majiangGame.getJu().getJuResult();
+		}
 	}
 
 	public int getDifen() {
