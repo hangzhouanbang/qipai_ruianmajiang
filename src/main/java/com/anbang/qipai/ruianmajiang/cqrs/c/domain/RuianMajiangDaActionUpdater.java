@@ -1,5 +1,7 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
+import java.util.List;
+
 import com.dml.majiang.ju.Ju;
 import com.dml.majiang.pai.MajiangPai;
 import com.dml.majiang.pan.Pan;
@@ -29,12 +31,18 @@ public class RuianMajiangDaActionUpdater implements MajiangPlayerDaActionUpdater
 		MajiangPlayer xiajiaPlayer = currentPan.findXiajia(daPlayer);
 		xiajiaPlayer.clearActionCandidates();
 		// 下家可以吃
-		xiajiaPlayer.tryChiAndGenerateCandidateActions(daAction.getActionPlayerId(), daAction.getPai());
+		List<MajiangPai> fangruShoupaiList = xiajiaPlayer.getFangruShoupaiList();
+		if (fangruShoupaiList.size() != 2) {
+			xiajiaPlayer.tryChiAndGenerateCandidateActions(daAction.getActionPlayerId(), daAction.getPai());
+		}
 
 		while (true) {
 			if (!xiajiaPlayer.getId().equals(daAction.getActionPlayerId())) {
 				// 其他的可以碰杠胡
-				xiajiaPlayer.tryPengAndGenerateCandidateAction(daAction.getActionPlayerId(), daAction.getPai());
+				List<MajiangPai> fangruShoupaiList1 = xiajiaPlayer.getFangruShoupaiList();
+				if (fangruShoupaiList1.size() != 2) {
+					xiajiaPlayer.tryPengAndGenerateCandidateAction(daAction.getActionPlayerId(), daAction.getPai());
+				}
 				xiajiaPlayer.tryGangdachuAndGenerateCandidateAction(daAction.getActionPlayerId(), daAction.getPai());
 
 				// 点炮胡
