@@ -3,14 +3,7 @@ spring:
     default-domain: qipai_ruianmajiang
   data:
     mongodb:
-      database: qipai_ruianmajiang
-      host: 172.16.21.50
-      port: 27017
-      username: root
-      password: '''~kkO837/FZ.'
-      authentication-database: admin
-      repositories:
-        enabled: true
+      uri: mongodb://localhost:27017/qipai_ruianmajiang
   cloud:
     stream:
       kafka:
