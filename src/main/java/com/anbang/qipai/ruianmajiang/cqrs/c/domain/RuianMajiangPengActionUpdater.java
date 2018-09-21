@@ -19,12 +19,13 @@ public class RuianMajiangPengActionUpdater implements MajiangPlayerPengActionUpd
 		RuianMajiangChiPengGangActionStatisticsListener juezhangStatisticsListener = ju
 				.getActionStatisticsListenerManager()
 				.findListener(RuianMajiangChiPengGangActionStatisticsListener.class);
-		if (juezhangStatisticsListener.getPlayerActionMap().containsKey(pengAction.getActionPlayerId())) {
+		Pan currentPan = ju.getCurrentPan();
+		MajiangPlayer player = currentPan.findPlayerById(pengAction.getActionPlayerId());
+		if (juezhangStatisticsListener.getPlayerActionMap().containsKey(player.getId())) {
+			player.clearActionCandidates();// 玩家已经做了决定，要删除动作
 			throw new HuFirstException();
 		} else {
-			Pan currentPan = ju.getCurrentPan();
 			currentPan.clearAllPlayersActionCandidates();
-			MajiangPlayer player = currentPan.findPlayerById(pengAction.getActionPlayerId());
 
 			List<MajiangPai> fangruShoupaiList = player.getFangruShoupaiList();
 			for (MajiangPai pai : fangruShoupaiList) {

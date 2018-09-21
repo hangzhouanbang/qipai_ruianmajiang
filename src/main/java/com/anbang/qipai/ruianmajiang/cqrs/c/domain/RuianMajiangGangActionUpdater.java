@@ -27,12 +27,13 @@ public class RuianMajiangGangActionUpdater implements MajiangPlayerGangActionUpd
 		RuianMajiangChiPengGangActionStatisticsListener ruianMajiangStatisticsListener = ju
 				.getActionStatisticsListenerManager()
 				.findListener(RuianMajiangChiPengGangActionStatisticsListener.class);
-		if (ruianMajiangStatisticsListener.getPlayerActionMap().containsKey(gangAction.getActionPlayerId())) {
+		Pan currentPan = ju.getCurrentPan();
+		MajiangPlayer player = currentPan.findPlayerById(gangAction.getActionPlayerId());
+		if (ruianMajiangStatisticsListener.getPlayerActionMap().containsKey(player.getId())) {
+			player.clearActionCandidates();// 玩家已经做了决定，要删除动作
 			throw new HuFirstException();
 		} else {
-			Pan currentPan = ju.getCurrentPan();
 			currentPan.clearAllPlayersActionCandidates();
-			MajiangPlayer player = currentPan.findPlayerById(gangAction.getActionPlayerId());
 			boolean baibanIsGuipai = currentPan.getPublicGuipaiSet().contains(MajiangPai.baiban);
 
 			// 看看是不是有其他玩家可以抢杠胡
