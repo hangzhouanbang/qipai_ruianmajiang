@@ -6,6 +6,7 @@ import com.dml.majiang.pai.MajiangPai;
 import com.dml.majiang.pai.fenzu.GangType;
 import com.dml.majiang.pan.Pan;
 import com.dml.majiang.player.MajiangPlayer;
+import com.dml.majiang.player.action.HuFirstException;
 import com.dml.majiang.player.action.gang.MajiangGangAction;
 import com.dml.majiang.player.action.gang.MajiangPlayerGangActionUpdater;
 import com.dml.majiang.player.action.hu.MajiangHuAction;
@@ -27,7 +28,7 @@ public class RuianMajiangGangActionUpdater implements MajiangPlayerGangActionUpd
 				.getActionStatisticsListenerManager()
 				.findListener(RuianMajiangChiPengGangActionStatisticsListener.class);
 		if (ruianMajiangStatisticsListener.getPlayerActionMap().containsKey(gangAction.getActionPlayerId())) {
-
+			throw new HuFirstException();
 		} else {
 			Pan currentPan = ju.getCurrentPan();
 			currentPan.clearAllPlayersActionCandidates();
