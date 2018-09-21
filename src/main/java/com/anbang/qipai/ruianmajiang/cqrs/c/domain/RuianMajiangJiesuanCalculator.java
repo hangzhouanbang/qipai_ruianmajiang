@@ -162,30 +162,16 @@ public class RuianMajiangJiesuanCalculator {
 		RuianMajiangPao pao = new RuianMajiangPao();
 		pao.setBaibanShu(shoupaixingWuguanJiesuancanshu.getBaibanShu());
 		pao.setCaishenShu(shoupaixingWuguanJiesuancanshu.getCaishenShu());
-		boolean facaiAnke = shoupaiPaiXing.hasKeziForPaiType(MajiangPai.facai);
-		pao.setFacaiAnke(facaiAnke);
+		pao.setFacaiAnke(shoupaiPaiXing.hasYuanPaiKeziZuForPaiType(MajiangPai.facai));
 		pao.setFacaiGang(shoupaixingWuguanJiesuancanshu.isGangchuFacai());
 		pao.setFacaiPeng(shoupaixingWuguanJiesuancanshu.isPengchuFacai());
-		boolean hongzhongAnke = shoupaiPaiXing.hasKeziForPaiType(MajiangPai.hongzhong);
-		if (hongzhongAnke) {
-			ShoupaiKeziZu hongzhongKeziZu = shoupaiPaiXing.findFirstKeziZuForPaiType(MajiangPai.hongzhong);
-			if (hongzhongKeziZu.countGuipai() == 0) {
-				pao.setHongzhongAnke(true);
-			}
-		}
+		pao.setHongzhongAnke(shoupaiPaiXing.hasYuanPaiKeziZuForPaiType(MajiangPai.hongzhong));
 
 		pao.setHongzhongGang(shoupaixingWuguanJiesuancanshu.isGangchuHongzhong());
 		pao.setHongzhongPeng(shoupaixingWuguanJiesuancanshu.isPengchuHongzhong());
 		pao.setHu(hu);
 
-		boolean zuofengAnke = shoupaiPaiXing.hasKeziForPaiType(shoupaixingWuguanJiesuancanshu.getMenFengPai());
-		if (zuofengAnke) {
-			ShoupaiKeziZu zuofengKeziZu = shoupaiPaiXing
-					.findFirstKeziZuForPaiType(shoupaixingWuguanJiesuancanshu.getMenFengPai());
-			if (zuofengKeziZu.countGuipai() == 0) {
-				pao.setZuofengAnke(true);
-			}
-		}
+		pao.setZuofengAnke(shoupaiPaiXing.hasYuanPaiKeziZuForPaiType(shoupaixingWuguanJiesuancanshu.getMenFengPai()));
 
 		pao.setZuofengGang(shoupaixingWuguanJiesuancanshu.isZuofengGang());
 		pao.setZuofengPeng(shoupaixingWuguanJiesuancanshu.isZuofengPeng());
