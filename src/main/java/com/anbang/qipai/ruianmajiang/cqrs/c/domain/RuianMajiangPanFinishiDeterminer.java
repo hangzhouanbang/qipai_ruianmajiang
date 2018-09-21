@@ -1,9 +1,9 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
+import com.anbang.qipai.ruianmajiang.cqrs.c.domain.listener.RuianMajiangChiPengGangActionStatisticsListener;
 import com.dml.majiang.ju.Ju;
 import com.dml.majiang.pan.Pan;
 import com.dml.majiang.pan.finish.CurrentPanFinishiDeterminer;
-import com.dml.majiang.player.action.listener.gang.GangCounter;
 
 public class RuianMajiangPanFinishiDeterminer implements CurrentPanFinishiDeterminer {
 
@@ -16,7 +16,8 @@ public class RuianMajiangPanFinishiDeterminer implements CurrentPanFinishiDeterm
 			return true;
 		} else {
 			int liupai = 14;
-			GangCounter gangCounter = ju.getActionStatisticsListenerManager().findListener(GangCounter.class);
+			RuianMajiangChiPengGangActionStatisticsListener gangCounter = ju.getActionStatisticsListenerManager()
+					.findListener(RuianMajiangChiPengGangActionStatisticsListener.class);
 			if (gangCounter.getCount() > 0) {
 				liupai += (4 + (gangCounter.getCount() - 1) * 2);
 			}

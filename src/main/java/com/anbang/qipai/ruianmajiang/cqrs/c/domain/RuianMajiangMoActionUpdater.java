@@ -3,14 +3,13 @@ package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 import java.util.List;
 import java.util.Set;
 
+import com.anbang.qipai.ruianmajiang.cqrs.c.domain.listener.RuianMajiangChiPengGangActionStatisticsListener;
 import com.dml.majiang.ju.Ju;
 import com.dml.majiang.pai.MajiangPai;
 import com.dml.majiang.pan.Pan;
 import com.dml.majiang.player.MajiangPlayer;
 import com.dml.majiang.player.action.da.MajiangDaAction;
 import com.dml.majiang.player.action.hu.MajiangHuAction;
-import com.dml.majiang.player.action.listener.comprehensive.JuezhangStatisticsListener;
-import com.dml.majiang.player.action.listener.gang.GangCounter;
 import com.dml.majiang.player.action.mo.LundaoMopai;
 import com.dml.majiang.player.action.mo.MajiangMoAction;
 import com.dml.majiang.player.action.mo.MajiangPlayerMoActionUpdater;
@@ -21,7 +20,8 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 	@Override
 	public void updateActions(MajiangMoAction moAction, Ju ju) throws Exception {
 		int liupai = 14;
-		GangCounter gangCounter = ju.getActionStatisticsListenerManager().findListener(GangCounter.class);
+		RuianMajiangChiPengGangActionStatisticsListener gangCounter = ju.getActionStatisticsListenerManager()
+				.findListener(RuianMajiangChiPengGangActionStatisticsListener.class);
 		if (gangCounter.getCount() > 0) {
 			liupai += (4 + (gangCounter.getCount() - 1) * 2);
 		}
@@ -105,8 +105,9 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 				}
 			} else {
 				// 啥也不能干，那只能打出牌
-				JuezhangStatisticsListener juezhangStatisticsListener = ju.getActionStatisticsListenerManager()
-						.findListener(JuezhangStatisticsListener.class);
+				RuianMajiangChiPengGangActionStatisticsListener juezhangStatisticsListener = ju
+						.getActionStatisticsListenerManager()
+						.findListener(RuianMajiangChiPengGangActionStatisticsListener.class);
 				for (MajiangPai pai : fangruShoupaiList) {
 					if (MajiangPai.isZipai(pai) && juezhangStatisticsListener.ifJuezhang(pai)) {
 						player.addActionCandidate(new MajiangDaAction(player.getId(), pai));

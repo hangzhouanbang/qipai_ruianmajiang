@@ -30,21 +30,10 @@ public class RuianMajiangDaActionUpdater implements MajiangPlayerDaActionUpdater
 
 		MajiangPlayer xiajiaPlayer = currentPan.findXiajia(daPlayer);
 		xiajiaPlayer.clearActionCandidates();
-		// 下家可以吃
-		List<MajiangPai> fangruShoupaiList = xiajiaPlayer.getFangruShoupaiList();
-		if (fangruShoupaiList.size() != 2) {
-			xiajiaPlayer.tryChiAndGenerateCandidateActions(daAction.getActionPlayerId(), daAction.getPai());
-		}
 
+		int i = 1;
 		while (true) {
 			if (!xiajiaPlayer.getId().equals(daAction.getActionPlayerId())) {
-				// 其他的可以碰杠胡
-				List<MajiangPai> fangruShoupaiList1 = xiajiaPlayer.getFangruShoupaiList();
-				if (fangruShoupaiList1.size() != 2) {
-					xiajiaPlayer.tryPengAndGenerateCandidateAction(daAction.getActionPlayerId(), daAction.getPai());
-				}
-				xiajiaPlayer.tryGangdachuAndGenerateCandidateAction(daAction.getActionPlayerId(), daAction.getPai());
-
 				// 点炮胡
 				RuianMajiangPanResultBuilder ruianMajiangJuResultBuilder = (RuianMajiangPanResultBuilder) ju
 						.getCurrentPanResultBuilder();
@@ -63,15 +52,31 @@ public class RuianMajiangDaActionUpdater implements MajiangPlayerDaActionUpdater
 					bestHu.setDianpaoPlayerId(daPlayer.getId());
 					xiajiaPlayer.addActionCandidate(new MajiangHuAction(xiajiaPlayer.getId(), bestHu));
 				}
+				// 其他的可以碰杠胡
+				xiajiaPlayer.tryGangdachuAndGenerateCandidateAction(daAction.getActionPlayerId(), daAction.getPai());
 
-				xiajiaPlayer.checkAndGenerateGuoCandidateAction();
+				List<MajiangPai> fangruShoupaiList1 = xiajiaPlayer.getFangruShoupaiList();
+				if (fangruShoupaiList1.size() != 2) {
+					xiajiaPlayer.tryPengAndGenerateCandidateAction(daAction.getActionPlayerId(), daAction.getPai());
+				}
+
+				if (i != 1) {
+					xiajiaPlayer.checkAndGenerateGuoCandidateAction();
+				}
 			} else {
 				break;
 			}
 			xiajiaPlayer = currentPan.findXiajia(xiajiaPlayer);
 			xiajiaPlayer.clearActionCandidates();
+			i++;
 		}
-
+		xiajiaPlayer = currentPan.findXiajia(xiajiaPlayer);
+		// 下家可以吃
+		List<MajiangPai> fangruShoupaiList = xiajiaPlayer.getFangruShoupaiList();
+		if (fangruShoupaiList.size() != 2) {
+			xiajiaPlayer.tryChiAndGenerateCandidateActions(daAction.getActionPlayerId(), daAction.getPai());
+		}
+		xiajiaPlayer.checkAndGenerateGuoCandidateAction();
 		// 如果所有玩家啥也做不了,那就下家摸牌
 		if (currentPan.allPlayerHasNoActionCandidates()) {
 			xiajiaPlayer = currentPan.findXiajia(daPlayer);

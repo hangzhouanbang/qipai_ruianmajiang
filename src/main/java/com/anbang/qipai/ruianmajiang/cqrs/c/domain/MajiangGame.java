@@ -3,6 +3,7 @@ package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.anbang.qipai.ruianmajiang.cqrs.c.domain.listener.RuianMajiangChiPengGangActionStatisticsListener;
 import com.dml.majiang.ju.Ju;
 import com.dml.majiang.ju.finish.FixedPanNumbersJuFinishiDeterminer;
 import com.dml.majiang.ju.firstpan.ClassicStartFirstPanProcess;
@@ -11,18 +12,16 @@ import com.dml.majiang.pan.avaliablepai.NoHuapaiRandomAvaliablePaiFiller;
 import com.dml.majiang.pan.frame.PanActionFrame;
 import com.dml.majiang.pan.guipai.RandomGuipaiDeterminer;
 import com.dml.majiang.pan.publicwaitingplayer.WaitDaPlayerPanPublicWaitingPlayerDeterminer;
-import com.dml.majiang.player.action.chi.PengganghuFirstChiActionProcessor;
+import com.dml.majiang.player.action.chi.PengganghuFirstBuChiActionProcessor;
 import com.dml.majiang.player.action.da.DachushoupaiDaActionProcessor;
-import com.dml.majiang.player.action.gang.HuFirstGangActionProcessor;
+import com.dml.majiang.player.action.gang.HuFirstBuGangActionProcessor;
 import com.dml.majiang.player.action.guo.DoNothingGuoActionProcessor;
 import com.dml.majiang.player.action.hu.PlayerHuAndClearAllActionHuActionUpdater;
 import com.dml.majiang.player.action.hu.PlayerSetHuHuActionProcessor;
 import com.dml.majiang.player.action.initial.ZhuangMoPaiInitialActionUpdater;
 import com.dml.majiang.player.action.listener.comprehensive.DianpaoDihuOpportunityDetector;
-import com.dml.majiang.player.action.listener.comprehensive.JuezhangStatisticsListener;
-import com.dml.majiang.player.action.listener.gang.GangCounter;
 import com.dml.majiang.player.action.listener.mo.MoGuipaiCounter;
-import com.dml.majiang.player.action.peng.HuFirstPengActionProcessor;
+import com.dml.majiang.player.action.peng.HuFirstBuPengActionProcessor;
 import com.dml.majiang.player.menfeng.RandomMustHasDongPlayersMenFengDeterminer;
 import com.dml.majiang.player.menfeng.ZhuangXiajiaIsDongIfZhuangNotHuPlayersMenFengDeterminer;
 import com.dml.majiang.player.shoupai.gouxing.NoDanpaiOneDuiziGouXingPanHu;
@@ -68,11 +67,11 @@ public class MajiangGame extends FixedPlayersMultipanAndVotetofinishGame {
 		ju.setMoActionUpdater(new RuianMajiangMoActionUpdater());
 		ju.setDaActionProcessor(new DachushoupaiDaActionProcessor());
 		ju.setDaActionUpdater(new RuianMajiangDaActionUpdater());
-		ju.setChiActionProcessor(new PengganghuFirstChiActionProcessor());
+		ju.setChiActionProcessor(new PengganghuFirstBuChiActionProcessor());
 		ju.setChiActionUpdater(new RuianMajiangChiActionUpdater());
-		ju.setPengActionProcessor(new HuFirstPengActionProcessor());
+		ju.setPengActionProcessor(new HuFirstBuPengActionProcessor());
 		ju.setPengActionUpdater(new RuianMajiangPengActionUpdater());
-		ju.setGangActionProcessor(new HuFirstGangActionProcessor());
+		ju.setGangActionProcessor(new HuFirstBuGangActionProcessor());
 		ju.setGangActionUpdater(new RuianMajiangGangActionUpdater());
 		ju.setGuoActionProcessor(new DoNothingGuoActionProcessor());
 		ju.setGuoActionUpdater(new RuianMajiangGuoActionUpdater());
@@ -80,9 +79,8 @@ public class MajiangGame extends FixedPlayersMultipanAndVotetofinishGame {
 		ju.setHuActionUpdater(new PlayerHuAndClearAllActionHuActionUpdater());
 
 		ju.addActionStatisticsListener(new CaizipaiListener());
-		ju.addActionStatisticsListener(new JuezhangStatisticsListener());
+		ju.addActionStatisticsListener(new RuianMajiangChiPengGangActionStatisticsListener());
 		ju.addActionStatisticsListener(new MoGuipaiCounter());
-		ju.addActionStatisticsListener(new GangCounter());
 		ju.addActionStatisticsListener(new DianpaoDihuOpportunityDetector());
 
 		// 开始第一盘
