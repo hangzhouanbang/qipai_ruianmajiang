@@ -241,12 +241,12 @@ public class MajiangController {
 		// 通知其他人
 		for (String otherPlayerId : readyToNextPanResult.getMajiangGame().allPlayerIds()) {
 			if (!otherPlayerId.equals(playerId)) {
-				QueryScope
-						.scopesForState(readyToNextPanResult.getMajiangGame().getState(),
-								readyToNextPanResult.getMajiangGame().findPlayerState(otherPlayerId))
-						.forEach((scope) -> {
-							wsNotifier.notifyToQuery(otherPlayerId, scope.name());
-						});
+				List<QueryScope> scopes = QueryScope.scopesForState(readyToNextPanResult.getMajiangGame().getState(),
+						readyToNextPanResult.getMajiangGame().findPlayerState(otherPlayerId));
+				scopes.remove(QueryScope.panResult);
+				scopes.forEach((scope) -> {
+					wsNotifier.notifyToQuery(otherPlayerId, scope.name());
+				});
 			}
 		}
 
