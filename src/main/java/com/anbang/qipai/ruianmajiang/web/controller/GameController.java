@@ -103,8 +103,8 @@ public class GameController {
 		for (String otherPlayerId : majiangGameValueObject.allPlayerIds()) {
 			if (!otherPlayerId.equals(playerId)) {
 				QueryScope.scopesForState(majiangGameValueObject.getState(),
-						majiangGameValueObject.findPlayerState(playerId)).forEach((scope) -> {
-							wsNotifier.notifyToQuery(playerId, scope.name());
+						majiangGameValueObject.findPlayerState(otherPlayerId)).forEach((scope) -> {
+							wsNotifier.notifyToQuery(otherPlayerId, scope.name());
 						});
 			}
 		}
@@ -151,8 +151,8 @@ public class GameController {
 		majiangGameValueObject.allPlayerIds().forEach((otherPlayerId) -> {
 			if (!otherPlayerId.equals(playerId)) {
 				QueryScope.scopesForState(majiangGameValueObject.getState(),
-						majiangGameValueObject.findPlayerState(playerId)).forEach((scope) -> {
-							wsNotifier.notifyToQuery(playerId, scope.name());
+						majiangGameValueObject.findPlayerState(otherPlayerId)).forEach((scope) -> {
+							wsNotifier.notifyToQuery(otherPlayerId, scope.name());
 						});
 			}
 		});
@@ -192,8 +192,8 @@ public class GameController {
 		majiangGameValueObject.allPlayerIds().forEach((otherPlayerId) -> {
 			if (!otherPlayerId.equals(playerId)) {
 				QueryScope.scopesForState(majiangGameValueObject.getState(),
-						majiangGameValueObject.findPlayerState(playerId)).forEach((scope) -> {
-							wsNotifier.notifyToQuery(playerId, scope.name());
+						majiangGameValueObject.findPlayerState(otherPlayerId)).forEach((scope) -> {
+							wsNotifier.notifyToQuery(otherPlayerId, scope.name());
 						});
 			}
 		});
@@ -261,8 +261,8 @@ public class GameController {
 		for (String otherPlayerId : readyForGameResult.getMajiangGame().allPlayerIds()) {
 			if (!otherPlayerId.equals(playerId)) {
 				QueryScope.scopesForState(readyForGameResult.getMajiangGame().getState(),
-						readyForGameResult.getMajiangGame().findPlayerState(playerId)).forEach((scope) -> {
-							wsNotifier.notifyToQuery(playerId, scope.name());
+						readyForGameResult.getMajiangGame().findPlayerState(otherPlayerId)).forEach((scope) -> {
+							wsNotifier.notifyToQuery(otherPlayerId, scope.name());
 						});
 			}
 		}
@@ -322,10 +322,14 @@ public class GameController {
 		}
 
 		// 通知其他人来查询
-		QueryScope.scopesForState(majiangGameValueObject.getState(), majiangGameValueObject.findPlayerState(playerId))
-				.forEach((scope) -> {
-					wsNotifier.notifyToQuery(playerId, scope.name());
-				});
+		majiangGameValueObject.allPlayerIds().forEach((otherPlayerId) -> {
+			if (!otherPlayerId.equals(playerId)) {
+				QueryScope.scopesForState(majiangGameValueObject.getState(),
+						majiangGameValueObject.findPlayerState(otherPlayerId)).forEach((scope) -> {
+							wsNotifier.notifyToQuery(otherPlayerId, scope.name());
+						});
+			}
+		});
 
 		return vo;
 	}
@@ -364,10 +368,14 @@ public class GameController {
 
 		data.put("queryScope", QueryScope.gameFinishVote);
 		// 通知其他人来查询投票情况
-		QueryScope.scopesForState(majiangGameValueObject.getState(), majiangGameValueObject.findPlayerState(playerId))
-				.forEach((scope) -> {
-					wsNotifier.notifyToQuery(playerId, scope.name());
-				});
+		majiangGameValueObject.allPlayerIds().forEach((otherPlayerId) -> {
+			if (!otherPlayerId.equals(playerId)) {
+				QueryScope.scopesForState(majiangGameValueObject.getState(),
+						majiangGameValueObject.findPlayerState(otherPlayerId)).forEach((scope) -> {
+							wsNotifier.notifyToQuery(otherPlayerId, scope.name());
+						});
+			}
+		});
 		return vo;
 
 	}
