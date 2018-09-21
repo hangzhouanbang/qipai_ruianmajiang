@@ -1,5 +1,6 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
+import com.anbang.qipai.ruianmajiang.cqrs.c.domain.listener.RuianMajiangChiPengGangActionStatisticsListener;
 import com.dml.majiang.ju.Ju;
 import com.dml.majiang.pai.MajiangPai;
 import com.dml.majiang.pai.fenzu.GangType;
@@ -22,44 +23,51 @@ public class RuianMajiangGangActionUpdater implements MajiangPlayerGangActionUpd
 
 	@Override
 	public void updateActions(MajiangGangAction gangAction, Ju ju) throws Exception {
-		Pan currentPan = ju.getCurrentPan();
-		currentPan.clearAllPlayersActionCandidates();
-		MajiangPlayer player = currentPan.findPlayerById(gangAction.getActionPlayerId());
-		boolean baibanIsGuipai = currentPan.getPublicGuipaiSet().contains(MajiangPai.baiban);
+		RuianMajiangChiPengGangActionStatisticsListener ruianMajiangStatisticsListener = ju
+				.getActionStatisticsListenerManager()
+				.findListener(RuianMajiangChiPengGangActionStatisticsListener.class);
+		if (ruianMajiangStatisticsListener.getPlayerActionMap().containsKey(gangAction.getActionPlayerId())) {
 
-		// 看看是不是有其他玩家可以抢杠胡
-		boolean qiangganghu = false;
-		if (gangAction.getGangType().equals(GangType.kezigangmo)
-				|| gangAction.getGangType().equals(GangType.kezigangshoupai)) {
-			RuianMajiangPanResultBuilder ruianMajiangPanResultBuilder = (RuianMajiangPanResultBuilder) ju
-					.getCurrentPanResultBuilder();
-			int dihu = ruianMajiangPanResultBuilder.getDihu();
-			boolean dapao = ruianMajiangPanResultBuilder.isDapao();
-			GouXingPanHu gouXingPanHu = ju.getGouXingPanHu();
-			MajiangPlayer currentPlayer = player;
-			while (true) {
-				MajiangPlayer xiajia = currentPan.findXiajia(currentPlayer);
-				if (xiajia.getId().equals(player.getId())) {
-					break;
-				}
-				RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestQianggangHu(gangAction.getPai(),
-						dapao, dihu, gouXingPanHu, xiajia, baibanIsGuipai);
-				if (bestHu != null) {
-					bestHu.setQianggang(true);
-					xiajia.addActionCandidate(new MajiangHuAction(xiajia.getId(), bestHu));
-					xiajia.checkAndGenerateGuoCandidateAction();
-					qiangganghu = true;
-					break;
-				}
+		} else {
+			Pan currentPan = ju.getCurrentPan();
+			currentPan.clearAllPlayersActionCandidates();
+			MajiangPlayer player = currentPan.findPlayerById(gangAction.getActionPlayerId());
+			boolean baibanIsGuipai = currentPan.getPublicGuipaiSet().contains(MajiangPai.baiban);
 
-				currentPlayer = xiajia;
+			// 看看是不是有其他玩家可以抢杠胡
+			boolean qiangganghu = false;
+			if (gangAction.getGangType().equals(GangType.kezigangmo)
+					|| gangAction.getGangType().equals(GangType.kezigangshoupai)) {
+				RuianMajiangPanResultBuilder ruianMajiangPanResultBuilder = (RuianMajiangPanResultBuilder) ju
+						.getCurrentPanResultBuilder();
+				int dihu = ruianMajiangPanResultBuilder.getDihu();
+				boolean dapao = ruianMajiangPanResultBuilder.isDapao();
+				GouXingPanHu gouXingPanHu = ju.getGouXingPanHu();
+				MajiangPlayer currentPlayer = player;
+				while (true) {
+					MajiangPlayer xiajia = currentPan.findXiajia(currentPlayer);
+					if (xiajia.getId().equals(player.getId())) {
+						break;
+					}
+					RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestQianggangHu(gangAction.getPai(),
+							dapao, dihu, gouXingPanHu, xiajia, baibanIsGuipai);
+					if (bestHu != null) {
+						bestHu.setQianggang(true);
+						xiajia.addActionCandidate(new MajiangHuAction(xiajia.getId(), bestHu));
+						xiajia.checkAndGenerateGuoCandidateAction();
+						qiangganghu = true;
+						break;
+					}
+
+					currentPlayer = xiajia;
+				}
 			}
-		}
 
-		// 没有抢杠胡，杠完之后要摸牌
-		if (!qiangganghu) {
-			player.addActionCandidate(new MajiangMoAction(player.getId(),
-					new GanghouBupai(gangAction.getPai(), gangAction.getGangType())));
+			// 没有抢杠胡，杠完之后要摸牌
+			if (!qiangganghu) {
+				player.addActionCandidate(new MajiangMoAction(player.getId(),
+						new GanghouBupai(gangAction.getPai(), gangAction.getGangType())));
+			}
 		}
 	}
 

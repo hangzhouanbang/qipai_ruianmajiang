@@ -21,24 +21,27 @@ public class RuianMajiangChiActionUpdater implements MajiangPlayerChiActionUpdat
 
 	@Override
 	public void updateActions(MajiangChiAction chiAction, Ju ju) throws Exception {
-		Pan currentPan = ju.getCurrentPan();
-		currentPan.clearAllPlayersActionCandidates();
-
-		MajiangPlayer player = currentPan.findPlayerById(chiAction.getActionPlayerId());
-
-		List<MajiangPai> fangruShoupaiList = player.getFangruShoupaiList();
 		RuianMajiangChiPengGangActionStatisticsListener juezhangStatisticsListener = ju
 				.getActionStatisticsListenerManager()
 				.findListener(RuianMajiangChiPengGangActionStatisticsListener.class);
-		for (MajiangPai pai : fangruShoupaiList) {
-			if (MajiangPai.isZipai(pai) && juezhangStatisticsListener.ifJuezhang(pai)) {
-				player.addActionCandidate(new MajiangDaAction(player.getId(), pai));
+		if (juezhangStatisticsListener.getPlayerActionMap().containsKey(chiAction.getActionPlayerId())) {
+
+		} else {
+			Pan currentPan = ju.getCurrentPan();
+			currentPan.clearAllPlayersActionCandidates();
+
+			MajiangPlayer player = currentPan.findPlayerById(chiAction.getActionPlayerId());
+
+			List<MajiangPai> fangruShoupaiList = player.getFangruShoupaiList();
+			for (MajiangPai pai : fangruShoupaiList) {
+				if (MajiangPai.isZipai(pai) && juezhangStatisticsListener.ifJuezhang(pai)) {
+					player.addActionCandidate(new MajiangDaAction(player.getId(), pai));
+				}
+			}
+			if (player.getActionCandidates().isEmpty()) {
+				player.generateDaActions();
 			}
 		}
-		if (player.getActionCandidates().isEmpty()) {
-			player.generateDaActions();
-		}
-
 	}
 
 }

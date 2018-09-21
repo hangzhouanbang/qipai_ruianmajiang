@@ -9,11 +9,9 @@ import com.dml.majiang.ju.Ju;
 import com.dml.majiang.pai.MajiangPai;
 import com.dml.majiang.pan.Pan;
 import com.dml.majiang.player.MajiangPlayer;
-import com.dml.majiang.player.action.HuFirstException;
 import com.dml.majiang.player.action.MajiangPlayerAction;
 import com.dml.majiang.player.action.MajiangPlayerActionType;
 import com.dml.majiang.player.action.chi.MajiangChiAction;
-import com.dml.majiang.player.action.chi.PengganghuFirstException;
 import com.dml.majiang.player.action.da.MajiangDaAction;
 import com.dml.majiang.player.action.gang.MajiangGangAction;
 import com.dml.majiang.player.action.listener.chi.MajiangPlayerChiActionStatisticsListener;
@@ -61,7 +59,6 @@ public class RuianMajiangChiPengGangActionStatisticsListener
 				if (actionTypesSet.contains(MajiangPlayerActionType.hu)) {
 					playerActionMap.put(player.getId(), gangAction);
 					player.clearActionCandidates();// 玩家已经做了决定，要删除动作
-					throw new HuFirstException();
 				}
 			} else {
 				break;
@@ -82,7 +79,6 @@ public class RuianMajiangChiPengGangActionStatisticsListener
 				if (actionTypesSet.contains(MajiangPlayerActionType.hu)) {
 					playerActionMap.put(player.getId(), pengAction);
 					player.clearActionCandidates();// 玩家已经做了决定，要删除动作
-					throw new HuFirstException();
 				}
 			} else {
 				break;
@@ -105,7 +101,6 @@ public class RuianMajiangChiPengGangActionStatisticsListener
 						|| actionTypesSet.contains(MajiangPlayerActionType.hu)) {
 					playerActionMap.put(player.getId(), chiAction);
 					player.clearActionCandidates();// 玩家已经做了决定，要删除动作
-					throw new PengganghuFirstException();
 				}
 			} else {
 				break;
