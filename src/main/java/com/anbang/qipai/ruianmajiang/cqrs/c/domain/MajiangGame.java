@@ -162,6 +162,12 @@ public class MajiangGame extends FixedPlayersMultipanAndVotetofinishGame {
 		ju.finish();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	protected MajiangGameValueObject toValueObject() {
+		return new MajiangGameValueObject(this);
+	}
+
 	public int getDifen() {
 		return difen;
 	}

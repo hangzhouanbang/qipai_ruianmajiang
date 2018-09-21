@@ -51,24 +51,22 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
 	public MajiangGameValueObject leaveGame(String playerId) throws Exception {
 		GameServer gameServer = singletonEntityRepository.getEntity(GameServer.class);
 		Game game = gameServer.findGamePlayerPlaying(playerId);
-		gameServer.leave(playerId);
+		MajiangGameValueObject majiangGameValueObject = gameServer.leave(playerId);
 		if (game.getState().name().equals(FinishedByVote.name)) {// 有可能离开的时候正在投票，由于离开自动投弃权最终导致游戏结束
 			gameServer.finishGame(game.getId());
 		}
-		return new MajiangGameValueObject((MajiangGame) game);
+		return majiangGameValueObject;
 	}
 
 	@Override
 	public ReadyForGameResult readyForGame(String playerId, Long currentTime) throws Exception {
 		ReadyForGameResult result = new ReadyForGameResult();
 		GameServer gameServer = singletonEntityRepository.getEntity(GameServer.class);
-		gameServer.ready(playerId);
-
-		MajiangGame majiangGame = (MajiangGame) gameServer.findGamePlayerPlaying(playerId);
-		MajiangGameValueObject majiangGameValueObject = new MajiangGameValueObject(majiangGame);
+		MajiangGameValueObject majiangGameValueObject = gameServer.ready(playerId);
 		result.setMajiangGame(majiangGameValueObject);
 
 		if (majiangGameValueObject.getState().name().equals(Playing.name)) {
+			MajiangGame majiangGame = (MajiangGame) gameServer.findGamePlayerPlaying(playerId);
 			PanActionFrame firstActionFrame = majiangGame.createJuAndStartFirstPan(currentTime);
 			result.setFirstActionFrame(firstActionFrame);
 		}
@@ -78,20 +76,13 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
 	@Override
 	public MajiangGameValueObject joinGame(String playerId, String gameId) throws Exception {
 		GameServer gameServer = singletonEntityRepository.getEntity(GameServer.class);
-		gameServer.join(playerId, gameId);
-		MajiangGame majiangGame = (MajiangGame) gameServer.findGame(gameId);
-		return new MajiangGameValueObject(majiangGame);
+		return gameServer.join(playerId, gameId);
 	}
 
 	@Override
 	public MajiangGameValueObject backToGame(String playerId, String gameId) throws Exception {
 		GameServer gameServer = singletonEntityRepository.getEntity(GameServer.class);
-		gameServer.back(playerId, gameId);
-
-		MajiangGame majiangGame = (MajiangGame) gameServer.findGame(gameId);
-		MajiangGameValueObject majiangGameValueObject = new MajiangGameValueObject(majiangGame);
-
-		return majiangGameValueObject;
+		return gameServer.back(playerId, gameId);
 	}
 
 	@Override
