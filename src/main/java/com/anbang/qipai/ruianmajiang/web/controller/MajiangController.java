@@ -163,23 +163,10 @@ public class MajiangController {
 		}
 
 		if (majiangActionResult.getPanResult() == null) {// 盘没结束
-			// 通知其他人
-			for (String otherPlayerId : majiangActionResult.getMajiangGame().allPlayerIds()) {
-				if (!otherPlayerId.equals(playerId)) {
-					wsNotifier.notifyToQuery(otherPlayerId, QueryScope.panForMe.name());
-				}
-			}
-
 			queryScopes.add(QueryScope.panForMe.name());
-
 		} else {// 盘结束了
 
 			if (majiangActionResult.getJuResult() != null) {// 局也结束了
-				for (String otherPlayerId : majiangActionResult.getMajiangGame().allPlayerIds()) {
-					if (!otherPlayerId.equals(playerId)) {
-						wsNotifier.notifyToQuery(otherPlayerId, QueryScope.juResult.name());
-					}
-				}
 				MajiangGameDbo majiangGameDbo = majiangGameQueryService
 						.findMajiangGameDboById(majiangActionResult.getMajiangGame().getId());
 				JuResultDbo juResultDbo = majiangPlayQueryService
@@ -190,18 +177,24 @@ public class MajiangController {
 				gameMsgService.gameFinished(majiangActionResult.getMajiangGame().getId());
 				queryScopes.add(QueryScope.juResult.name());
 			} else {
-				for (String otherPlayerId : majiangActionResult.getMajiangGame().allPlayerIds()) {
-					if (!otherPlayerId.equals(playerId)) {
-						wsNotifier.notifyToQuery(otherPlayerId, QueryScope.panResult.name());
-						wsNotifier.notifyToQuery(otherPlayerId, QueryScope.gameInfo.name());
-					}
-				}
 				queryScopes.add(QueryScope.panResult.name());
 				queryScopes.add(QueryScope.gameInfo.name());
 			}
+
 			gameMsgService.panFinished(majiangActionResult.getMajiangGame(),
 					majiangActionResult.getPanActionFrame().getPanAfterAction());
 
+		}
+		// 通知其他人
+		for (String otherPlayerId : majiangActionResult.getMajiangGame().allPlayerIds()) {
+			if (!otherPlayerId.equals(playerId)) {
+				QueryScope
+						.scopesForState(majiangActionResult.getMajiangGame().getState(),
+								majiangActionResult.getMajiangGame().findPlayerState(otherPlayerId))
+						.forEach((scope) -> {
+							wsNotifier.notifyToQuery(otherPlayerId, scope.name());
+						});
+			}
 		}
 
 		return vo;
@@ -237,19 +230,26 @@ public class MajiangController {
 			return vo;
 		}
 
-		// 通知其他人
 		PanActionFrame firstActionFrame = readyToNextPanResult.getFirstActionFrame();
 		List<QueryScope> queryScopes = new ArrayList<>();
 		queryScopes.add(QueryScope.gameInfo);
 		if (firstActionFrame != null) {
 			queryScopes.add(QueryScope.panForMe);
 		}
+		data.put("queryScopes", queryScopes);
+
+		// 通知其他人
 		for (String otherPlayerId : readyToNextPanResult.getMajiangGame().allPlayerIds()) {
 			if (!otherPlayerId.equals(playerId)) {
-				queryScopes.forEach((scope) -> wsNotifier.notifyToQuery(otherPlayerId, scope.name()));
+				QueryScope
+						.scopesForState(readyToNextPanResult.getMajiangGame().getState(),
+								readyToNextPanResult.getMajiangGame().findPlayerState(otherPlayerId))
+						.forEach((scope) -> {
+							wsNotifier.notifyToQuery(otherPlayerId, scope.name());
+						});
 			}
 		}
-		data.put("queryScopes", queryScopes);
+
 		return vo;
 	}
 

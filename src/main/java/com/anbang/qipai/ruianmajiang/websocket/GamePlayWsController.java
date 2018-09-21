@@ -100,11 +100,10 @@ public class GamePlayWsController extends TextWebSocketHandler {
 			// 通知其他玩家
 			majiangGameValueObject.allPlayerIds().forEach((playerId) -> {
 				if (!playerId.equals(closedPlayerId)) {
-					wsNotifier.notifyToQuery(playerId, QueryScope.gameInfo.name());
-					wsNotifier.notifyToQuery(playerId, QueryScope.gameFinishVote.name()); // 离开的那人可能投了弃权
-					if (majiangGameValueObject.getState().name().equals(FinishedByVote.name)) {
-						wsNotifier.notifyToQuery(playerId, QueryScope.juResult.name());
-					}
+					QueryScope.scopesForState(majiangGameValueObject.getState(),
+							majiangGameValueObject.findPlayerState(playerId)).forEach((scope) -> {
+								wsNotifier.notifyToQuery(playerId, scope.name());
+							});
 				}
 			});
 		}
