@@ -88,42 +88,52 @@ public class RuianMajiangPanPlayerResultVO {
 		if (hu) {
 			this.zimo = zimo;
 			ShoupaiPaiXing shoupaiPaiXing = panPlayerResultDbo.getPlayer().getHu().getShoupaiPaiXing();
-			List<ShoupaiShunziZu> shunziList = shoupaiPaiXing.getShunziList();
-			for (ShoupaiShunziZu shoupaiShunziZu : shunziList) {
-				List<ResultShoupaiVO> shoupaiList = new ArrayList<>();
-				resultShoupaiZuList.add(shoupaiList);
-				shoupaiList.add(new ResultShoupaiVO(shoupaiShunziZu.getPai1()));
-				shoupaiList.add(new ResultShoupaiVO(shoupaiShunziZu.getPai2()));
-				shoupaiList.add(new ResultShoupaiVO(shoupaiShunziZu.getPai3()));
-			}
+			if (shoupaiPaiXing == null) {// 三财神胡没有牌型
+				List<MajiangPai> shoupaiList = panPlayerResultDbo.getPlayer().getFangruShoupaiList();
+				shoupaiList.add(panPlayerResultDbo.getPlayer().getGangmoShoupai().getPai());
+				caishenList = new ArrayList<>(panPlayerResultDbo.getPlayer().getFangruGuipaiList());
+				List<ResultShoupaiVO> list = new ArrayList<>();
+				resultShoupaiZuList.add(list);
+				for (MajiangPai pai : shoupaiList) {
+					list.add(new ResultShoupaiVO(pai));
+				}
+			} else {
+				List<ShoupaiShunziZu> shunziList = shoupaiPaiXing.getShunziList();
+				for (ShoupaiShunziZu shoupaiShunziZu : shunziList) {
+					List<ResultShoupaiVO> shoupaiList = new ArrayList<>();
+					resultShoupaiZuList.add(shoupaiList);
+					shoupaiList.add(new ResultShoupaiVO(shoupaiShunziZu.getPai1()));
+					shoupaiList.add(new ResultShoupaiVO(shoupaiShunziZu.getPai2()));
+					shoupaiList.add(new ResultShoupaiVO(shoupaiShunziZu.getPai3()));
+				}
 
-			List<ShoupaiKeziZu> keziList = shoupaiPaiXing.getKeziList();
-			for (ShoupaiKeziZu shoupaiKeziZu : keziList) {
-				List<ResultShoupaiVO> shoupaiList = new ArrayList<>();
-				resultShoupaiZuList.add(shoupaiList);
-				shoupaiList.add(new ResultShoupaiVO(shoupaiKeziZu.getPai1()));
-				shoupaiList.add(new ResultShoupaiVO(shoupaiKeziZu.getPai2()));
-				shoupaiList.add(new ResultShoupaiVO(shoupaiKeziZu.getPai3()));
-			}
+				List<ShoupaiKeziZu> keziList = shoupaiPaiXing.getKeziList();
+				for (ShoupaiKeziZu shoupaiKeziZu : keziList) {
+					List<ResultShoupaiVO> shoupaiList = new ArrayList<>();
+					resultShoupaiZuList.add(shoupaiList);
+					shoupaiList.add(new ResultShoupaiVO(shoupaiKeziZu.getPai1()));
+					shoupaiList.add(new ResultShoupaiVO(shoupaiKeziZu.getPai2()));
+					shoupaiList.add(new ResultShoupaiVO(shoupaiKeziZu.getPai3()));
+				}
 
-			List<ShoupaiGangziZu> gangziList = shoupaiPaiXing.getGangziList();
-			for (ShoupaiGangziZu shoupaiGangziZu : gangziList) {
-				List<ResultShoupaiVO> shoupaiList = new ArrayList<>();
-				resultShoupaiZuList.add(shoupaiList);
-				shoupaiList.add(new ResultShoupaiVO(shoupaiGangziZu.getPai1()));
-				shoupaiList.add(new ResultShoupaiVO(shoupaiGangziZu.getPai2()));
-				shoupaiList.add(new ResultShoupaiVO(shoupaiGangziZu.getPai3()));
-				shoupaiList.add(new ResultShoupaiVO(shoupaiGangziZu.getPai4()));
-			}
+				List<ShoupaiGangziZu> gangziList = shoupaiPaiXing.getGangziList();
+				for (ShoupaiGangziZu shoupaiGangziZu : gangziList) {
+					List<ResultShoupaiVO> shoupaiList = new ArrayList<>();
+					resultShoupaiZuList.add(shoupaiList);
+					shoupaiList.add(new ResultShoupaiVO(shoupaiGangziZu.getPai1()));
+					shoupaiList.add(new ResultShoupaiVO(shoupaiGangziZu.getPai2()));
+					shoupaiList.add(new ResultShoupaiVO(shoupaiGangziZu.getPai3()));
+					shoupaiList.add(new ResultShoupaiVO(shoupaiGangziZu.getPai4()));
+				}
 
-			List<ShoupaiDuiziZu> duiziList = shoupaiPaiXing.getDuiziList();
-			for (ShoupaiDuiziZu shoupaiDuiziZu : duiziList) {
-				List<ResultShoupaiVO> shoupaiList = new ArrayList<>();
-				resultShoupaiZuList.add(shoupaiList);
-				shoupaiList.add(new ResultShoupaiVO(shoupaiDuiziZu.getPai1()));
-				shoupaiList.add(new ResultShoupaiVO(shoupaiDuiziZu.getPai2()));
+				List<ShoupaiDuiziZu> duiziList = shoupaiPaiXing.getDuiziList();
+				for (ShoupaiDuiziZu shoupaiDuiziZu : duiziList) {
+					List<ResultShoupaiVO> shoupaiList = new ArrayList<>();
+					resultShoupaiZuList.add(shoupaiList);
+					shoupaiList.add(new ResultShoupaiVO(shoupaiDuiziZu.getPai1()));
+					shoupaiList.add(new ResultShoupaiVO(shoupaiDuiziZu.getPai2()));
+				}
 			}
-
 		} else {
 			if (!zimo) {
 				if (playerId.equals(dianpaoPlayerId)) {

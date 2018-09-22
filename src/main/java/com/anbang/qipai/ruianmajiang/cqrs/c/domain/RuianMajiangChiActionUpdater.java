@@ -9,7 +9,6 @@ import com.dml.majiang.pan.Pan;
 import com.dml.majiang.player.MajiangPlayer;
 import com.dml.majiang.player.action.chi.MajiangChiAction;
 import com.dml.majiang.player.action.chi.MajiangPlayerChiActionUpdater;
-import com.dml.majiang.player.action.chi.PengganghuFirstException;
 import com.dml.majiang.player.action.da.MajiangDaAction;
 
 /**
@@ -28,21 +27,16 @@ public class RuianMajiangChiActionUpdater implements MajiangPlayerChiActionUpdat
 		Pan currentPan = ju.getCurrentPan();
 
 		MajiangPlayer player = currentPan.findPlayerById(chiAction.getActionPlayerId());
-		if (juezhangStatisticsListener.getPlayerActionMap().containsKey(player.getId())) {
-			player.clearActionCandidates();// 玩家已经做了决定，要删除动作
-			throw new PengganghuFirstException();
-		} else {
-			currentPan.clearAllPlayersActionCandidates();
+		currentPan.clearAllPlayersActionCandidates();
 
-			List<MajiangPai> fangruShoupaiList = player.getFangruShoupaiList();
-			for (MajiangPai pai : fangruShoupaiList) {
-				if (MajiangPai.isZipai(pai) && juezhangStatisticsListener.ifJuezhang(pai)) {
-					player.addActionCandidate(new MajiangDaAction(player.getId(), pai));
-				}
+		List<MajiangPai> fangruShoupaiList = player.getFangruShoupaiList();
+		for (MajiangPai pai : fangruShoupaiList) {
+			if (MajiangPai.isZipai(pai) && juezhangStatisticsListener.ifJuezhang(pai)) {
+				player.addActionCandidate(new MajiangDaAction(player.getId(), pai));
 			}
-			if (player.getActionCandidates().isEmpty()) {
-				player.generateDaActions();
-			}
+		}
+		if (player.getActionCandidates().isEmpty()) {
+			player.generateDaActions();
 		}
 	}
 
