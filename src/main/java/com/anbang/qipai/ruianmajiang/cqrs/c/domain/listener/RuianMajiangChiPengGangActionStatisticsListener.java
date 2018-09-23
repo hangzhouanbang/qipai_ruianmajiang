@@ -13,7 +13,6 @@ import com.dml.majiang.player.action.HuFirstException;
 import com.dml.majiang.player.action.MajiangPlayerAction;
 import com.dml.majiang.player.action.MajiangPlayerActionType;
 import com.dml.majiang.player.action.chi.MajiangChiAction;
-import com.dml.majiang.player.action.chi.PengganghuFirstException;
 import com.dml.majiang.player.action.da.MajiangDaAction;
 import com.dml.majiang.player.action.gang.MajiangGangAction;
 import com.dml.majiang.player.action.listener.chi.MajiangPlayerChiActionStatisticsListener;
@@ -117,7 +116,6 @@ public class RuianMajiangChiPengGangActionStatisticsListener
 					|| recordAction.getType().equals(MajiangPlayerActionType.gang)) {
 				playerActionMap.put(player.getId(), chiAction);
 				player.clearActionCandidates();// 玩家已经做了决定，要删除动作
-				throw new PengganghuFirstException();
 			}
 		}
 	}
