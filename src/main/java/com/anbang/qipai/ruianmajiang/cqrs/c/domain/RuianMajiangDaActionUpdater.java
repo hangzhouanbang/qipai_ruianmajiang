@@ -21,12 +21,28 @@ public class RuianMajiangDaActionUpdater implements MajiangPlayerDaActionUpdater
 
 		Pan currentPan = ju.getCurrentPan();
 		MajiangPlayer daPlayer = currentPan.findPlayerById(daAction.getActionPlayerId());
+		List<MajiangPai> daplayerFangruShoupaiList = daPlayer.getFangruShoupaiList();
 		// 是否是地胡
 		DianpaoDihuOpportunityDetector dianpaoDihuOpportunityDetector = ju.getActionStatisticsListenerManager()
 				.findListener(DianpaoDihuOpportunityDetector.class);
 		boolean couldDihu = dianpaoDihuOpportunityDetector.ifDihuOpportunity();
 		daPlayer.clearActionCandidates();
 		boolean baibanIsGuipai = currentPan.getPublicGuipaiSet().contains(MajiangPai.baiban);
+
+		if (daplayerFangruShoupaiList.size() == 0) {// 如果手牌只有财神时需要有胡和过
+			// 胡
+			RuianMajiangPanResultBuilder ruianMajiangPanResultBuilder = (RuianMajiangPanResultBuilder) ju
+					.getCurrentPanResultBuilder();
+			int dihu = ruianMajiangPanResultBuilder.getDihu();
+			boolean dapao = ruianMajiangPanResultBuilder.isDapao();
+			GouXingPanHu gouXingPanHu = ju.getGouXingPanHu();
+			daPlayer.setGangmoShoupai(daAction.getPai());
+			RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestZimoHu(false, dapao, dihu, gouXingPanHu,
+					daPlayer, new MajiangMoAction(daPlayer.getId(), new LundaoMopai()), baibanIsGuipai);
+			daPlayer.setGangmoShoupai(null);
+			daPlayer.addActionCandidate(new MajiangHuAction(daPlayer.getId(), bestHu));
+			daPlayer.checkAndGenerateGuoCandidateAction();
+		}
 
 		MajiangPlayer xiajiaPlayer = currentPan.findXiajia(daPlayer);
 		xiajiaPlayer.clearActionCandidates();
@@ -69,6 +85,7 @@ public class RuianMajiangDaActionUpdater implements MajiangPlayerDaActionUpdater
 			xiajiaPlayer = currentPan.findXiajia(xiajiaPlayer);
 			xiajiaPlayer.clearActionCandidates();
 		}
+
 		currentPan.disablePlayerActionsByHuPengGangChiPriority();// 吃碰杠胡优先级判断
 		// 如果所有玩家啥也做不了,那就下家摸牌
 		if (currentPan.allPlayerHasNoActionCandidates()) {
