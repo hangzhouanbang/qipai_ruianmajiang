@@ -24,25 +24,36 @@ public class RuianMajiangChiActionUpdater implements MajiangPlayerChiActionUpdat
 
 	@Override
 	public void updateActions(MajiangChiAction chiAction, Ju ju) throws Exception {
+		Pan currentPan = ju.getCurrentPan();
+		MajiangPlayer player = currentPan.findPlayerById(chiAction.getActionPlayerId());
 		RuianMajiangChiPengGangActionStatisticsListener juezhangStatisticsListener = ju
 				.getActionStatisticsListenerManager()
 				.findListener(RuianMajiangChiPengGangActionStatisticsListener.class);
-		Pan currentPan = ju.getCurrentPan();
-		if (!juezhangStatisticsListener.getPlayerActionMap().isEmpty()) {// 如果有其他动作
-			MajiangPlayerAction finallyDoneAction = juezhangStatisticsListener.findPlayerFinallyDoneAction();
-			if (finallyDoneAction != null) {// 有其他碰杠动作，先执行碰杠
-				MajiangPlayer actionPlayer = currentPan.findPlayerById(finallyDoneAction.getActionPlayerId());
-				if (finallyDoneAction instanceof MajiangPengAction) {
-					actionPlayer.addActionCandidate((MajiangPengAction) finallyDoneAction);
-				} else if (finallyDoneAction instanceof MajiangGangAction) {
-					actionPlayer.addActionCandidate((MajiangGangAction) finallyDoneAction);
-				}
-				juezhangStatisticsListener.updateForNextLun();
-			} else {
+		if (chiAction.isDisabledByHigherPriorityAction()) {// 如果动作被阻塞
+			player.clearActionCandidates();// 玩家已经做了决定，要删除动作
+			if (currentPan.allPlayerHasNoActionCandidates() && !currentPan.anyPlayerHu()) {// 所有玩家行牌结束，并且没人胡
+				MajiangPlayerAction finallyDoneAction = juezhangStatisticsListener.findPlayerFinallyDoneAction();// 找出最终应该执行的动作
+				if (finallyDoneAction != null) {
+					MajiangPlayer actionPlayer = currentPan.findPlayerById(finallyDoneAction.getActionPlayerId());
+					if (finallyDoneAction instanceof MajiangPengAction) {// 如果是碰
+						MajiangPengAction action = (MajiangPengAction) finallyDoneAction;
+						actionPlayer.addActionCandidate(new MajiangPengAction(action.getActionPlayerId(),
+								action.getDachupaiPlayerId(), action.getPai()));
+					} else if (finallyDoneAction instanceof MajiangGangAction) {// 如果是杠
+						MajiangGangAction action = (MajiangGangAction) finallyDoneAction;
+						actionPlayer.addActionCandidate(new MajiangGangAction(action.getActionPlayerId(),
+								action.getDachupaiPlayerId(), action.getPai(), action.getGangType()));
+					} else if (finallyDoneAction instanceof MajiangChiAction) {// 如果是吃
+						MajiangChiAction action = (MajiangChiAction) finallyDoneAction;
+						actionPlayer.addActionCandidate(new MajiangChiAction(action.getActionPlayerId(),
+								action.getDachupaiPlayerId(), action.getChijinPai(), action.getShunzi()));
+					}
+				} else {
 
+				}
+				juezhangStatisticsListener.updateForNextLun();// 清空动作缓存
 			}
 		} else {
-			MajiangPlayer player = currentPan.findPlayerById(chiAction.getActionPlayerId());
 			currentPan.clearAllPlayersActionCandidates();
 
 			List<MajiangPai> fangruShoupaiList = player.getFangruShoupaiList();

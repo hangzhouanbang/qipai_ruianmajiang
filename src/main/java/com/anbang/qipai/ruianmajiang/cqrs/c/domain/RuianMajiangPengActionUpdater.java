@@ -7,6 +7,7 @@ import com.dml.majiang.ju.Ju;
 import com.dml.majiang.pai.MajiangPai;
 import com.dml.majiang.pan.Pan;
 import com.dml.majiang.player.MajiangPlayer;
+import com.dml.majiang.player.action.MajiangPlayerAction;
 import com.dml.majiang.player.action.da.MajiangDaAction;
 import com.dml.majiang.player.action.peng.MajiangPengAction;
 import com.dml.majiang.player.action.peng.MajiangPlayerPengActionUpdater;
@@ -20,16 +21,34 @@ public class RuianMajiangPengActionUpdater implements MajiangPlayerPengActionUpd
 				.findListener(RuianMajiangChiPengGangActionStatisticsListener.class);
 		Pan currentPan = ju.getCurrentPan();
 		MajiangPlayer player = currentPan.findPlayerById(pengAction.getActionPlayerId());
-		currentPan.clearAllPlayersActionCandidates();
+		if (pengAction.isDisabledByHigherPriorityAction()) {// 如果动作被阻塞
+			player.clearActionCandidates();// 玩家已经做了决定，要删除动作
+			if (currentPan.allPlayerHasNoActionCandidates() && !currentPan.anyPlayerHu()) {// 所有玩家行牌结束，并且没人胡
+				MajiangPlayerAction finallyDoneAction = juezhangStatisticsListener.findPlayerFinallyDoneAction();// 找出最终应该执行的动作
+				if (finallyDoneAction != null) {
+					MajiangPlayer actionPlayer = currentPan.findPlayerById(finallyDoneAction.getActionPlayerId());
+					if (finallyDoneAction instanceof MajiangPengAction) {// 如果是碰，也只能是碰
+						MajiangPengAction action = (MajiangPengAction) finallyDoneAction;
+						actionPlayer.addActionCandidate(new MajiangPengAction(action.getActionPlayerId(),
+								action.getDachupaiPlayerId(), action.getPai()));
+					}
+				} else {
 
-		List<MajiangPai> fangruShoupaiList = player.getFangruShoupaiList();
-		for (MajiangPai pai : fangruShoupaiList) {
-			if (MajiangPai.isZipai(pai) && juezhangStatisticsListener.ifJuezhang(pai)) {
-				player.addActionCandidate(new MajiangDaAction(player.getId(), pai));
+				}
+				juezhangStatisticsListener.updateForNextLun();// 清空动作缓存
 			}
-		}
-		if (player.getActionCandidates().isEmpty()) {
-			player.generateDaActions();
+		} else {
+			currentPan.clearAllPlayersActionCandidates();
+
+			List<MajiangPai> fangruShoupaiList = player.getFangruShoupaiList();
+			for (MajiangPai pai : fangruShoupaiList) {
+				if (MajiangPai.isZipai(pai) && juezhangStatisticsListener.ifJuezhang(pai)) {
+					player.addActionCandidate(new MajiangDaAction(player.getId(), pai));
+				}
+			}
+			if (player.getActionCandidates().isEmpty()) {
+				player.generateDaActions();
+			}
 		}
 	}
 
