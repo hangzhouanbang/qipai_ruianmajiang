@@ -73,8 +73,9 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 					couldTianhu = true;
 				}
 			}
-
-			RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestZimoHu(couldTianhu, dapao, dihu,
+            final SiFengQiMoDaActionListener siFengQiMoDaActionListener = ju.getActionStatisticsListenerManager().findListener(SiFengQiMoDaActionListener.class);
+            final boolean couldSiFengQi = siFengQiMoDaActionListener.couldSiFengQi(moAction.getActionPlayerId());
+			RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestZimoHu(couldSiFengQi,couldTianhu, dapao, dihu,
 					gouXingPanHu, player, moAction, baibanIsGuipai);
 			if (bestHu != null) {
 				bestHu.setZimo(true);

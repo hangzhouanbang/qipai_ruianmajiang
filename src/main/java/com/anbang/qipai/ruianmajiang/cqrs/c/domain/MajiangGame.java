@@ -82,6 +82,7 @@ public class MajiangGame extends FixedPlayersMultipanAndVotetofinishGame {
 		ju.addActionStatisticsListener(new RuianMajiangChiPengGangActionStatisticsListener());
 		ju.addActionStatisticsListener(new MoGuipaiCounter());
 		ju.addActionStatisticsListener(new DianpaoDihuOpportunityDetector());
+		ju.addActionStatisticsListener(new SiFengQiMoDaActionListener());
 
 		// 开始第一盘
 		ju.startFirstPan(allPlayerIds());

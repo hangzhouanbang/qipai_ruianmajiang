@@ -23,7 +23,7 @@ import com.dml.majiang.player.shoupai.gouxing.GouXingPanHu;
 public class RuianMajiangJiesuanCalculator {
 
 	// 自摸胡
-	public static RuianMajiangHu calculateBestZimoHu(boolean couldTianhu, boolean dapao, int dihu,
+	public static RuianMajiangHu calculateBestZimoHu(boolean couldSiFengQi,boolean couldTianhu, boolean dapao, int dihu,
 			GouXingPanHu gouXingPanHu, MajiangPlayer player, MajiangMoAction moAction, boolean baibanIsGuipai) {
 		ShoupaiCalculator shoupaiCalculator = player.getShoupaiCalculator();
 		List<MajiangPai> guipaiList = player.findGuipaiList();// TODO 也可以用统计器做
@@ -45,7 +45,7 @@ public class RuianMajiangJiesuanCalculator {
 			RuianMajiangPanPlayerScore bestScore = null;
 			ShoupaiPaiXing bestHuShoupaiPaiXing = null;
 			for (ShoupaiPaiXing shoupaiPaiXing : huPaiShoupaiPaiXingList) {
-				RuianMajiangPanPlayerScore score = calculateScoreForShoupaiPaiXing(false, couldTianhu, false,
+				RuianMajiangPanPlayerScore score = calculateScoreForShoupaiPaiXing(couldSiFengQi,false, couldTianhu, false,
 						shoupaixingWuguanJiesuancanshu, shoupaiPaiXing, true,
 						moAction.getReason().getName().equals(GanghouBupai.name), true, false, dihu, dapao);
 				if (bestScore == null || bestScore.getValue() < score.getValue()) {
@@ -60,7 +60,7 @@ public class RuianMajiangJiesuanCalculator {
 	}
 
 	// 抢杠胡
-	public static RuianMajiangHu calculateBestQianggangHu(MajiangPai gangPai, boolean dapao, int dihu,
+	public static RuianMajiangHu calculateBestQianggangHu(boolean couldSiFengQi,MajiangPai gangPai, boolean dapao, int dihu,
 			GouXingPanHu gouXingPanHu, MajiangPlayer player, boolean baibanIsGuipai) {
 		ShoupaiCalculator shoupaiCalculator = player.getShoupaiCalculator();
 		List<MajiangPai> guipaiList = player.findGuipaiList();// TODO 也可以用统计器做
@@ -76,7 +76,7 @@ public class RuianMajiangJiesuanCalculator {
 			RuianMajiangPanPlayerScore bestScore = null;
 			ShoupaiPaiXing bestHuShoupaiPaiXing = null;
 			for (ShoupaiPaiXing shoupaiPaiXing : huPaiShoupaiPaiXingList) {
-				RuianMajiangPanPlayerScore score = calculateScoreForShoupaiPaiXing(true, false, false,
+				RuianMajiangPanPlayerScore score = calculateScoreForShoupaiPaiXing(couldSiFengQi,true, false, false,
 						shoupaixingWuguanJiesuancanshu, shoupaiPaiXing, true, false, true, true, dihu, dapao);
 				if (bestScore == null || bestScore.getValue() < score.getValue()) {
 					bestScore = score;
@@ -90,7 +90,7 @@ public class RuianMajiangJiesuanCalculator {
 	}
 
 	// 点炮胡
-	public static RuianMajiangHu calculateBestDianpaoHu(boolean couldDihu, boolean dapao, int dihu,
+	public static RuianMajiangHu calculateBestDianpaoHu(boolean couldSiFengQi,boolean couldDihu, boolean dapao, int dihu,
 			GouXingPanHu gouXingPanHu, MajiangPlayer player, boolean baibanIsGuipai, MajiangPai hupai) {
 		ShoupaiCalculator shoupaiCalculator = player.getShoupaiCalculator();
 		List<MajiangPai> guipaiList = player.findGuipaiList();// TODO 也可以用统计器做
@@ -106,7 +106,7 @@ public class RuianMajiangJiesuanCalculator {
 			RuianMajiangPanPlayerScore bestScore = null;
 			ShoupaiPaiXing bestHuShoupaiPaiXing = null;
 			for (ShoupaiPaiXing shoupaiPaiXing : huPaiShoupaiPaiXingList) {
-				RuianMajiangPanPlayerScore score = calculateScoreForShoupaiPaiXing(true, false, couldDihu,
+				RuianMajiangPanPlayerScore score = calculateScoreForShoupaiPaiXing(couldSiFengQi,true, false, couldDihu,
 						shoupaixingWuguanJiesuancanshu, shoupaiPaiXing, true, false, false, false, dihu, dapao);
 				if (bestScore == null || bestScore.getValue() < score.getValue()) {
 					bestScore = score;
@@ -132,7 +132,7 @@ public class RuianMajiangJiesuanCalculator {
 		ShoupaixingWuguanJiesuancanshu shoupaixingWuguanJiesuancanshu = new ShoupaixingWuguanJiesuancanshu(player);
 		RuianMajiangPanPlayerScore bestScore = null;
 		for (ShoupaiPaiXing shoupaiPaiXing : shoupaiPaiXingList) {
-			RuianMajiangPanPlayerScore score = calculateScoreForShoupaiPaiXing(false, false, false,
+			RuianMajiangPanPlayerScore score = calculateScoreForShoupaiPaiXing(false,false, false, false,
 					shoupaixingWuguanJiesuancanshu, shoupaiPaiXing, false, false, false, false, dihu, dapao);
 			if (bestScore == null || bestScore.getValue() < score.getValue()) {
 				bestScore = score;
@@ -141,12 +141,12 @@ public class RuianMajiangJiesuanCalculator {
 		return bestScore;
 	}
 
-	private static RuianMajiangPanPlayerScore calculateScoreForShoupaiPaiXing(boolean dianpao, boolean couldTianhu,
+	private static RuianMajiangPanPlayerScore calculateScoreForShoupaiPaiXing(boolean couldSiFengQi,boolean dianpao, boolean couldTianhu,
 			boolean couldDihu, ShoupaixingWuguanJiesuancanshu shoupaixingWuguanJiesuancanshu,
 			ShoupaiPaiXing shoupaiPaiXing, boolean hu, boolean gangkaiHu, boolean zimoHu, boolean qianggangHu, int dihu,
 			boolean dapao) {
 		RuianMajiangPanPlayerScore score = new RuianMajiangPanPlayerScore();
-		RuianMajiangHushu hushu = calculateHushu(dianpao, couldTianhu, couldDihu, hu, gangkaiHu, zimoHu, qianggangHu,
+		RuianMajiangHushu hushu = calculateHushu(couldSiFengQi,dianpao, couldTianhu, couldDihu, hu, gangkaiHu, zimoHu, qianggangHu,
 				dihu, shoupaixingWuguanJiesuancanshu, shoupaiPaiXing);
 		score.setHushu(hushu);
 		if (dapao) {
@@ -181,7 +181,7 @@ public class RuianMajiangJiesuanCalculator {
 		return pao;
 	}
 
-	private static RuianMajiangHushu calculateHushu(boolean dianpao, boolean couldTianhu, boolean couldDihu, boolean hu,
+	private static RuianMajiangHushu calculateHushu(boolean couldSiFengQi ,boolean dianpao, boolean couldTianhu, boolean couldDihu, boolean hu,
 			boolean gangkaiHu, boolean zimoHu, boolean qianggangHu, int dihu,
 			ShoupaixingWuguanJiesuancanshu shoupaixingWuguanJiesuancanshu, ShoupaiPaiXing shoupaiPaiXing) {
 		RuianMajiangHushu hushu = new RuianMajiangHushu();
@@ -255,7 +255,7 @@ public class RuianMajiangJiesuanCalculator {
 		taishu.setQingyiseHu(hu && shoupaixingWuguanJiesuancanshu.isQingyise());
 		taishu.setSancaishenHu(shoupaixingWuguanJiesuancanshu.getCaishenShu() == 3);
 		taishu.setShuangCaishengHu(hu && shoupaixingWuguanJiesuancanshu.getCaishenShu() == 2);
-		taishu.setSifengqiHu(false);// TODO 用统计器来做
+		taishu.setSifengqiHu(couldSiFengQi);// TODO 用统计器来做
 		taishu.setTianHu(couldTianhu);
 		boolean zuofengAnke = shoupaiPaiXing.hasKeziForPaiType(shoupaixingWuguanJiesuancanshu.getMenFengPai());
 		taishu.setZuofengAnke(zuofengAnke);

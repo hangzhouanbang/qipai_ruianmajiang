@@ -67,7 +67,9 @@ public class RuianMajiangDaActionUpdater implements MajiangPlayerDaActionUpdater
 				GouXingPanHu gouXingPanHu = ju.getGouXingPanHu();
 				// 先把这张牌放入计算器
 				xiajiaPlayer.getShoupaiCalculator().addPai(daAction.getPai());
-				RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestDianpaoHu(couldDihu, dapao, dihu,
+				final SiFengQiMoDaActionListener siFengQiMoDaActionListener = ju.getActionStatisticsListenerManager().findListener(SiFengQiMoDaActionListener.class);
+				final boolean couldSiFengQi = siFengQiMoDaActionListener.couldSiFengQi(daAction.getActionPlayerId());
+				RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestDianpaoHu(couldSiFengQi,couldDihu, dapao, dihu,
 						gouXingPanHu, xiajiaPlayer, baibanIsGuipai, daAction.getPai());
 				// 再把这张牌拿出计算器
 				xiajiaPlayer.getShoupaiCalculator().removePai(daAction.getPai());
