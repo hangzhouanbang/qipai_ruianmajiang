@@ -29,7 +29,7 @@ public class RuianMajiangDaActionUpdater implements MajiangPlayerDaActionUpdater
 		daPlayer.clearActionCandidates();
 		boolean baibanIsGuipai = currentPan.getPublicGuipaiSet().contains(MajiangPai.baiban);
 
-		if (daplayerFangruShoupaiList.size() == 0) {// 如果手牌只有财神时需要有胡和过
+		if (daplayerFangruShoupaiList.size() == 0) {// 如果手牌只有财神时需要有胡和过，胡自己打出去的那张牌
 			// 胡
 			RuianMajiangPanResultBuilder ruianMajiangPanResultBuilder = (RuianMajiangPanResultBuilder) ju
 					.getCurrentPanResultBuilder();

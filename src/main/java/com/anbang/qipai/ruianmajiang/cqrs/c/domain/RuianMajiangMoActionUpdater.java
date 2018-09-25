@@ -31,7 +31,7 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 		List<MajiangPai> fangruShoupaiList = player.getFangruShoupaiList();
 		Set<MajiangPai> guipaiTypeSet = player.getGuipaiTypeSet();
 		MajiangPai gangmoShoupai = player.getGangmoShoupai();
-		player.clearActionCandidates();
+		currentPan.clearAllPlayersActionCandidates();
 		int playersCount = currentPan.countPlayers();
 		int avaliablePaiLeft = currentPan.countAvaliablePai();
 		if (avaliablePaiLeft - liupai == 0) {// 没牌了
