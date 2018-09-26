@@ -26,12 +26,12 @@ public class RuianMajiangGangActionUpdater implements MajiangPlayerGangActionUpd
 	public void updateActions(MajiangGangAction gangAction, Ju ju) throws Exception {
 		Pan currentPan = ju.getCurrentPan();
 		MajiangPlayer player = currentPan.findPlayerById(gangAction.getActionPlayerId());
+		RuianMajiangChiPengGangActionStatisticsListener chiPengGangRecordListener = ju
+				.getActionStatisticsListenerManager()
+				.findListener(RuianMajiangChiPengGangActionStatisticsListener.class);
 		if (gangAction.isDisabledByHigherPriorityAction()) {// 如果动作被阻塞
 			player.clearActionCandidates();// 玩家已经做了决定，要删除动作
 			if (currentPan.allPlayerHasNoActionCandidates() && !currentPan.anyPlayerHu()) {// 所有玩家行牌结束，并且没人胡
-				RuianMajiangChiPengGangActionStatisticsListener chiPengGangRecordListener = ju
-						.getActionStatisticsListenerManager()
-						.findListener(RuianMajiangChiPengGangActionStatisticsListener.class);
 				MajiangPlayerAction finallyDoneAction = chiPengGangRecordListener.findPlayerFinallyDoneAction();// 找出最终应该执行的动作
 				if (finallyDoneAction != null) {
 					MajiangPlayer actionPlayer = currentPan.findPlayerById(finallyDoneAction.getActionPlayerId());
@@ -47,6 +47,7 @@ public class RuianMajiangGangActionUpdater implements MajiangPlayerGangActionUpd
 			}
 		} else {
 			currentPan.clearAllPlayersActionCandidates();
+			chiPengGangRecordListener.updateForNextLun();// 清空动作缓存
 			boolean baibanIsGuipai = currentPan.getPublicGuipaiSet().contains(MajiangPai.baiban);
 
 			// 看看是不是有其他玩家可以抢杠胡

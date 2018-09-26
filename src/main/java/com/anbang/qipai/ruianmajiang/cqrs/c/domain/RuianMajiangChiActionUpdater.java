@@ -55,6 +55,7 @@ public class RuianMajiangChiActionUpdater implements MajiangPlayerChiActionUpdat
 			}
 		} else {
 			currentPan.clearAllPlayersActionCandidates();
+			juezhangStatisticsListener.updateForNextLun();// 清空动作缓存
 
 			List<MajiangPai> fangruShoupaiList = player.getFangruShoupaiList();
 			for (MajiangPai pai : fangruShoupaiList) {
