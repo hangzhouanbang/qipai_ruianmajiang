@@ -37,8 +37,8 @@ public class RuianMajiangDaActionUpdater implements MajiangPlayerDaActionUpdater
 			boolean dapao = ruianMajiangPanResultBuilder.isDapao();
 			GouXingPanHu gouXingPanHu = ju.getGouXingPanHu();
 			daPlayer.setGangmoShoupai(daAction.getPai());
-			RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestZimoHu(false, dapao, dihu, gouXingPanHu,
-					daPlayer, new MajiangMoAction(daPlayer.getId(), new LundaoMopai()), baibanIsGuipai);
+			RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestZimoHu(false, false, dapao, dihu,
+					gouXingPanHu, daPlayer, new MajiangMoAction(daPlayer.getId(), new LundaoMopai()), baibanIsGuipai);
 			daPlayer.setGangmoShoupai(null);
 			daPlayer.addActionCandidate(new MajiangHuAction(daPlayer.getId(), bestHu));
 			daPlayer.checkAndGenerateGuoCandidateAction();
@@ -67,10 +67,11 @@ public class RuianMajiangDaActionUpdater implements MajiangPlayerDaActionUpdater
 				GouXingPanHu gouXingPanHu = ju.getGouXingPanHu();
 				// 先把这张牌放入计算器
 				xiajiaPlayer.getShoupaiCalculator().addPai(daAction.getPai());
-				final SiFengQiMoDaActionListener siFengQiMoDaActionListener = ju.getActionStatisticsListenerManager().findListener(SiFengQiMoDaActionListener.class);
+				final SiFengQiMoDaActionListener siFengQiMoDaActionListener = ju.getActionStatisticsListenerManager()
+						.findListener(SiFengQiMoDaActionListener.class);
 				final boolean couldSiFengQi = siFengQiMoDaActionListener.couldSiFengQi(daAction.getActionPlayerId());
-				RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestDianpaoHu(couldSiFengQi,couldDihu, dapao, dihu,
-						gouXingPanHu, xiajiaPlayer, baibanIsGuipai, daAction.getPai());
+				RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestDianpaoHu(couldSiFengQi, couldDihu,
+						dapao, dihu, gouXingPanHu, xiajiaPlayer, baibanIsGuipai, daAction.getPai());
 				// 再把这张牌拿出计算器
 				xiajiaPlayer.getShoupaiCalculator().removePai(daAction.getPai());
 				if (bestHu != null) {
