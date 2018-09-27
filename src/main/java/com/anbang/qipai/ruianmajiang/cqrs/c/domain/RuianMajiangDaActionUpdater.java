@@ -36,12 +36,17 @@ public class RuianMajiangDaActionUpdater implements MajiangPlayerDaActionUpdater
 					.getCurrentPanResultBuilder();
 			int dihu = ruianMajiangPanResultBuilder.getDihu();
 			boolean dapao = ruianMajiangPanResultBuilder.isDapao();
+			int maxtai = ruianMajiangPanResultBuilder.getMaxtai();
 			GouXingPanHu gouXingPanHu = ju.getGouXingPanHu();
 			daPlayer.setGangmoShoupai(daAction.getPai());
 			RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestZimoHu(false, false, dapao, dihu,
 					gouXingPanHu, daPlayer, new MajiangMoAction(daPlayer.getId(), new LundaoMopai()), baibanIsGuipai);
 			daPlayer.setGangmoShoupai(null);
-			daPlayer.addActionCandidate(new MajiangHuAction(daPlayer.getId(), bestHu));
+			if (bestHu != null) {
+				bestHu.setZimo(true);// 全求神算自摸
+				bestHu.setDianpaoPlayerId(daPlayer.getId());
+				daPlayer.addActionCandidate(new MajiangHuAction(daPlayer.getId(), bestHu));
+			}
 			daPlayer.checkAndGenerateGuoCandidateAction();
 		}
 
