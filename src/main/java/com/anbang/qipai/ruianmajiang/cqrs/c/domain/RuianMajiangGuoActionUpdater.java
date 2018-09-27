@@ -50,6 +50,7 @@ public class RuianMajiangGuoActionUpdater implements MajiangPlayerGuoActionUpdat
 			} else {
 				// 那要我打牌
 				List<MajiangPai> fangruShoupaiList = player.getFangruShoupaiList();
+				MajiangPai gangmoShoupai = player.getGangmoShoupai();
 				RuianMajiangChiPengGangActionStatisticsListener juezhangStatisticsListener = ju
 						.getActionStatisticsListenerManager()
 						.findListener(RuianMajiangChiPengGangActionStatisticsListener.class);
@@ -57,6 +58,9 @@ public class RuianMajiangGuoActionUpdater implements MajiangPlayerGuoActionUpdat
 					if (MajiangPai.isZipai(pai) && juezhangStatisticsListener.ifJuezhang(pai)) {
 						player.addActionCandidate(new MajiangDaAction(player.getId(), pai));
 					}
+				}
+				if (MajiangPai.isZipai(gangmoShoupai) && juezhangStatisticsListener.ifJuezhang(gangmoShoupai)) {
+					player.addActionCandidate(new MajiangDaAction(player.getId(), gangmoShoupai));
 				}
 				if (player.getActionCandidates().isEmpty()) {
 					player.generateDaActions();
