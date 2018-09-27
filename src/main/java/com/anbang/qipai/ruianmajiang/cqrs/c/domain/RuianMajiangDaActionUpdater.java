@@ -18,7 +18,7 @@ import com.dml.majiang.player.shoupai.gouxing.GouXingPanHu;
 public class RuianMajiangDaActionUpdater implements MajiangPlayerDaActionUpdater {
 
 	@Override
-	public void updateActions(MajiangDaAction daAction, Ju ju) throws Exception {
+	public void updateActions(MajiangDaAction daAction, Ju ju) {
 
 		Pan currentPan = ju.getCurrentPan();
 		MajiangPlayer daPlayer = currentPan.findPlayerById(daAction.getActionPlayerId());

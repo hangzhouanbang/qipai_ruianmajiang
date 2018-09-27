@@ -16,13 +16,13 @@ public class CaizipaiListener
 		implements MajiangPlayerDaActionStatisticsListener, MajiangPlayerPengActionStatisticsListener {
 
 	@Override
-	public void update(MajiangPengAction pengAction, Ju ju) throws Exception {
+	public void update(MajiangPengAction pengAction, Ju ju) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void update(MajiangDaAction daAction, Ju ju) throws Exception {
+	public void update(MajiangDaAction daAction, Ju ju) {
 		// TODO Auto-generated method stub
 
 	}

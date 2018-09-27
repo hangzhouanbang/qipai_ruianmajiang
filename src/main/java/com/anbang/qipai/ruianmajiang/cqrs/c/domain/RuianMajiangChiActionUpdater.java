@@ -23,7 +23,7 @@ import com.dml.majiang.player.action.peng.MajiangPengAction;
 public class RuianMajiangChiActionUpdater implements MajiangPlayerChiActionUpdater {
 
 	@Override
-	public void updateActions(MajiangChiAction chiAction, Ju ju) throws Exception {
+	public void updateActions(MajiangChiAction chiAction, Ju ju) {
 		Pan currentPan = ju.getCurrentPan();
 		MajiangPlayer player = currentPan.findPlayerById(chiAction.getActionPlayerId());
 		RuianMajiangChiPengGangActionStatisticsListener juezhangStatisticsListener = ju
