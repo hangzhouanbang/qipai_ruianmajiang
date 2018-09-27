@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.listener.RuianMajiangChiPengGangActionStatisticsListener;
+import com.anbang.qipai.ruianmajiang.cqrs.c.domain.listener.SiFengQiMoDaActionListener;
 import com.dml.majiang.ju.Ju;
 import com.dml.majiang.ju.finish.FixedPanNumbersJuFinishiDeterminer;
 import com.dml.majiang.ju.firstpan.ClassicStartFirstPanProcess;
@@ -163,7 +164,7 @@ public class MajiangGame extends FixedPlayersMultipanAndVotetofinishGame {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected MajiangGameValueObject toValueObject() {
+	public MajiangGameValueObject toValueObject() {
 		return new MajiangGameValueObject(this);
 	}
 
