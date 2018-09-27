@@ -197,12 +197,26 @@ public class RuianMajiangJiesuanCalculator {
 		if (hu) {
 			taishu.setDuiduiHu(shoupaixingWuguanJiesuancanshu.getChichupaiZuCount() == 0 && shoupaiShunziCount == 0);
 		}
-		boolean facaiAnke = shoupaiPaiXing.hasKeziForPaiType(MajiangPai.facai);
+		boolean facaiAnke = false;
+		List<ShoupaiKeziZu> allKeziZuForFacai = shoupaiPaiXing.findAllKeziZuForPaiType(MajiangPai.facai);
+		for (ShoupaiKeziZu shoupaiKeziZu : allKeziZuForFacai) {
+			if (shoupaiKeziZu.countDangPai(GuipaiDangPai.dangType) < 2) {
+				facaiAnke = true;
+				break;
+			}
+		}
 		taishu.setFacaiAnke(facaiAnke);
 		taishu.setFacaiGang(shoupaixingWuguanJiesuancanshu.isGangchuFacai());
 		taishu.setFacaiPeng(shoupaixingWuguanJiesuancanshu.isPengchuFacai());
 		taishu.setGangkaiHu(gangkaiHu);
-		boolean hongzhongAnke = shoupaiPaiXing.hasKeziForPaiType(MajiangPai.hongzhong);
+		boolean hongzhongAnke = false;
+		List<ShoupaiKeziZu> allKeziZuForHongzhong = shoupaiPaiXing.findAllKeziZuForPaiType(MajiangPai.hongzhong);
+		for (ShoupaiKeziZu shoupaiKeziZu : allKeziZuForHongzhong) {
+			if (shoupaiKeziZu.countDangPai(GuipaiDangPai.dangType) < 2) {
+				hongzhongAnke = true;
+				break;
+			}
+		}
 		taishu.setHongzhongAnke(hongzhongAnke);
 		taishu.setHongzhongGang(shoupaixingWuguanJiesuancanshu.isGangchuHongzhong());
 		taishu.setHongzhongPeng(shoupaixingWuguanJiesuancanshu.isPengchuHongzhong());
@@ -258,7 +272,17 @@ public class RuianMajiangJiesuanCalculator {
 		taishu.setShuangCaishengHu(hu && shoupaixingWuguanJiesuancanshu.getCaishenShu() == 2);
 		taishu.setSifengqiHu(couldSiFengQi);// TODO 用统计器来做
 		taishu.setTianHu(couldTianhu);
-		boolean zuofengAnke = shoupaiPaiXing.hasKeziForPaiType(shoupaixingWuguanJiesuancanshu.getMenFengPai());
+
+		boolean zuofengAnke = false;
+		List<ShoupaiKeziZu> allKeziZuForMenFeng = shoupaiPaiXing
+				.findAllKeziZuForPaiType(shoupaixingWuguanJiesuancanshu.getMenFengPai());
+		for (ShoupaiKeziZu shoupaiKeziZu : allKeziZuForMenFeng) {
+			if (shoupaiKeziZu.countDangPai(GuipaiDangPai.dangType) < 2) {
+				zuofengAnke = true;
+				break;
+			}
+		}
+
 		taishu.setZuofengAnke(zuofengAnke);
 		taishu.setZuofengGang(shoupaixingWuguanJiesuancanshu.isZuofengGang());
 		taishu.setZuofengPeng(shoupaixingWuguanJiesuancanshu.isZuofengPeng());
