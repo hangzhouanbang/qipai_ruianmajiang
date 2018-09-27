@@ -99,7 +99,7 @@ public class RuianMajiangTaishu {
 		if (shuangCaishengHu) {
 			tai++;
 		}
-		value = (maxtai > 0 && tai >= maxtai) ? maxtai : tai;
+		value = tai;
 	}
 
 	public int getMaxtai() {

@@ -75,6 +75,11 @@ public class RuianMajiangHushu {
 				value = 500;
 			}
 		}
+		if (taishu.getMaxtai() > 0 && taishu.getValue() > taishu.getMaxtai()) {
+			if (value > 500) {
+				value = 500;
+			}
+		}
 	}
 
 	public int quzhengValue() {
