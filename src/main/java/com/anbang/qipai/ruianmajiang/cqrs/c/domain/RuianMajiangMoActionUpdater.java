@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.listener.RuianMajiangChiPengGangActionStatisticsListener;
+import com.anbang.qipai.ruianmajiang.cqrs.c.domain.listener.SiFengQiMoDaActionListener;
 import com.dml.majiang.ju.Ju;
 import com.dml.majiang.pai.MajiangPai;
 import com.dml.majiang.pan.Pan;
@@ -73,10 +74,11 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 					couldTianhu = true;
 				}
 			}
-            final SiFengQiMoDaActionListener siFengQiMoDaActionListener = ju.getActionStatisticsListenerManager().findListener(SiFengQiMoDaActionListener.class);
-            final boolean couldSiFengQi = siFengQiMoDaActionListener.couldSiFengQi(moAction.getActionPlayerId());
-			RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestZimoHu(couldSiFengQi,couldTianhu, dapao, dihu,
-					gouXingPanHu, player, moAction, baibanIsGuipai);
+			final SiFengQiMoDaActionListener siFengQiMoDaActionListener = ju.getActionStatisticsListenerManager()
+					.findListener(SiFengQiMoDaActionListener.class);
+			final boolean couldSiFengQi = siFengQiMoDaActionListener.couldSiFengQi(moAction.getActionPlayerId());
+			RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestZimoHu(couldSiFengQi, couldTianhu, dapao,
+					dihu, gouXingPanHu, player, moAction, baibanIsGuipai);
 			if (bestHu != null) {
 				bestHu.setZimo(true);
 				player.addActionCandidate(new MajiangHuAction(player.getId(), bestHu));
