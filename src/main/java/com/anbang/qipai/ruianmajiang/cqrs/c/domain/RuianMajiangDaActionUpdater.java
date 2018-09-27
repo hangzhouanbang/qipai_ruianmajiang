@@ -30,26 +30,6 @@ public class RuianMajiangDaActionUpdater implements MajiangPlayerDaActionUpdater
 		daPlayer.clearActionCandidates();
 		boolean baibanIsGuipai = currentPan.getPublicGuipaiSet().contains(MajiangPai.baiban);
 
-		if (daplayerFangruShoupaiList.size() == 0) {// 如果手牌只有财神时需要有胡和过，胡自己打出去的那张牌
-			// 胡
-			RuianMajiangPanResultBuilder ruianMajiangPanResultBuilder = (RuianMajiangPanResultBuilder) ju
-					.getCurrentPanResultBuilder();
-			int dihu = ruianMajiangPanResultBuilder.getDihu();
-			boolean dapao = ruianMajiangPanResultBuilder.isDapao();
-			int maxtai = ruianMajiangPanResultBuilder.getMaxtai();
-			GouXingPanHu gouXingPanHu = ju.getGouXingPanHu();
-			daPlayer.setGangmoShoupai(daAction.getPai());
-			RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestZimoHu(false, false, dapao, dihu, maxtai,
-					gouXingPanHu, daPlayer, new MajiangMoAction(daPlayer.getId(), new LundaoMopai()), baibanIsGuipai);
-			daPlayer.setGangmoShoupai(null);
-			if (bestHu != null) {
-				bestHu.setZimo(true);// 全求神算自摸
-				bestHu.setDianpaoPlayerId(daPlayer.getId());
-				daPlayer.addActionCandidate(new MajiangHuAction(daPlayer.getId(), bestHu));
-			}
-			daPlayer.checkAndGenerateGuoCandidateAction();
-		}
-
 		MajiangPlayer xiajiaPlayer = currentPan.findXiajia(daPlayer);
 		xiajiaPlayer.clearActionCandidates();
 		// 下家可以吃
@@ -95,7 +75,25 @@ public class RuianMajiangDaActionUpdater implements MajiangPlayerDaActionUpdater
 			xiajiaPlayer = currentPan.findXiajia(xiajiaPlayer);
 			xiajiaPlayer.clearActionCandidates();
 		}
-
+		if (daplayerFangruShoupaiList.size() == 0) {// 如果手牌只有财神时需要有胡和过，胡自己打出去的那张牌
+			// 胡
+			RuianMajiangPanResultBuilder ruianMajiangPanResultBuilder = (RuianMajiangPanResultBuilder) ju
+					.getCurrentPanResultBuilder();
+			int dihu = ruianMajiangPanResultBuilder.getDihu();
+			boolean dapao = ruianMajiangPanResultBuilder.isDapao();
+			int maxtai = ruianMajiangPanResultBuilder.getMaxtai();
+			GouXingPanHu gouXingPanHu = ju.getGouXingPanHu();
+			daPlayer.setGangmoShoupai(daAction.getPai());
+			RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestZimoHu(false, false, dapao, dihu, maxtai,
+					gouXingPanHu, daPlayer, new MajiangMoAction(daPlayer.getId(), new LundaoMopai()), baibanIsGuipai);
+			daPlayer.setGangmoShoupai(null);
+			if (bestHu != null) {
+				bestHu.setZimo(true);// 全求神算自摸
+				bestHu.setDianpaoPlayerId(daPlayer.getId());
+				daPlayer.addActionCandidate(new MajiangHuAction(daPlayer.getId(), bestHu));
+			}
+			daPlayer.checkAndGenerateGuoCandidateAction();
+		}
 		currentPan.disablePlayerActionsByHuPengGangChiPriority();// 吃碰杠胡优先级判断
 		// 如果所有玩家啥也做不了,那就下家摸牌
 		if (currentPan.allPlayerHasNoActionCandidates()) {
