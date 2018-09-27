@@ -1,6 +1,10 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
 public class RuianMajiangTaishu {
+	/**
+	 * 封顶台数。0为不封顶
+	 */
+	private int maxtai;
 	private boolean hongzhongPeng;
 	private boolean hongzhongAnke;
 	private boolean hongzhongGang;
@@ -95,7 +99,15 @@ public class RuianMajiangTaishu {
 		if (shuangCaishengHu) {
 			tai++;
 		}
-		value = tai;
+		value = (maxtai > 0 && tai >= maxtai) ? maxtai : tai;
+	}
+
+	public int getMaxtai() {
+		return maxtai;
+	}
+
+	public void setMaxtai(int maxtai) {
+		this.maxtai = maxtai;
 	}
 
 	public boolean isHongzhongPeng() {
