@@ -23,4 +23,9 @@ public interface GameCmdService {
 	MajiangGameValueObject voteToFinish(String playerId, Boolean yes) throws Exception;
 
 	MajiangGameValueObject finishGameImmediately(String gameId) throws Exception;
+
+	MajiangGameValueObject leaveGameByOffline(String playerId) throws Exception;
+
+	MajiangGameValueObject leaveGameByHangup(String playerId) throws Exception;
+
 }
