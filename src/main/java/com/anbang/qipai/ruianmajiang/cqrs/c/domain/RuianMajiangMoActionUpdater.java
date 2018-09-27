@@ -66,6 +66,7 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 					.getCurrentPanResultBuilder();
 			int dihu = ruianMajiangPanResultBuilder.getDihu();
 			boolean dapao = ruianMajiangPanResultBuilder.isDapao();
+			int maxtai = ruianMajiangPanResultBuilder.getMaxtai();
 			GouXingPanHu gouXingPanHu = ju.getGouXingPanHu();
 
 			boolean couldTianhu = false;
@@ -78,7 +79,7 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 					.findListener(SiFengQiMoDaActionListener.class);
 			final boolean couldSiFengQi = siFengQiMoDaActionListener.couldSiFengQi(moAction.getActionPlayerId());
 			RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestZimoHu(couldSiFengQi, couldTianhu, dapao,
-					dihu, gouXingPanHu, player, moAction, baibanIsGuipai);
+					dihu, maxtai, gouXingPanHu, player, moAction, baibanIsGuipai);
 			if (bestHu != null) {
 				bestHu.setZimo(true);
 				player.addActionCandidate(new MajiangHuAction(player.getId(), bestHu));
@@ -87,7 +88,7 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 				int guipaiCount = player.countGuipai();
 				if (guipaiCount == 3) {
 					RuianMajiangPanPlayerScore score = RuianMajiangJiesuanCalculator
-							.calculateBestScoreForBuhuPlayer(dapao, dihu, player, baibanIsGuipai);
+							.calculateBestScoreForBuhuPlayer(dapao, dihu, maxtai, player, baibanIsGuipai);
 					RuianMajiangHu sancaishenHu = new RuianMajiangHu(score);
 					player.addActionCandidate(new MajiangHuAction(player.getId(), sancaishenHu));
 				}

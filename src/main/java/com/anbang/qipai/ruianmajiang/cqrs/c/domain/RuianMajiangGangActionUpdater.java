@@ -59,6 +59,7 @@ public class RuianMajiangGangActionUpdater implements MajiangPlayerGangActionUpd
 						.getCurrentPanResultBuilder();
 				int dihu = ruianMajiangPanResultBuilder.getDihu();
 				boolean dapao = ruianMajiangPanResultBuilder.isDapao();
+				int maxtai = ruianMajiangPanResultBuilder.getMaxtai();
 				GouXingPanHu gouXingPanHu = ju.getGouXingPanHu();
 				MajiangPlayer currentPlayer = player;
 				while (true) {
@@ -71,7 +72,7 @@ public class RuianMajiangGangActionUpdater implements MajiangPlayerGangActionUpd
 					final boolean couldSiFengQi = siFengQiMoDaActionListener
 							.couldSiFengQi(gangAction.getActionPlayerId());
 					RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestQianggangHu(couldSiFengQi,
-							gangAction.getPai(), dapao, dihu, gouXingPanHu, xiajia, baibanIsGuipai);
+							gangAction.getPai(), dapao, dihu, maxtai, gouXingPanHu, xiajia, baibanIsGuipai);
 					if (bestHu != null) {
 						bestHu.setQianggang(true);
 						xiajia.addActionCandidate(new MajiangHuAction(xiajia.getId(), bestHu));

@@ -36,9 +36,10 @@ public class RuianMajiangDaActionUpdater implements MajiangPlayerDaActionUpdater
 					.getCurrentPanResultBuilder();
 			int dihu = ruianMajiangPanResultBuilder.getDihu();
 			boolean dapao = ruianMajiangPanResultBuilder.isDapao();
+			int maxtai = ruianMajiangPanResultBuilder.getMaxtai();
 			GouXingPanHu gouXingPanHu = ju.getGouXingPanHu();
 			daPlayer.setGangmoShoupai(daAction.getPai());
-			RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestZimoHu(false, false, dapao, dihu,
+			RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestZimoHu(false, false, dapao, dihu, maxtai,
 					gouXingPanHu, daPlayer, new MajiangMoAction(daPlayer.getId(), new LundaoMopai()), baibanIsGuipai);
 			daPlayer.setGangmoShoupai(null);
 			daPlayer.addActionCandidate(new MajiangHuAction(daPlayer.getId(), bestHu));
@@ -61,10 +62,11 @@ public class RuianMajiangDaActionUpdater implements MajiangPlayerDaActionUpdater
 				}
 				xiajiaPlayer.tryGangdachuAndGenerateCandidateAction(daAction.getActionPlayerId(), daAction.getPai());
 				// 点炮胡
-				RuianMajiangPanResultBuilder ruianMajiangJuResultBuilder = (RuianMajiangPanResultBuilder) ju
+				RuianMajiangPanResultBuilder ruianMajiangPanResultBuilder = (RuianMajiangPanResultBuilder) ju
 						.getCurrentPanResultBuilder();
-				int dihu = ruianMajiangJuResultBuilder.getDihu();
-				boolean dapao = ruianMajiangJuResultBuilder.isDapao();
+				int dihu = ruianMajiangPanResultBuilder.getDihu();
+				boolean dapao = ruianMajiangPanResultBuilder.isDapao();
+				int maxtai = ruianMajiangPanResultBuilder.getMaxtai();
 				GouXingPanHu gouXingPanHu = ju.getGouXingPanHu();
 				// 先把这张牌放入计算器
 				xiajiaPlayer.getShoupaiCalculator().addPai(daAction.getPai());
@@ -72,7 +74,7 @@ public class RuianMajiangDaActionUpdater implements MajiangPlayerDaActionUpdater
 						.findListener(SiFengQiMoDaActionListener.class);
 				final boolean couldSiFengQi = siFengQiMoDaActionListener.couldSiFengQi(daAction.getActionPlayerId());
 				RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestDianpaoHu(couldSiFengQi, couldDihu,
-						dapao, dihu, gouXingPanHu, xiajiaPlayer, baibanIsGuipai, daAction.getPai());
+						dapao, dihu, maxtai, gouXingPanHu, xiajiaPlayer, baibanIsGuipai, daAction.getPai());
 				// 再把这张牌拿出计算器
 				xiajiaPlayer.getShoupaiCalculator().removePai(daAction.getPai());
 				if (bestHu != null) {

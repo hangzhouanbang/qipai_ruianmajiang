@@ -60,6 +60,7 @@ public class MajiangGame extends FixedPlayersMultipanAndVotetofinishGame {
 		RuianMajiangPanResultBuilder ruianMajiangPanResultBuilder = new RuianMajiangPanResultBuilder();
 		ruianMajiangPanResultBuilder.setDapao(dapao);
 		ruianMajiangPanResultBuilder.setDihu(difen);
+		ruianMajiangPanResultBuilder.setMaxtai(taishu);
 		ju.setCurrentPanResultBuilder(ruianMajiangPanResultBuilder);
 		ju.setJuFinishiDeterminer(new FixedPanNumbersJuFinishiDeterminer(panshu));
 		ju.setJuResultBuilder(new RuianMajiangJuResultBuilder());

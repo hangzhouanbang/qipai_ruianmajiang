@@ -18,6 +18,10 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 
 	private int dihu;
 	private boolean dapao;
+	/**
+	 * 封顶台数。0代表不封顶
+	 */
+	private int maxtai;
 
 	@Override
 	public PanResult buildCurrentPanResult(Ju ju, long panFinishTime) {
@@ -72,7 +76,7 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 				} else {
 					// 计算非胡玩家分数
 					playerResult.setScore(RuianMajiangJiesuanCalculator.calculateBestScoreForBuhuPlayer(dapao, dihu,
-							player, baibanIsGuipai));
+							maxtai, player, baibanIsGuipai));
 				}
 				playerResultList.add(playerResult);
 			}
@@ -177,8 +181,8 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 			List<RuianMajiangPanPlayerResult> playerResultList = new ArrayList<>();
 			currentPan.getMajiangPlayerIdMajiangPlayerMap().values().forEach((player) -> {
 				RuianMajiangPanPlayerResult playerResult = new RuianMajiangPanPlayerResult(player.getId());
-				playerResult.setScore(RuianMajiangJiesuanCalculator.calculateBestScoreForBuhuPlayer(dapao, dihu, player,
-						baibanIsGuipai));
+				playerResult.setScore(RuianMajiangJiesuanCalculator.calculateBestScoreForBuhuPlayer(dapao, dihu, maxtai,
+						player, baibanIsGuipai));
 				playerResultList.add(playerResult);
 			});
 			if (dapao) {
@@ -219,15 +223,15 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 	}
 
 	private int quzheng(int value) {
-        int shang = value / 10;
-        int yu = value % 10;
-        if (yu > 0) {
-            return (shang + 1) * 10;
-        } else if (yu < 0){
-            return (shang - 1) * 10;
-        } else {
-            return shang * 10;
-        }
+		int shang = value / 10;
+		int yu = value % 10;
+		if (yu > 0) {
+			return (shang + 1) * 10;
+		} else if (yu < 0) {
+			return (shang - 1) * 10;
+		} else {
+			return shang * 10;
+		}
 	}
 
 	public int getDihu() {
@@ -244,6 +248,14 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 
 	public void setDapao(boolean dapao) {
 		this.dapao = dapao;
+	}
+
+	public int getMaxtai() {
+		return maxtai;
+	}
+
+	public void setMaxtai(int maxtai) {
+		this.maxtai = maxtai;
 	}
 
 }
