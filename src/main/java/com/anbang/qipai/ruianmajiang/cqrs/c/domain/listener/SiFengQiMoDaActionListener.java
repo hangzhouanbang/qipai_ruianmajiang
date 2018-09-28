@@ -71,8 +71,9 @@ public class SiFengQiMoDaActionListener implements MajiangPlayerDaActionStatisti
 		final String playerId = moAction.getActionPlayerId();
 		final Pan currentPan = ju.getCurrentPan();
 		final MajiangPlayer player = currentPan.findPlayerById(playerId);
-		//第一次摸排，遍历初始牌
+		//第一次摸排，遍历初始牌，鬼牌
 		if (isPlayerFistMo(playerId)){
+		    //初始牌
 			final List<MajiangPai> fangruShoupaiList = player.getFangruShoupaiList();
 			for (MajiangPai pai : fangruShoupaiList) {
 				//只记录风牌
@@ -80,7 +81,15 @@ public class SiFengQiMoDaActionListener implements MajiangPlayerDaActionStatisti
 					this.moFengPai(pai,playerId);
 				}
 			}
-		}
+			//鬼牌
+			final List<MajiangPai> fangruGuiPaiList = player.getFangruGuipaiList();
+            for (MajiangPai pai : fangruGuiPaiList) {
+                //只记录风牌
+                if (isFengPai(pai)) {
+                    this.moFengPai(pai,playerId);
+                }
+            }
+        }
 		final MajiangPai pai = player.getGangmoShoupai();
 		System.out.println(">>> 用户:"+moAction.getActionPlayerId()+", 摸牌: "+pai);
 		System.out.println(">>> mo update 之前:"+string());
