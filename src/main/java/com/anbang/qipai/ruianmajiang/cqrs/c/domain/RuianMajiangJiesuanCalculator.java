@@ -52,6 +52,16 @@ public class RuianMajiangJiesuanCalculator {
 				if (bestScore == null || bestScore.getValue() < score.getValue()) {
 					bestScore = score;
 					bestHuShoupaiPaiXing = shoupaiPaiXing;
+				} else if (bestScore.getValue() == score.getValue()) {
+					if (bestScore.getHushu().getTaishu().getValue() < score.getHushu().getTaishu().getValue()) {
+						bestScore = score;
+						bestHuShoupaiPaiXing = shoupaiPaiXing;
+					} else if (bestScore.getHushu().getTaishu().getValue() == score.getHushu().getTaishu().getValue()) {
+						if (bestScore.getHushu().getValue() < score.getHushu().getValue()) {
+							bestScore = score;
+							bestHuShoupaiPaiXing = shoupaiPaiXing;
+						}
+					}
 				}
 			}
 			return new RuianMajiangHu(bestHuShoupaiPaiXing, bestScore);
@@ -82,6 +92,16 @@ public class RuianMajiangJiesuanCalculator {
 				if (bestScore == null || bestScore.getValue() < score.getValue()) {
 					bestScore = score;
 					bestHuShoupaiPaiXing = shoupaiPaiXing;
+				} else if (bestScore.getValue() == score.getValue()) {
+					if (bestScore.getHushu().getTaishu().getValue() < score.getHushu().getTaishu().getValue()) {
+						bestScore = score;
+						bestHuShoupaiPaiXing = shoupaiPaiXing;
+					} else if (bestScore.getHushu().getTaishu().getValue() == score.getHushu().getTaishu().getValue()) {
+						if (bestScore.getHushu().getValue() < score.getHushu().getValue()) {
+							bestScore = score;
+							bestHuShoupaiPaiXing = shoupaiPaiXing;
+						}
+					}
 				}
 			}
 			return new RuianMajiangHu(bestHuShoupaiPaiXing, bestScore);
@@ -114,6 +134,16 @@ public class RuianMajiangJiesuanCalculator {
 				if (bestScore == null || bestScore.getValue() < score.getValue()) {
 					bestScore = score;
 					bestHuShoupaiPaiXing = shoupaiPaiXing;
+				} else if (bestScore.getValue() == score.getValue()) {
+					if (bestScore.getHushu().getTaishu().getValue() < score.getHushu().getTaishu().getValue()) {
+						bestScore = score;
+						bestHuShoupaiPaiXing = shoupaiPaiXing;
+					} else if (bestScore.getHushu().getTaishu().getValue() == score.getHushu().getTaishu().getValue()) {
+						if (bestScore.getHushu().getValue() < score.getHushu().getValue()) {
+							bestScore = score;
+							bestHuShoupaiPaiXing = shoupaiPaiXing;
+						}
+					}
 				}
 			}
 			return new RuianMajiangHu(bestHuShoupaiPaiXing, bestScore);
@@ -139,6 +169,14 @@ public class RuianMajiangJiesuanCalculator {
 					shoupaixingWuguanJiesuancanshu, shoupaiPaiXing, false, false, false, false, dihu, maxtai, dapao);
 			if (bestScore == null || bestScore.getValue() < score.getValue()) {
 				bestScore = score;
+			} else if (bestScore.getValue() == score.getValue()) {
+				if (bestScore.getHushu().getTaishu().getValue() < score.getHushu().getTaishu().getValue()) {
+					bestScore = score;
+				} else if (bestScore.getHushu().getTaishu().getValue() == score.getHushu().getTaishu().getValue()) {
+					if (bestScore.getHushu().getValue() < score.getHushu().getValue()) {
+						bestScore = score;
+					}
+				}
 			}
 		}
 		return bestScore;
