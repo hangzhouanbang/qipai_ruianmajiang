@@ -310,7 +310,7 @@ public class RuianMajiangJiesuanCalculator {
 		taishu.setQingyiseHu(hu && shoupaixingWuguanJiesuancanshu.isQingyise());
 		taishu.setSancaishenHu(shoupaixingWuguanJiesuancanshu.getCaishenShu() == 3);
 		taishu.setShuangCaishengHu(hu && shoupaixingWuguanJiesuancanshu.getCaishenShu() == 2);
-		taishu.setSifengqiHu(couldSiFengQi);// TODO 用统计器来做
+		taishu.setSifengqiHu(couldSiFengQi);
 		taishu.setTianHu(couldTianhu);
 
 		boolean zuofengAnke = false;
