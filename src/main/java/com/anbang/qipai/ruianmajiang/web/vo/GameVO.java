@@ -8,9 +8,11 @@ import com.dml.mpgame.game.Canceled;
 import com.dml.mpgame.game.Finished;
 import com.dml.mpgame.game.Playing;
 import com.dml.mpgame.game.WaitingStart;
+import com.dml.mpgame.game.extend.fpmpv.VoteNotPassWhenWaitingNextPan;
 import com.dml.mpgame.game.extend.fpmpv.VotingWhenWaitingNextPan;
 import com.dml.mpgame.game.extend.multipan.WaitingNextPan;
 import com.dml.mpgame.game.extend.vote.FinishedByVote;
+import com.dml.mpgame.game.extend.vote.VoteNotPassWhenPlaying;
 import com.dml.mpgame.game.extend.vote.VotingWhenPlaying;
 
 public class GameVO {
@@ -43,7 +45,11 @@ public class GameVO {
 			state = "playing";
 		} else if (sn.equals(VotingWhenPlaying.name)) {
 			state = "playing";
+		} else if (sn.equals(VoteNotPassWhenPlaying.name)) {
+			state = "playing";
 		} else if (sn.equals(VotingWhenWaitingNextPan.name)) {
+			state = "waitingNextPan";
+		} else if (sn.equals(VoteNotPassWhenWaitingNextPan.name)) {
 			state = "waitingNextPan";
 		} else if (sn.equals(WaitingNextPan.name)) {
 			state = "waitingNextPan";
