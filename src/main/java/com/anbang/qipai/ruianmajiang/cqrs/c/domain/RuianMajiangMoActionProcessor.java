@@ -19,7 +19,7 @@ public class RuianMajiangMoActionProcessor implements MajiangPlayerMoActionProce
 		}
 
 		currentPan.playerMoPai(action.getActionPlayerId());
-		currentPan.setActivePaiCursor(null);
+		// currentPan.setActivePaiCursor(null);
 	}
 
 }
