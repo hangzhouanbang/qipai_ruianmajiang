@@ -56,6 +56,7 @@ public class RuianMajiangDaActionUpdater implements MajiangPlayerDaActionUpdater
 				xiajiaPlayer.getShoupaiCalculator().addPai(daAction.getPai());
 				final SiFengQiMoDaActionListener siFengQiMoDaActionListener = ju.getActionStatisticsListenerManager()
 						.findListener(SiFengQiMoDaActionListener.class);
+				siFengQiMoDaActionListener.put(xiajiaPlayer.getId(),daAction.getPai());
 				final boolean couldSiFengQi = siFengQiMoDaActionListener.couldSiFengQi(xiajiaPlayer.getId());
 				RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestDianpaoHu(couldSiFengQi,
 						couldDihu && !currentPan.getZhuangPlayerId().equals(xiajiaPlayer.getId()), dapao, dihu, maxtai,
@@ -67,7 +68,9 @@ public class RuianMajiangDaActionUpdater implements MajiangPlayerDaActionUpdater
 					bestHu.setDianpao(true);
 					bestHu.setDianpaoPlayerId(daPlayer.getId());
 					xiajiaPlayer.addActionCandidate(new MajiangHuAction(xiajiaPlayer.getId(), bestHu));
-				}
+				}else{
+				    siFengQiMoDaActionListener.remove(xiajiaPlayer.getId(),daAction.getPai());
+                }
 
 				xiajiaPlayer.checkAndGenerateGuoCandidateAction();
 			} else {

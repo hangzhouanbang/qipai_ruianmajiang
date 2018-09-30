@@ -60,6 +60,25 @@ public class SiFengQiMoDaActionListener implements MajiangPlayerDaActionStatisti
 		this.firstMoPaiMap.clear();
 	}
 
+	public void remove(final String playerId , final MajiangPai pai){
+        if (isFengPai(pai)){
+            final Map<MajiangPai, Integer> fengPaiCounter = this.getOrCreateFengpaiCounter(playerId);
+            Integer counter = fengPaiCounter.get(pai);
+            if (counter == null){
+                fengPaiCounter.put(pai,0);
+            } else{
+                fengPaiCounter.put(pai,--counter);
+            }
+        }
+    }
+
+	public void put(final String playerId , final MajiangPai pai){
+	    if (isFengPai(pai)){
+           this.moFengPai(pai,playerId);
+        }
+    }
+
+
 	//用户是不是第一次摸排
 	private boolean isPlayerFistMo(String playerId){
 		Boolean mo = this.firstMoPaiMap.putIfAbsent(playerId, Boolean.TRUE);
@@ -115,7 +134,7 @@ public class SiFengQiMoDaActionListener implements MajiangPlayerDaActionStatisti
 		final Map<MajiangPai, Integer> fengPaiCounter = this.getOrCreateFengpaiCounter(playerId);
 		boolean siFengQi = true;
 		for (Integer count : fengPaiCounter.values()) {
-			if (count == 0) {
+			if (count <= 0) {
 				siFengQi = false;
 				break;
 			}

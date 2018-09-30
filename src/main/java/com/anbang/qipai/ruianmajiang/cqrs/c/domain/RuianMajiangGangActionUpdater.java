@@ -69,6 +69,7 @@ public class RuianMajiangGangActionUpdater implements MajiangPlayerGangActionUpd
 					}
 					final SiFengQiMoDaActionListener siFengQiMoDaActionListener = ju
 							.getActionStatisticsListenerManager().findListener(SiFengQiMoDaActionListener.class);
+					siFengQiMoDaActionListener.put(xiajia.getId(),gangAction.getPai());
 					final boolean couldSiFengQi = siFengQiMoDaActionListener
 							.couldSiFengQi(gangAction.getActionPlayerId());
 					RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestQianggangHu(couldSiFengQi,
@@ -79,6 +80,8 @@ public class RuianMajiangGangActionUpdater implements MajiangPlayerGangActionUpd
 						xiajia.checkAndGenerateGuoCandidateAction();
 						qiangganghu = true;
 						break;
+					}else{
+						siFengQiMoDaActionListener.remove(xiajia.getId() , gangAction.getPai());
 					}
 
 					currentPlayer = xiajia;
