@@ -152,7 +152,7 @@ public class MajiangGame extends FixedPlayersMultipanAndVotetofinishGame {
 	}
 
 	@Override
-	public void start() throws Exception {
+	public void start(long currentTime) throws Exception {
 		state = new Playing();
 		updateAllPlayersState(new PlayerPlaying());
 	}
