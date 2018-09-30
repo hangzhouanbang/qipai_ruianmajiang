@@ -31,7 +31,9 @@ import com.dml.mpgame.game.Canceled;
 import com.dml.mpgame.game.Finished;
 import com.dml.mpgame.game.GameNotFoundException;
 import com.dml.mpgame.game.Playing;
+import com.dml.mpgame.game.extend.fpmpv.VoteNotPassWhenWaitingNextPan;
 import com.dml.mpgame.game.extend.vote.FinishedByVote;
+import com.dml.mpgame.game.extend.vote.VoteNotPassWhenPlaying;
 
 /**
  * 游戏框架相关
@@ -152,7 +154,10 @@ public class GameController {
 				List<QueryScope> scopes = QueryScope.scopesForState(majiangGameValueObject.getState(),
 						majiangGameValueObject.findPlayerState(otherPlayerId));
 				scopes.remove(QueryScope.panResult);
-				scopes.remove(QueryScope.gameFinishVote);
+				if (majiangGameValueObject.getState().name().equals(VoteNotPassWhenPlaying.name)
+						|| majiangGameValueObject.getState().name().equals(VoteNotPassWhenWaitingNextPan.name)) {
+					scopes.remove(QueryScope.gameFinishVote);
+				}
 				scopes.forEach((scope) -> {
 					wsNotifier.notifyToQuery(otherPlayerId, scope.name());
 				});
@@ -196,7 +201,10 @@ public class GameController {
 				List<QueryScope> scopes = QueryScope.scopesForState(majiangGameValueObject.getState(),
 						majiangGameValueObject.findPlayerState(otherPlayerId));
 				scopes.remove(QueryScope.panResult);
-				scopes.remove(QueryScope.gameFinishVote);
+				if (majiangGameValueObject.getState().name().equals(VoteNotPassWhenPlaying.name)
+						|| majiangGameValueObject.getState().name().equals(VoteNotPassWhenWaitingNextPan.name)) {
+					scopes.remove(QueryScope.gameFinishVote);
+				}
 				scopes.forEach((scope) -> {
 					wsNotifier.notifyToQuery(otherPlayerId, scope.name());
 				});
