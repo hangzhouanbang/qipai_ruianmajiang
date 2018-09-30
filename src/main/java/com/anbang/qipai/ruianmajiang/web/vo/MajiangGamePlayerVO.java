@@ -53,17 +53,17 @@ public class MajiangGamePlayerVO {
 		} else if (sn.equals(PlayerReadyToStartNextPan.name)) {
 			state = "readyToStart";
 		} else if (sn.equals(PlayerPlayingAndVoted.name)) {
-			state = "playing";
+			state = sn;
 		} else if (sn.equals(PlayerPlayingAndVoting.name)) {
-			state = PlayerPlayingAndVoting.name;
+			state = sn;
 		} else if (sn.equals(PlayerPanFinishedAndVoted.name)) {
-			state = "panFinished";
+			state = sn;
 		} else if (sn.equals(PlayerPanFinishedAndVoting.name)) {
-			state = PlayerPanFinishedAndVoting.name;
+			state = sn;
 		} else if (sn.equals(PlayerReadyToStartNextPanAndVoted.name)) {
-			state = "readyToStart";
+			state = sn;
 		} else if (sn.equals(PlayerReadyToStartNextPanAndVoting.name)) {
-			state = PlayerReadyToStartNextPanAndVoting.name;
+			state = sn;
 		} else {
 		}
 
