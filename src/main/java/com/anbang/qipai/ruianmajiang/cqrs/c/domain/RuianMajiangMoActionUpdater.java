@@ -90,6 +90,7 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 					RuianMajiangPanPlayerScore score = RuianMajiangJiesuanCalculator
 							.calculateBestScoreForBuhuPlayer(dapao, dihu, maxtai, player, baibanIsGuipai);
 					RuianMajiangHu sancaishenHu = new RuianMajiangHu(score);
+					sancaishenHu.setZimo(true);
 					player.addActionCandidate(new MajiangHuAction(player.getId(), sancaishenHu));
 				}
 			}
