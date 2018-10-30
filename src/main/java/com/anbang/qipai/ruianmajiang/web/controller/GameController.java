@@ -363,7 +363,6 @@ public class GameController {
 			MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
 			JuResultVO juResult = new JuResultVO(juResultDbo, majiangGameDbo);
 			ruianMajiangResultMsgService.recordJuResult(juResult);
-			gameMsgService.gameFinished(gameId);
 		}
 
 		if (majiangGameValueObject.getState().name().equals(FinishedByVote.name)
@@ -423,6 +422,9 @@ public class GameController {
 			MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
 			JuResultVO juResult = new JuResultVO(juResultDbo, majiangGameDbo);
 			ruianMajiangResultMsgService.recordJuResult(juResult);
+		}
+		if (majiangGameValueObject.getState().name().equals(FinishedByVote.name)
+				|| majiangGameValueObject.getState().name().equals(Canceled.name)) {
 			gameMsgService.gameFinished(gameId);
 		}
 
