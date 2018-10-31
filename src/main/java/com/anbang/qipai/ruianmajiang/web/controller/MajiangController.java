@@ -249,8 +249,10 @@ public class MajiangController {
 				});
 			}
 		}
-
 		return vo;
 	}
+
+
+
 
 }

@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.PlaybackFrameDbo;
+import com.anbang.qipai.ruianmajiang.web.vo.FrameInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -455,5 +457,12 @@ public class GameController {
 		vo.setData(data);
 		return vo;
 	}
+
+	@RequestMapping(value = "/playback")
+	@ResponseBody
+    public CommonVO playback(FrameInfoVo frameInfoVo){
+        PlaybackFrameDbo playbackFrameDbo=this.majiangPlayQueryService.find(frameInfoVo.getGameId(),frameInfoVo.getPanno(),frameInfoVo.getFrameNo());
+        return new CommonVO(true,null,playbackFrameDbo);
+    }
 
 }

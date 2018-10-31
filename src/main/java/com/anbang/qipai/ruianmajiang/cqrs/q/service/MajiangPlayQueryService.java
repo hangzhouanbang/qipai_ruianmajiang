@@ -3,6 +3,8 @@ package com.anbang.qipai.ruianmajiang.cqrs.q.service;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.anbang.qipai.ruianmajiang.cqrs.q.dao.PlaybackDao;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.PlaybackFrameDbo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -42,6 +44,9 @@ public class MajiangPlayQueryService {
 	private PlayerInfoDao playerInfoDao;
 
 	@Autowired
+	private PlaybackDao playbackDao;
+
+	@Autowired
 	private GameLatestPanActionFrameDboDao gameLatestPanActionFrameDboDao;
 
 	private LiangangangPanActionFramePlayerViewFilter pvFilter = new LiangangangPanActionFramePlayerViewFilter();
@@ -71,6 +76,12 @@ public class MajiangPlayQueryService {
 			PanActionFrame panActionFrame = readyForGameResult.getFirstActionFrame();
 			gameLatestPanActionFrameDboDao.save(majiangGame.getId(), panActionFrame.toByteArray(1024 * 8));
 			// TODO 记录一条Frame，回放的时候要做
+//			String gameId=majiangGame.getId();
+//			int panno=panActionFrame.getPanAfterAction().getNo();
+//			int lastFrameNo=playbackDao.lastFrameNo(gameId,panno);
+//			int frameId = ++lastFrameNo;
+//            PlaybackFrameDbo playbackFrameDbo=new PlaybackFrameDbo(gameId,panno,frameId,panActionFrame);
+//            playbackDao.save(playbackFrameDbo);
 		}
 	}
 
@@ -85,7 +96,13 @@ public class MajiangPlayQueryService {
 		if (readyToNextPanResult.getFirstActionFrame() != null) {
 			gameLatestPanActionFrameDboDao.save(majiangGame.getId(),
 					readyToNextPanResult.getFirstActionFrame().toByteArray(1024 * 8));
-			// TODO 记录一条Frame，回放的时候要做
+			//TODO 下面代码未测试
+//            String gameId=majiangGame.getId();
+//            int panno=readyToNextPanResult.getFirstActionFrame().getPanAfterAction().getNo();
+//            int lastFrameNo=playbackDao.lastFrameNo(gameId,panno);
+//            int frameId = ++lastFrameNo;
+//            PlaybackFrameDbo playbackFrameDbo=new PlaybackFrameDbo(gameId,panno,frameId,readyToNextPanResult.getFirstActionFrame());
+//            playbackDao.save(playbackFrameDbo);
 		}
 
 	}
@@ -101,7 +118,12 @@ public class MajiangPlayQueryService {
 		String gameId = majiangActionResult.getMajiangGame().getId();
 		PanActionFrame panActionFrame = majiangActionResult.getPanActionFrame();
 		gameLatestPanActionFrameDboDao.save(gameId, panActionFrame.toByteArray(1024 * 8));
-		// TODO 记录一条Frame，回放的时候要做
+        //TODO 下面代码未测试
+//        int panno = panActionFrame.getPanAfterAction().getNo();
+//        int lastFrameNo = playbackDao.lastFrameNo(gameId,panno);
+//        int frameId = ++lastFrameNo;
+//        PlaybackFrameDbo playbackFrameDbo = new PlaybackFrameDbo(gameId,panno,frameId,panActionFrame);
+//        playbackDao.save(playbackFrameDbo);
 
 		// 盘出结果的话要记录结果
 		RuianMajiangPanResult ruianMajiangPanResult = majiangActionResult.getPanResult();
@@ -115,7 +137,6 @@ public class MajiangPlayQueryService {
 				juResultDboDao.save(juResultDbo);
 			}
 		}
-
 	}
 
 	public PanResultDbo findPanResultDbo(String gameId, int panNo) {
@@ -125,5 +146,9 @@ public class MajiangPlayQueryService {
 	public JuResultDbo findJuResultDbo(String gameId) {
 		return juResultDboDao.findByGameId(gameId);
 	}
+
+	public PlaybackFrameDbo find(String gameId, int panno, int frameNo){
+	    return playbackDao.find(gameId, panno, frameNo);
+    }
 
 }

@@ -14,6 +14,15 @@ public class CommonVO {
 
 	private Object data;
 
+	public CommonVO() {
+	}
+
+	public CommonVO(boolean success, String msg, Object data) {
+		this.success = success;
+		this.msg = msg;
+		this.data = data;
+	}
+
 	public boolean isSuccess() {
 		return success;
 	}
