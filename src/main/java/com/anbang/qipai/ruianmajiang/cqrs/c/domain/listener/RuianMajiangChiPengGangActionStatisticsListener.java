@@ -85,12 +85,16 @@ public class RuianMajiangChiPengGangActionStatisticsListener
 		for (MajiangPlayerAction action : playerActionMap.values()) {
 			if (action.getType().equals(MajiangPlayerActionType.gang)) {
 				return action;
-			} else if (action.getType().equals(MajiangPlayerActionType.peng)) {
+			}
+		}
+		for (MajiangPlayerAction action : playerActionMap.values()) {
+			if (action.getType().equals(MajiangPlayerActionType.peng)) {
 				return action;
-			} else if (action.getType().equals(MajiangPlayerActionType.chi)) {
+			}
+		}
+		for (MajiangPlayerAction action : playerActionMap.values()) {
+			if (action.getType().equals(MajiangPlayerActionType.chi)) {
 				return action;
-			} else {
-				return null;
 			}
 		}
 		return null;
