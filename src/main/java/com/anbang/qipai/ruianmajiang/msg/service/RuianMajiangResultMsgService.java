@@ -6,7 +6,8 @@ import org.springframework.messaging.support.MessageBuilder;
 
 import com.anbang.qipai.ruianmajiang.msg.channel.RuianMajiangResultSource;
 import com.anbang.qipai.ruianmajiang.msg.msjobj.CommonMO;
-import com.anbang.qipai.ruianmajiang.web.vo.JuResultVO;
+import com.anbang.qipai.ruianmajiang.msg.msjobj.MajiangHistoricalPanResult;
+import com.anbang.qipai.ruianmajiang.msg.msjobj.MajiangHistoricalJuResult;
 
 @EnableBinding(RuianMajiangResultSource.class)
 public class RuianMajiangResultMsgService {
@@ -14,10 +15,17 @@ public class RuianMajiangResultMsgService {
 	@Autowired
 	private RuianMajiangResultSource ruianMajiangResultSource;
 
-	public void recordJuResult(JuResultVO juResult) {
+	public void recordJuResult(MajiangHistoricalJuResult juResult) {
 		CommonMO mo = new CommonMO();
 		mo.setMsg("ruianmajiang ju result");
 		mo.setData(juResult);
+		ruianMajiangResultSource.ruianMajiangResult().send(MessageBuilder.withPayload(mo).build());
+	}
+
+	public void recordPanResult(MajiangHistoricalPanResult panResult) {
+		CommonMO mo = new CommonMO();
+		mo.setMsg("ruianmajiang pan result");
+		mo.setData(panResult);
 		ruianMajiangResultSource.ruianMajiangResult().send(MessageBuilder.withPayload(mo).build());
 	}
 }

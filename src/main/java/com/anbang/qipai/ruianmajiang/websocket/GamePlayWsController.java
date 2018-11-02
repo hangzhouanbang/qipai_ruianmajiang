@@ -20,9 +20,9 @@ import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.JuResultDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangGameQueryService;
 import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangPlayQueryService;
+import com.anbang.qipai.ruianmajiang.msg.msjobj.MajiangHistoricalJuResult;
 import com.anbang.qipai.ruianmajiang.msg.service.RuianMajiangGameMsgService;
 import com.anbang.qipai.ruianmajiang.msg.service.RuianMajiangResultMsgService;
-import com.anbang.qipai.ruianmajiang.web.vo.JuResultVO;
 import com.dml.mpgame.game.GameState;
 import com.dml.mpgame.game.extend.vote.FinishedByVote;
 import com.dml.mpgame.game.player.GamePlayerState;
@@ -97,7 +97,7 @@ public class GamePlayWsController extends TextWebSocketHandler {
 			if (majiangGameValueObject.getState().name().equals(FinishedByVote.name)) {
 				JuResultDbo juResultDbo = majiangPlayQueryService.findJuResultDbo(gameId);
 				MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
-				JuResultVO juResult = new JuResultVO(juResultDbo, majiangGameDbo);
+				MajiangHistoricalJuResult juResult = new MajiangHistoricalJuResult(juResultDbo, majiangGameDbo);
 				ruianMajiangResultMsgService.recordJuResult(juResult);
 				gameMsgService.gameFinished(gameId);
 			}

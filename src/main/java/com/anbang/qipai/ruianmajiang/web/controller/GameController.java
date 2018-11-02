@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.PlaybackFrameDbo;
-import com.anbang.qipai.ruianmajiang.web.vo.FrameInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -20,15 +18,21 @@ import com.anbang.qipai.ruianmajiang.cqrs.c.service.PlayerAuthService;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.GameFinishVoteDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.JuResultDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameDbo;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGamePlayerDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangGameQueryService;
 import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangPlayQueryService;
+import com.anbang.qipai.ruianmajiang.msg.msjobj.MajiangHistoricalJuResult;
+import com.anbang.qipai.ruianmajiang.msg.service.MemberGoldsMsgService;
 import com.anbang.qipai.ruianmajiang.msg.service.RuianMajiangGameMsgService;
 import com.anbang.qipai.ruianmajiang.msg.service.RuianMajiangResultMsgService;
+import com.anbang.qipai.ruianmajiang.plan.bean.MemberGoldBalance;
+import com.anbang.qipai.ruianmajiang.plan.service.MemberGoldBalanceService;
 import com.anbang.qipai.ruianmajiang.web.vo.CommonVO;
 import com.anbang.qipai.ruianmajiang.web.vo.GameVO;
-import com.anbang.qipai.ruianmajiang.web.vo.JuResultVO;
+import com.anbang.qipai.ruianmajiang.web.vo.PanActionFrameVO;
 import com.anbang.qipai.ruianmajiang.websocket.GamePlayWsNotifier;
 import com.anbang.qipai.ruianmajiang.websocket.QueryScope;
+import com.dml.majiang.pan.frame.PanActionFrame;
 import com.dml.mpgame.game.Canceled;
 import com.dml.mpgame.game.Finished;
 import com.dml.mpgame.game.GameNotFoundException;
@@ -67,6 +71,12 @@ public class GameController {
 
 	@Autowired
 	private RuianMajiangResultMsgService ruianMajiangResultMsgService;
+
+	@Autowired
+	private MemberGoldBalanceService memberGoldBalanceService;
+
+	@Autowired
+	private MemberGoldsMsgService memberGoldsMsgService;
 
 	/**
 	 * 新一局游戏
@@ -363,7 +373,7 @@ public class GameController {
 		// 记录战绩
 		if (juResultDbo != null) {
 			MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
-			JuResultVO juResult = new JuResultVO(juResultDbo, majiangGameDbo);
+			MajiangHistoricalJuResult juResult = new MajiangHistoricalJuResult(juResultDbo, majiangGameDbo);
 			ruianMajiangResultMsgService.recordJuResult(juResult);
 		}
 
@@ -422,7 +432,7 @@ public class GameController {
 		// 记录战绩
 		if (juResultDbo != null) {
 			MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
-			JuResultVO juResult = new JuResultVO(juResultDbo, majiangGameDbo);
+			MajiangHistoricalJuResult juResult = new MajiangHistoricalJuResult(juResultDbo, majiangGameDbo);
 			ruianMajiangResultMsgService.recordJuResult(juResult);
 		}
 		if (majiangGameValueObject.getState().name().equals(FinishedByVote.name)
@@ -460,9 +470,51 @@ public class GameController {
 
 	@RequestMapping(value = "/playback")
 	@ResponseBody
-    public CommonVO playback(FrameInfoVo frameInfoVo){
-        PlaybackFrameDbo playbackFrameDbo=this.majiangPlayQueryService.find(frameInfoVo.getGameId(),frameInfoVo.getPanno(),frameInfoVo.getFrameNo());
-        return new CommonVO(true,null,playbackFrameDbo);
-    }
+	public CommonVO playback(String gameId, int panNo, int actionNo) {
+		CommonVO vo = new CommonVO();
+		Map data = new HashMap();
+		vo.setData(data);
+		PanActionFrame panActionFrame = majiangPlayQueryService.findPanActionFrameDboForBackPlay(gameId, panNo,
+				actionNo);
+		data.put("panActionFrame", new PanActionFrameVO(panActionFrame));
+		return vo;
+	}
 
+	@RequestMapping(value = "/wisecrack")
+	@ResponseBody
+	public CommonVO wisecrack(String token, String gameId, String ordinal) {
+		CommonVO vo = new CommonVO();
+		String playerId = playerAuthService.getPlayerIdByToken(token);
+		if (playerId == null) {
+			vo.setSuccess(false);
+			vo.setMsg("invalid token");
+			return vo;
+		}
+		MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
+		if (!ordinal.contains("qiaopihuafy")) {
+			// 通知其他人
+			for (MajiangGamePlayerDbo otherPlayer : majiangGameDbo.getPlayers()) {
+				if (!otherPlayer.getPlayerId().equals(playerId)) {
+					wsNotifier.notifyToListenWisecrack(otherPlayer.getPlayerId(), ordinal, playerId);
+				}
+			}
+			vo.setSuccess(true);
+			return vo;
+		}
+		MemberGoldBalance account = memberGoldBalanceService.findByMemberId(playerId);
+		if (account.getBalanceAfter() > 10) {
+			memberGoldsMsgService.withdraw(playerId, 10, "wisecrack");
+			// 通知其他人
+			for (MajiangGamePlayerDbo otherPlayer : majiangGameDbo.getPlayers()) {
+				if (!otherPlayer.getPlayerId().equals(playerId)) {
+					wsNotifier.notifyToListenWisecrack(otherPlayer.getPlayerId(), ordinal, playerId);
+				}
+			}
+			vo.setSuccess(true);
+			return vo;
+		}
+		vo.setSuccess(false);
+		vo.setMsg("InsufficientBalanceException");
+		return vo;
+	}
 }
