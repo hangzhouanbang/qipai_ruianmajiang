@@ -4,6 +4,7 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017/qipai_ruianmajiang
+      
   cloud:
     stream:
       kafka:
@@ -34,6 +35,16 @@ spring:
                   ms: 5
                 batch:
                   size: 16384
+          memberGoldsAccounting:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
       bindings:
         ruianMajiangGame:
           destination: ruianMajiangGame
@@ -42,6 +53,11 @@ spring:
             partitionCount: 1
         ruianMajiangResult:
           destination: ruianMajiangResult
+          contentType: application/json
+          producer:
+            partitionCount: 1
+        memberGoldsAccounting:
+          destination: memberGoldsAccounting
           contentType: application/json
           producer:
             partitionCount: 1
@@ -54,6 +70,13 @@ spring:
           contentType: application/json
         ruianGameRoom:
           destination: ruianGameRoom
+          group: qipai-ruianmajiang
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        memberGolds:
+          destination: memberGolds
           group: qipai-ruianmajiang
           consumer:
             concurrency: 1
