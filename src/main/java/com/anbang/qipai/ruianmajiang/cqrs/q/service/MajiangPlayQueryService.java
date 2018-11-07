@@ -1,6 +1,7 @@
 package com.anbang.qipai.ruianmajiang.cqrs.q.service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,7 +81,7 @@ public class MajiangPlayQueryService {
 			int panNo = panActionFrame.getPanAfterAction().getNo();
 			int actionNo = panActionFrame.getNo();
 			PanActionFrameDbo panActionFrameDbo = new PanActionFrameDbo(gameId, panNo, actionNo);
-			panActionFrameDbo.setFrameData(panActionFrame.toByteArray(1024 * 8));
+			panActionFrameDbo.setPanActionFrame(panActionFrame);
 			panActionFrameDboDao.save(panActionFrameDbo);
 		}
 	}
@@ -101,7 +102,7 @@ public class MajiangPlayQueryService {
 			int panNo = readyToNextPanResult.getFirstActionFrame().getPanAfterAction().getNo();
 			int actionNo = readyToNextPanResult.getFirstActionFrame().getNo();
 			PanActionFrameDbo panActionFrameDbo = new PanActionFrameDbo(gameId, panNo, actionNo);
-			panActionFrameDbo.setFrameData(readyToNextPanResult.getFirstActionFrame().toByteArray(1024 * 8));
+			panActionFrameDbo.setPanActionFrame(readyToNextPanResult.getFirstActionFrame());
 			panActionFrameDboDao.save(panActionFrameDbo);
 		}
 
@@ -122,7 +123,7 @@ public class MajiangPlayQueryService {
 		int panNo = panActionFrame.getPanAfterAction().getNo();
 		int actionNo = panActionFrame.getNo();
 		PanActionFrameDbo panActionFrameDbo = new PanActionFrameDbo(gameId, panNo, actionNo);
-		panActionFrameDbo.setFrameData(panActionFrame.toByteArray(1024 * 8));
+		panActionFrameDbo.setPanActionFrame(panActionFrame);
 		panActionFrameDboDao.save(panActionFrameDbo);
 		// 盘出结果的话要记录结果
 		RuianMajiangPanResult ruianMajiangPanResult = majiangActionResult.getPanResult();
@@ -146,12 +147,8 @@ public class MajiangPlayQueryService {
 		return juResultDboDao.findByGameId(gameId);
 	}
 
-	public PanActionFrame findPanActionFrameDboForBackPlay(String gameId, int panNo, int actionNo) {
-		PanActionFrameDbo panActionFrameDbo = panActionFrameDboDao.findByGameIdAndPanNoAndActionNo(gameId, panNo,
-				actionNo);
-		byte[] frameData = panActionFrameDbo.getFrameData();
-		PanActionFrame panActionFrame = PanActionFrame.fromByteArray(frameData);
-		return panActionFrame;
+	public List<PanActionFrameDbo> findPanActionFrameDboForBackPlay(String gameId, int panNo) {
+		return panActionFrameDboDao.findByGameIdAndPanNo(gameId, panNo);
 	}
 
 }
