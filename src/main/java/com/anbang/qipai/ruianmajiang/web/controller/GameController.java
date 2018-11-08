@@ -20,6 +20,7 @@ import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.JuResultDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGamePlayerDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.PanActionFrameDbo;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.PanResultDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangGameQueryService;
 import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangPlayQueryService;
 import com.anbang.qipai.ruianmajiang.msg.msjobj.MajiangHistoricalJuResult;
@@ -31,6 +32,7 @@ import com.anbang.qipai.ruianmajiang.plan.service.MemberGoldBalanceService;
 import com.anbang.qipai.ruianmajiang.web.vo.CommonVO;
 import com.anbang.qipai.ruianmajiang.web.vo.GameVO;
 import com.anbang.qipai.ruianmajiang.web.vo.PanActionFrameVO;
+import com.anbang.qipai.ruianmajiang.web.vo.PanResultVO;
 import com.anbang.qipai.ruianmajiang.websocket.GamePlayWsNotifier;
 import com.anbang.qipai.ruianmajiang.websocket.QueryScope;
 import com.dml.mpgame.game.Canceled;
@@ -477,11 +479,14 @@ public class GameController {
 		List<PanActionFrameDbo> frameList = majiangPlayQueryService.findPanActionFrameDboForBackPlay(gameId, panNo);
 		List<PanActionFrameVO> frameVOList = new ArrayList<>();
 		for (PanActionFrameDbo frame : frameList) {
+			frame.getPanActionFrame().getPanAfterAction().getAvaliablePaiList().setPaiList(null);
 			frameVOList.add(new PanActionFrameVO(frame.getPanActionFrame()));
 		}
 		MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
 		majiangGameDbo.setPanNo(panNo);
 		GameVO gameVO = new GameVO(majiangGameDbo);
+		PanResultDbo panResultDbo = majiangPlayQueryService.findPanResultDbo(gameId, panNo);
+		data.put("panResult", new PanResultVO(panResultDbo, majiangGameDbo));
 		data.put("game", gameVO);
 		data.put("framelist", frameVOList);
 		return vo;
