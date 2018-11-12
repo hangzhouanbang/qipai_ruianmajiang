@@ -28,7 +28,9 @@ import com.anbang.qipai.ruianmajiang.msg.service.MemberGoldsMsgService;
 import com.anbang.qipai.ruianmajiang.msg.service.RuianMajiangGameMsgService;
 import com.anbang.qipai.ruianmajiang.msg.service.RuianMajiangResultMsgService;
 import com.anbang.qipai.ruianmajiang.plan.bean.MemberGoldBalance;
+import com.anbang.qipai.ruianmajiang.plan.bean.PlayerInfo;
 import com.anbang.qipai.ruianmajiang.plan.service.MemberGoldBalanceService;
+import com.anbang.qipai.ruianmajiang.plan.service.PlayerInfoService;
 import com.anbang.qipai.ruianmajiang.web.vo.CommonVO;
 import com.anbang.qipai.ruianmajiang.web.vo.GameVO;
 import com.anbang.qipai.ruianmajiang.web.vo.PanActionFrameVO;
@@ -79,6 +81,9 @@ public class GameController {
 
 	@Autowired
 	private MemberGoldsMsgService memberGoldsMsgService;
+
+	@Autowired
+	private PlayerInfoService playerInfoService;
 
 	/**
 	 * 新一局游戏
@@ -503,7 +508,8 @@ public class GameController {
 			return vo;
 		}
 		MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
-		if (!ordinal.contains("qiaopihuafy")) {
+		PlayerInfo playerInfo = playerInfoService.findPlayerInfoById(playerId);
+		if (playerInfo.isVip() || !ordinal.contains("qiaopihuafy")) {
 			// 通知其他人
 			for (MajiangGamePlayerDbo otherPlayer : majiangGameDbo.getPlayers()) {
 				if (!otherPlayer.getPlayerId().equals(playerId)) {
