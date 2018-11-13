@@ -3,8 +3,8 @@ spring:
     default-domain: qipai_ruianmajiang
   data:
     mongodb:
-      uri: mongodb://localhost:27017/qipai_ruianmajiang
-      
+      #uri: mongodb://localhost:27017/qipai_ruianmajiang
+
   cloud:
     stream:
       kafka:
