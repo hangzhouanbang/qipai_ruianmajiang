@@ -10,6 +10,7 @@ public class RuianMajiangJuPlayerResultMO {
 	private int huCount;
 	private int caishenCount;
 	private int dapaoCount;
+	private int maxTaishu;
 	private int maxHushu;
 	private int totalScore;
 
@@ -21,6 +22,7 @@ public class RuianMajiangJuPlayerResultMO {
 		huCount = juPlayerResult.getHuCount();
 		caishenCount = juPlayerResult.getCaishenCount();
 		dapaoCount = juPlayerResult.getDapaoCount();
+		maxTaishu = juPlayerResult.getMaxTaishu();
 		maxHushu = juPlayerResult.getMaxHushu();
 		totalScore = juPlayerResult.getTotalScore();
 	}
@@ -32,6 +34,7 @@ public class RuianMajiangJuPlayerResultMO {
 		huCount = 0;
 		caishenCount = 0;
 		dapaoCount = 0;
+		maxTaishu = 0;
 		maxHushu = 0;
 		totalScore = 0;
 	}
@@ -86,6 +89,14 @@ public class RuianMajiangJuPlayerResultMO {
 
 	public void setDapaoCount(int dapaoCount) {
 		this.dapaoCount = dapaoCount;
+	}
+
+	public int getMaxTaishu() {
+		return maxTaishu;
+	}
+
+	public void setMaxTaishu(int maxTaishu) {
+		this.maxTaishu = maxTaishu;
 	}
 
 	public int getMaxHushu() {
