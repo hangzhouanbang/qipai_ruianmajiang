@@ -11,6 +11,7 @@ public class RuianMajiangJuPlayerResultVO {
 	private int huCount;
 	private int caishenCount;
 	private int dapaoCount;
+	private int maxTaishu;
 	private int maxHushu;
 	private int totalScore;
 
@@ -22,6 +23,7 @@ public class RuianMajiangJuPlayerResultVO {
 		huCount = juPlayerResult.getHuCount();
 		caishenCount = juPlayerResult.getCaishenCount();
 		dapaoCount = juPlayerResult.getDapaoCount();
+		maxTaishu = juPlayerResult.getMaxTaishu();
 		maxHushu = juPlayerResult.getMaxHushu();
 		totalScore = juPlayerResult.getTotalScore();
 	}
@@ -33,6 +35,7 @@ public class RuianMajiangJuPlayerResultVO {
 		huCount = 0;
 		caishenCount = 0;
 		dapaoCount = 0;
+		maxTaishu = 0;
 		maxHushu = 0;
 		totalScore = 0;
 	}
@@ -59,6 +62,46 @@ public class RuianMajiangJuPlayerResultVO {
 
 	public int getDapaoCount() {
 		return dapaoCount;
+	}
+
+	public int getMaxTaishu() {
+		return maxTaishu;
+	}
+
+	public void setMaxTaishu(int maxTaishu) {
+		this.maxTaishu = maxTaishu;
+	}
+
+	public void setPlayerId(String playerId) {
+		this.playerId = playerId;
+	}
+
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
+	}
+
+	public void setHeadimgurl(String headimgurl) {
+		this.headimgurl = headimgurl;
+	}
+
+	public void setHuCount(int huCount) {
+		this.huCount = huCount;
+	}
+
+	public void setCaishenCount(int caishenCount) {
+		this.caishenCount = caishenCount;
+	}
+
+	public void setDapaoCount(int dapaoCount) {
+		this.dapaoCount = dapaoCount;
+	}
+
+	public void setMaxHushu(int maxHushu) {
+		this.maxHushu = maxHushu;
+	}
+
+	public void setTotalScore(int totalScore) {
+		this.totalScore = totalScore;
 	}
 
 	public int getMaxHushu() {

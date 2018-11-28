@@ -34,6 +34,7 @@ public class RuianMajiangJuResultBuilder implements JuResultBuilder {
 					if (panPlayerResult.getScore().getPao() != null) {
 						juPlayerResult.increaseDapaoCount(panPlayerResult.getScore().getPao().getValue());
 					}
+					juPlayerResult.tryAndUpdateMaxTaishu(panPlayerResult.getScore().getHushu().getTaishu().getValue());
 					juPlayerResult.tryAndUpdateMaxHushu(panPlayerResult.getScore().getHushu().getValue());
 					juPlayerResult.setTotalScore(panPlayerResult.getTotalScore());
 				}
