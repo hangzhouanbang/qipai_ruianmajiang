@@ -182,6 +182,66 @@ public class RuianMajiangJiesuanCalculator {
 		return bestScore;
 	}
 
+	public static RuianMajiangPanPlayerScore calculateBestScoreForTuidaohuPlayer(boolean dapao, int dihu, int maxtai,
+			MajiangPlayer player, boolean baibanIsGuipai) {
+		ShoupaiCalculator shoupaiCalculator = player.getShoupaiCalculator();
+		List<MajiangPai> guipaiList = player.findGuipaiList();// TODO 也可以用统计器做
+
+		List<ShoupaiPaiXing> shoupaiPaiXingList = calculateBuhuShoupaiPaiXingList(guipaiList, baibanIsGuipai,
+				shoupaiCalculator);
+
+		// 要选出分数最高的牌型
+		// 先计算和手牌型无关的参数
+		ShoupaixingWuguanJiesuancanshu shoupaixingWuguanJiesuancanshu = new ShoupaixingWuguanJiesuancanshu(player);
+		RuianMajiangPanPlayerScore bestScore = null;
+		for (ShoupaiPaiXing shoupaiPaiXing : shoupaiPaiXingList) {
+			RuianMajiangPanPlayerScore score = calculateTuidaohuScoreForShoupaiPaiXing(false, false, false, false,
+					shoupaixingWuguanJiesuancanshu, shoupaiPaiXing, false, false, false, false, dihu, maxtai, dapao);
+			if (bestScore == null || bestScore.getValue() < score.getValue()) {
+				bestScore = score;
+			} else if (bestScore.getValue() == score.getValue()) {
+				if (bestScore.getHushu().getTaishu().getValue() < score.getHushu().getTaishu().getValue()) {
+					bestScore = score;
+				} else if (bestScore.getHushu().getTaishu().getValue() == score.getHushu().getTaishu().getValue()) {
+					if (bestScore.getHushu().getValue() < score.getHushu().getValue()) {
+						bestScore = score;
+					}
+				}
+			}
+		}
+		return bestScore;
+	}
+
+	private static RuianMajiangPanPlayerScore calculateTuidaohuScoreForShoupaiPaiXing(boolean couldSiFengQi,
+			boolean dianpao, boolean couldTianhu, boolean couldDihu,
+			ShoupaixingWuguanJiesuancanshu shoupaixingWuguanJiesuancanshu, ShoupaiPaiXing shoupaiPaiXing, boolean hu,
+			boolean gangkaiHu, boolean zimoHu, boolean qianggangHu, int dihu, int maxtai, boolean dapao) {
+		RuianMajiangPanPlayerScore score = new RuianMajiangPanPlayerScore();
+		RuianMajiangHushu hushu = new RuianMajiangHushu();
+		RuianMajiangTaishu taishu = new RuianMajiangTaishu();
+		if (shoupaixingWuguanJiesuancanshu.getBaibanShu() > 0 || shoupaixingWuguanJiesuancanshu.getFacaiShu() > 1
+				|| shoupaixingWuguanJiesuancanshu.getHongzhongShu() > 1
+				|| shoupaixingWuguanJiesuancanshu.getMenFengPaiShu() > 1
+				|| shoupaixingWuguanJiesuancanshu.isGangchuFacai() || shoupaixingWuguanJiesuancanshu.isPengchuFacai()
+				|| shoupaixingWuguanJiesuancanshu.isGangchuHongzhong()
+				|| shoupaixingWuguanJiesuancanshu.isPengchuHongzhong() || shoupaixingWuguanJiesuancanshu.isZuofengGang()
+				|| shoupaixingWuguanJiesuancanshu.isZuofengPeng()) {
+			hushu.setValue(500);
+		} else {
+			hushu.setValue(250);
+		}
+		taishu.setBaibanShu(shoupaixingWuguanJiesuancanshu.getBaibanShu());
+		taishu.setValue(3);
+		hushu.setTaishu(taishu);
+		score.setHushu(hushu);
+		if (dapao) {
+			RuianMajiangPao pao = calculatePao(shoupaixingWuguanJiesuancanshu, shoupaiPaiXing, hu);
+			score.setPao(pao);
+		}
+		score.calculate();
+		return score;
+	}
+
 	private static RuianMajiangPanPlayerScore calculateScoreForShoupaiPaiXing(boolean couldSiFengQi, boolean dianpao,
 			boolean couldTianhu, boolean couldDihu, ShoupaixingWuguanJiesuancanshu shoupaixingWuguanJiesuancanshu,
 			ShoupaiPaiXing shoupaiPaiXing, boolean hu, boolean gangkaiHu, boolean zimoHu, boolean qianggangHu, int dihu,

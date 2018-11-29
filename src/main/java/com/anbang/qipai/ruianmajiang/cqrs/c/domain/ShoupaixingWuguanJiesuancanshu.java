@@ -19,7 +19,10 @@ public class ShoupaixingWuguanJiesuancanshu {
 	private MajiangPai menFengPai;
 	private boolean zuofengPeng;
 	private boolean zuofengGang;
+	private int facaiShu;
+	private int menFengPaiShu;
 	private int baibanShu;
+	private int hongzhongShu;
 	private int caishenShu;
 	private boolean allXushupaiInSameCategory;
 	private boolean hasZipai;
@@ -48,6 +51,22 @@ public class ShoupaixingWuguanJiesuancanshu {
 		pengchuFacai = player.ifPengchu(MajiangPai.facai);
 		gangchuFacai = player.ifGangchu(MajiangPai.facai);
 		menFengPai = player.fengpaiForMenfeng();
+		for (MajiangPai majiangPai : player.getFangruShoupaiList()) {
+			if (majiangPai.equals(menFengPai)) {
+				menFengPaiShu++;
+			} else if (majiangPai.equals(MajiangPai.facai)) {
+				facaiShu++;
+			} else if (majiangPai.equals(MajiangPai.hongzhong)) {
+				hongzhongShu++;
+			}
+		}
+		if (player.getGangmoShoupai().equals(menFengPai)) {
+			menFengPaiShu++;
+		} else if (player.getGangmoShoupai().equals(MajiangPai.facai)) {
+			facaiShu++;
+		} else if (player.getGangmoShoupai().equals(MajiangPai.hongzhong)) {
+			hongzhongShu++;
+		}
 		zuofengPeng = player.ifPengchu(menFengPai);
 		zuofengGang = player.ifGangchu(menFengPai);
 		baibanShu = player.countPublicPai();
@@ -139,6 +158,10 @@ public class ShoupaixingWuguanJiesuancanshu {
 
 	}
 
+	public int getHongzhongShu() {
+		return hongzhongShu;
+	}
+
 	public boolean isPengchuHongzhong() {
 		return pengchuHongzhong;
 	}
@@ -153,6 +176,14 @@ public class ShoupaixingWuguanJiesuancanshu {
 
 	public boolean isGangchuFacai() {
 		return gangchuFacai;
+	}
+
+	public int getFacaiShu() {
+		return facaiShu;
+	}
+
+	public int getMenFengPaiShu() {
+		return menFengPaiShu;
 	}
 
 	public MajiangPai getMenFengPai() {

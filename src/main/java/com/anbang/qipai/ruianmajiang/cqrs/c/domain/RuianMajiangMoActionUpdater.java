@@ -88,7 +88,7 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 				int guipaiCount = player.countGuipai();
 				if (guipaiCount == 3) {
 					RuianMajiangPanPlayerScore score = RuianMajiangJiesuanCalculator
-							.calculateBestScoreForBuhuPlayer(dapao, dihu, maxtai, player, baibanIsGuipai);
+							.calculateBestScoreForTuidaohuPlayer(dapao, dihu, maxtai, player, baibanIsGuipai);
 					RuianMajiangHu sancaishenHu = new RuianMajiangHu(score);
 					sancaishenHu.setZimo(true);
 					player.addActionCandidate(new MajiangHuAction(player.getId(), sancaishenHu));
