@@ -36,11 +36,17 @@ public class RuianMajiangPengActionUpdater implements MajiangPlayerPengActionUpd
 		} else {
 			currentPan.clearAllPlayersActionCandidates();
 			juezhangStatisticsListener.updateForNextLun();// 清空动作缓存
+			// 刻子杠手牌
+			player.tryKezigangshoupaiAndGenerateCandidateAction();
 
-			List<MajiangPai> fangruShoupaiList = player.getFangruShoupaiList();
-			for (MajiangPai pai : fangruShoupaiList) {
-				if (MajiangPai.isZipai(pai) && juezhangStatisticsListener.ifJuezhang(pai)) {
-					player.addActionCandidate(new MajiangDaAction(player.getId(), pai));
+			// 需要有“过”
+			player.checkAndGenerateGuoCandidateAction();
+			if (player.getActionCandidates().isEmpty()) {
+				List<MajiangPai> fangruShoupaiList = player.getFangruShoupaiList();
+				for (MajiangPai pai : fangruShoupaiList) {
+					if (MajiangPai.isZipai(pai) && juezhangStatisticsListener.ifJuezhang(pai)) {
+						player.addActionCandidate(new MajiangDaAction(player.getId(), pai));
+					}
 				}
 			}
 			if (player.getActionCandidates().isEmpty()) {

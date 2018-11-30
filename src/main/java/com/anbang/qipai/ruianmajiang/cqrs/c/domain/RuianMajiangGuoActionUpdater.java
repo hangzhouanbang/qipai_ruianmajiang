@@ -101,6 +101,22 @@ public class RuianMajiangGuoActionUpdater implements MajiangPlayerGuoActionUpdat
 				MajiangPlayer gangPlayer = currentPan.findPlayerById(action.getActionPlayerId());
 				gangPlayer.addActionCandidate(new MajiangMoAction(gangPlayer.getId(), new LundaoMopai()));
 			}
+		} else if (action.getType().equals(MajiangPlayerActionType.peng)) {// 过的是我碰了之后的杠
+			if (currentPan.allPlayerHasNoActionCandidates() && !currentPan.anyPlayerHu()) {// 如果所有玩家啥也干不了
+				// 那要我打牌
+				List<MajiangPai> fangruShoupaiList = player.getFangruShoupaiList();
+				RuianMajiangChiPengGangActionStatisticsListener juezhangStatisticsListener = ju
+						.getActionStatisticsListenerManager()
+						.findListener(RuianMajiangChiPengGangActionStatisticsListener.class);
+				for (MajiangPai pai : fangruShoupaiList) {
+					if (MajiangPai.isZipai(pai) && juezhangStatisticsListener.ifJuezhang(pai)) {
+						player.addActionCandidate(new MajiangDaAction(player.getId(), pai));
+					}
+				}
+				if (player.getActionCandidates().isEmpty()) {
+					player.generateDaActions();
+				}
+			}
 		} else {
 		}
 	}

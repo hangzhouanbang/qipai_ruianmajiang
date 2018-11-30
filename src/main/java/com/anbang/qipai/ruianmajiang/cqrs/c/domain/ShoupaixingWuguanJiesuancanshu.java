@@ -60,11 +60,11 @@ public class ShoupaixingWuguanJiesuancanshu {
 				hongzhongShu++;
 			}
 		}
-		if (player.getGangmoShoupai().equals(menFengPai)) {
+		if (player.getGangmoShoupai() != null && player.getGangmoShoupai().equals(menFengPai)) {
 			menFengPaiShu++;
-		} else if (player.getGangmoShoupai().equals(MajiangPai.facai)) {
+		} else if (player.getGangmoShoupai() != null && player.getGangmoShoupai().equals(MajiangPai.facai)) {
 			facaiShu++;
-		} else if (player.getGangmoShoupai().equals(MajiangPai.hongzhong)) {
+		} else if (player.getGangmoShoupai() != null && player.getGangmoShoupai().equals(MajiangPai.hongzhong)) {
 			hongzhongShu++;
 		}
 		zuofengPeng = player.ifPengchu(menFengPai);
