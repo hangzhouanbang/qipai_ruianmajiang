@@ -19,8 +19,8 @@ import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.PanResultDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangGameQueryService;
 import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangPlayQueryService;
-import com.anbang.qipai.ruianmajiang.msg.msjobj.MajiangHistoricalPanResult;
 import com.anbang.qipai.ruianmajiang.msg.msjobj.MajiangHistoricalJuResult;
+import com.anbang.qipai.ruianmajiang.msg.msjobj.MajiangHistoricalPanResult;
 import com.anbang.qipai.ruianmajiang.msg.service.RuianMajiangGameMsgService;
 import com.anbang.qipai.ruianmajiang.msg.service.RuianMajiangResultMsgService;
 import com.anbang.qipai.ruianmajiang.web.vo.CommonVO;
@@ -191,12 +191,9 @@ public class MajiangController {
 		// 通知其他人
 		for (String otherPlayerId : majiangActionResult.getMajiangGame().allPlayerIds()) {
 			if (!otherPlayerId.equals(playerId)) {
-				QueryScope
-						.scopesForState(majiangActionResult.getMajiangGame().getState(),
-								majiangActionResult.getMajiangGame().findPlayerState(otherPlayerId))
-						.forEach((scope) -> {
-							wsNotifier.notifyToQuery(otherPlayerId, scope.name());
-						});
+				wsNotifier.notifyToQuery(otherPlayerId,
+						QueryScope.scopesForState(majiangActionResult.getMajiangGame().getState(),
+								majiangActionResult.getMajiangGame().findPlayerState(otherPlayerId)));
 			}
 		}
 
@@ -247,9 +244,7 @@ public class MajiangController {
 				List<QueryScope> scopes = QueryScope.scopesForState(readyToNextPanResult.getMajiangGame().getState(),
 						readyToNextPanResult.getMajiangGame().findPlayerState(otherPlayerId));
 				scopes.remove(QueryScope.panResult);
-				scopes.forEach((scope) -> {
-					wsNotifier.notifyToQuery(otherPlayerId, scope.name());
-				});
+				wsNotifier.notifyToQuery(otherPlayerId, scopes);
 			}
 		}
 		return vo;
