@@ -96,9 +96,11 @@ public class GamePlayWsController extends TextWebSocketHandler {
 			String gameId = majiangGameValueObject.getId();
 			if (majiangGameValueObject.getState().name().equals(FinishedByVote.name)) {
 				JuResultDbo juResultDbo = majiangPlayQueryService.findJuResultDbo(gameId);
-				MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
-				MajiangHistoricalJuResult juResult = new MajiangHistoricalJuResult(juResultDbo, majiangGameDbo);
-				ruianMajiangResultMsgService.recordJuResult(juResult);
+				if (juResultDbo != null) {
+					MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
+					MajiangHistoricalJuResult juResult = new MajiangHistoricalJuResult(juResultDbo, majiangGameDbo);
+					ruianMajiangResultMsgService.recordJuResult(juResult);
+				}
 				gameMsgService.gameFinished(gameId);
 			}
 
