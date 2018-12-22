@@ -18,9 +18,11 @@ public interface GameCmdService {
 
 	void bindPlayer(String playerId, String gameId);
 
-	MajiangGameValueObject finish(String playerId) throws Exception;
+	MajiangGameValueObject finish(String playerId, Long currentTime) throws Exception;
 
 	MajiangGameValueObject voteToFinish(String playerId, Boolean yes) throws Exception;
+
+	MajiangGameValueObject voteToFinishByTimeOver(String playerId, Long currentTime) throws Exception;
 
 	MajiangGameValueObject finishGameImmediately(String gameId) throws Exception;
 
