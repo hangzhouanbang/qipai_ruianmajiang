@@ -23,4 +23,9 @@ public class PlayerInfoService {
 	public void updateVip(String playerId, boolean vip) {
 		playerInfoDao.updateVip(playerId, vip);
 	}
+
+	public void updateMemberBaseInfo(PlayerInfo member) {
+		playerInfoDao.updateMemberBaseInfo(member.getId(), member.getNickname(), member.getHeadimgurl(),
+				member.getGender());
+	}
 }
