@@ -365,6 +365,20 @@ public class RuianMajiangJiesuanCalculator {
 					qiandangHu = true;
 				}
 			}
+		} else {
+			ShoupaiShunziZu huPaiShunziZu = shoupaiPaiXing.findShunziZuHasLastActionPai();
+			if (huPaiShunziZu != null) {
+				if (!huPaiShunziZu.getPai2().isLastActionPai()) {
+					if (huPaiShunziZu.getPai3().isLastActionPai()) {
+						biandangHu = true;
+					} else if (huPaiShunziZu.getPai1().isLastActionPai()) {
+						biandangHu = true;
+					} else {
+					}
+				} else {
+					qiandangHu = true;
+				}
+			}
 		}
 		taishu.setQianggangHu(qianggangHu);
 		taishu.setQingyiseHu(hu && shoupaixingWuguanJiesuancanshu.isQingyise());
@@ -416,7 +430,7 @@ public class RuianMajiangJiesuanCalculator {
 		hushu.setErbapengShu(erbapengShu);
 
 		hushu.setErbaminggangShu(shoupaixingWuguanJiesuancanshu.getErbaminggangShu());
-		hushu.setFacaiDuizi(shoupaiPaiXing.hasDuiziForPaiType(MajiangPai.facai));
+		hushu.setFacaiDuizi(shoupaiPaiXing.hasDuiziForPaiTypeNoCaishen(MajiangPai.facai));
 
 		hushu.setFengziangangShu(shoupaixingWuguanJiesuancanshu.getFengziangangCount());
 
