@@ -365,7 +365,7 @@ public class RuianMajiangJiesuanCalculator {
 					qiandangHu = true;
 				}
 			}
-		} else {
+		} else if (hu) {
 			ShoupaiShunziZu huPaiShunziZu = shoupaiPaiXing.findShunziZuHasLastActionPai();
 			if (huPaiShunziZu != null) {
 				if (!huPaiShunziZu.getPai2().isLastActionPai()) {
