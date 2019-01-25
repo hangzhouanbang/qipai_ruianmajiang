@@ -1,6 +1,7 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
 import java.util.List;
+import java.util.Map;
 
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.listener.SiFengQiMoDaActionListener;
 import com.dml.majiang.ju.Ju;
@@ -11,6 +12,7 @@ import com.dml.majiang.player.action.da.MajiangDaAction;
 import com.dml.majiang.player.action.da.MajiangPlayerDaActionUpdater;
 import com.dml.majiang.player.action.hu.MajiangHuAction;
 import com.dml.majiang.player.action.listener.comprehensive.DianpaoDihuOpportunityDetector;
+import com.dml.majiang.player.action.listener.comprehensive.GuoPengBuPengStatisticsListener;
 import com.dml.majiang.player.action.mo.LundaoMopai;
 import com.dml.majiang.player.action.mo.MajiangMoAction;
 import com.dml.majiang.player.shoupai.gouxing.GouXingPanHu;
@@ -30,6 +32,11 @@ public class RuianMajiangDaActionUpdater implements MajiangPlayerDaActionUpdater
 		daPlayer.clearActionCandidates();
 		boolean baibanIsGuipai = currentPan.getPublicGuipaiSet().contains(MajiangPai.baiban);
 
+		GuoPengBuPengStatisticsListener guoPengBuPengStatisticsListener = ju.getActionStatisticsListenerManager()
+				.findListener(GuoPengBuPengStatisticsListener.class);
+		Map<String, List<MajiangPai>> canNotPengPlayersPaiMap = guoPengBuPengStatisticsListener
+				.getCanNotPengPlayersPaiMap();
+
 		MajiangPlayer xiajiaPlayer = currentPan.findXiajia(daPlayer);
 		xiajiaPlayer.clearActionCandidates();
 		// 下家可以吃
@@ -42,7 +49,21 @@ public class RuianMajiangDaActionUpdater implements MajiangPlayerDaActionUpdater
 				// 其他的可以碰杠胡
 				List<MajiangPai> fangruShoupaiList1 = xiajiaPlayer.getFangruShoupaiList();
 				if (fangruShoupaiList1.size() != 2) {
-					xiajiaPlayer.tryPengAndGenerateCandidateAction(daAction.getActionPlayerId(), daAction.getPai());
+					boolean canPeng = true;// 可以碰
+					if (canNotPengPlayersPaiMap.containsKey(xiajiaPlayer.getId())) {
+						List<MajiangPai> canNotPengPaiList = canNotPengPlayersPaiMap.get(xiajiaPlayer.getId());
+						if (canNotPengPaiList != null && !canNotPengPaiList.isEmpty()) {
+							for (MajiangPai pai : canNotPengPaiList) {
+								if (pai.equals(daAction.getPai())) {
+									canPeng = false;
+									break;
+								}
+							}
+						}
+					}
+					if (canPeng) {
+						xiajiaPlayer.tryPengAndGenerateCandidateAction(daAction.getActionPlayerId(), daAction.getPai());
+					}
 				}
 				xiajiaPlayer.tryGangdachuAndGenerateCandidateAction(daAction.getActionPlayerId(), daAction.getPai());
 				// 点炮胡
@@ -56,7 +77,7 @@ public class RuianMajiangDaActionUpdater implements MajiangPlayerDaActionUpdater
 				xiajiaPlayer.getShoupaiCalculator().addPai(daAction.getPai());
 				final SiFengQiMoDaActionListener siFengQiMoDaActionListener = ju.getActionStatisticsListenerManager()
 						.findListener(SiFengQiMoDaActionListener.class);
-				siFengQiMoDaActionListener.put(xiajiaPlayer.getId(),daAction.getPai());
+				siFengQiMoDaActionListener.put(xiajiaPlayer.getId(), daAction.getPai());
 				final boolean couldSiFengQi = siFengQiMoDaActionListener.couldSiFengQi(xiajiaPlayer.getId());
 				RuianMajiangHu bestHu = RuianMajiangJiesuanCalculator.calculateBestDianpaoHu(couldSiFengQi,
 						couldDihu && !currentPan.getZhuangPlayerId().equals(xiajiaPlayer.getId()), dapao, dihu, maxtai,
@@ -68,9 +89,9 @@ public class RuianMajiangDaActionUpdater implements MajiangPlayerDaActionUpdater
 					bestHu.setDianpao(true);
 					bestHu.setDianpaoPlayerId(daPlayer.getId());
 					xiajiaPlayer.addActionCandidate(new MajiangHuAction(xiajiaPlayer.getId(), bestHu));
-				}else{
-				    siFengQiMoDaActionListener.remove(xiajiaPlayer.getId(),daAction.getPai());
-                }
+				} else {
+					siFengQiMoDaActionListener.remove(xiajiaPlayer.getId(), daAction.getPai());
+				}
 
 				xiajiaPlayer.checkAndGenerateGuoCandidateAction();
 			} else {

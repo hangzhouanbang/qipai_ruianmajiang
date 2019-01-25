@@ -380,6 +380,60 @@ public class GameController {
 		return vo;
 	}
 
+	/**
+	 * 最开始的取消准备,不适用下一盘的准备
+	 *
+	 * @param token
+	 * @return
+	 */
+	@RequestMapping(value = "/cancelready")
+	@ResponseBody
+	public CommonVO cancelReady(String token) {
+		CommonVO vo = new CommonVO();
+		Map data = new HashMap();
+		vo.setData(data);
+		String playerId = playerAuthService.getPlayerIdByToken(token);
+		if (playerId == null) {
+			vo.setSuccess(false);
+			vo.setMsg("invalid token");
+			return vo;
+		}
+
+		ReadyForGameResult readyForGameResult;
+		try {
+			readyForGameResult = gameCmdService.cancelReadyForGame(playerId, System.currentTimeMillis());
+		} catch (Exception e) {
+			vo.setSuccess(false);
+			vo.setMsg(e.getClass().getName());
+			return vo;
+		}
+
+		try {
+			majiangPlayQueryService.readyForGame(readyForGameResult);// TODO 一起点准备的时候可能有同步问题.要靠框架解决
+		} catch (Throwable e) {
+			vo.setSuccess(false);
+			vo.setMsg(e.getMessage());
+			return vo;
+		}
+		// 通知其他人
+		for (String otherPlayerId : readyForGameResult.getMajiangGame().allPlayerIds()) {
+			if (!otherPlayerId.equals(playerId)) {
+				wsNotifier.notifyToQuery(otherPlayerId,
+						QueryScope.scopesForState(readyForGameResult.getMajiangGame().getState(),
+								readyForGameResult.getMajiangGame().findPlayerState(otherPlayerId)));
+
+			}
+		}
+
+		List<QueryScope> queryScopes = new ArrayList<>();
+		queryScopes.add(QueryScope.gameInfo);
+		if (readyForGameResult.getMajiangGame().getState().name().equals(Playing.name)) {
+			queryScopes.add(QueryScope.panForMe);
+		}
+		data.put("queryScopes", queryScopes);
+		return vo;
+	}
+
 	@RequestMapping(value = "/finish")
 	@ResponseBody
 	public CommonVO finish(String token) {
