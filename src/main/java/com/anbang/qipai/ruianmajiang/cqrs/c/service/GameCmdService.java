@@ -8,7 +8,7 @@ public interface GameCmdService {
 	MajiangGameValueObject newMajiangGame(String gameId, String playerId, Integer difen, Integer taishu, Integer panshu,
 			Integer renshu, Boolean dapao);
 
-	MajiangGameValueObject newMajiangGameForXiuxianchang(String gameId, String playerId, Integer difen, Integer taishu,
+	MajiangGameValueObject newMajiangGameLeaveAndQuit(String gameId, String playerId, Integer difen, Integer taishu,
 			Integer panshu, Integer renshu, Boolean dapao);
 
 	MajiangGameValueObject leaveGame(String playerId) throws Exception;
