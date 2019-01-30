@@ -110,6 +110,7 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 				}
 			} else {
 				// 啥也不能干，那只能打出牌
+				MajiangDaAction latestDaAction = (MajiangDaAction) currentPan.findLatestDaActionFrame();
 				RuianMajiangChiPengGangActionStatisticsListener juezhangStatisticsListener = ju
 						.getActionStatisticsListenerManager()
 						.findListener(RuianMajiangChiPengGangActionStatisticsListener.class);
@@ -123,6 +124,18 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 				}
 				if (player.getActionCandidates().isEmpty()) {
 					player.generateDaActions();
+				} else {// 跟风
+					for (MajiangPai pai : fangruShoupaiList) {
+						if (latestDaAction != null && MajiangPai.isZipai(pai) && latestDaAction.getPai().equals(pai)
+								&& player.getShoupaiCalculator().count(pai) == 1 && !gangmoShoupai.equals(pai)) {
+							player.addActionCandidate(new MajiangDaAction(player.getId(), pai));
+						}
+					}
+					if (latestDaAction != null && MajiangPai.isZipai(gangmoShoupai)
+							&& latestDaAction.getPai().equals(gangmoShoupai)
+							&& player.getShoupaiCalculator().count(gangmoShoupai) == 0) {
+						player.addActionCandidate(new MajiangDaAction(player.getId(), gangmoShoupai));
+					}
 				}
 			}
 

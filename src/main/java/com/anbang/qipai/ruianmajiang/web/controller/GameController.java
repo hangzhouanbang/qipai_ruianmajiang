@@ -271,12 +271,14 @@ public class GameController {
 			if (!otherPlayerId.equals(playerId)) {
 				List<QueryScope> scopes = QueryScope.scopesForState(majiangGameValueObject.getState(),
 						majiangGameValueObject.findPlayerState(otherPlayerId));
-				scopes.remove(QueryScope.panResult);
+				if (!majiangGameValueObject.getState().name().equals(Finished.name)) {
+					scopes.remove(QueryScope.panResult);
+				}
 				if (majiangGameValueObject.getState().name().equals(VoteNotPassWhenPlaying.name)
 						|| majiangGameValueObject.getState().name().equals(VoteNotPassWhenWaitingNextPan.name)) {
 					scopes.remove(QueryScope.gameFinishVote);
-					wsNotifier.notifyToQuery(otherPlayerId, scopes);
 				}
+				wsNotifier.notifyToQuery(otherPlayerId, scopes);
 			}
 		}
 		return vo;

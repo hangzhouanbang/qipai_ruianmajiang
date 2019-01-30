@@ -49,6 +49,7 @@ public class RuianMajiangGuoActionUpdater implements MajiangPlayerGuoActionUpdat
 				xiajiaPlayer.addActionCandidate(new MajiangMoAction(xiajiaPlayer.getId(), new LundaoMopai()));
 			} else {
 				// 那要我打牌
+				MajiangDaAction latestDaAction = (MajiangDaAction) currentPan.findLatestDaActionFrame();
 				List<MajiangPai> fangruShoupaiList = player.getFangruShoupaiList();
 				MajiangPai gangmoShoupai = player.getGangmoShoupai();
 				RuianMajiangChiPengGangActionStatisticsListener juezhangStatisticsListener = ju
@@ -62,8 +63,21 @@ public class RuianMajiangGuoActionUpdater implements MajiangPlayerGuoActionUpdat
 				if (MajiangPai.isZipai(gangmoShoupai) && juezhangStatisticsListener.ifJuezhang(gangmoShoupai)) {
 					player.addActionCandidate(new MajiangDaAction(player.getId(), gangmoShoupai));
 				}
+
 				if (player.getActionCandidates().isEmpty()) {
 					player.generateDaActions();
+				} else {// 跟风
+					for (MajiangPai pai : fangruShoupaiList) {
+						if (latestDaAction != null && MajiangPai.isZipai(pai) && latestDaAction.getPai().equals(pai)
+								&& player.getShoupaiCalculator().count(pai) == 1 && !gangmoShoupai.equals(pai)) {
+							player.addActionCandidate(new MajiangDaAction(player.getId(), pai));
+						}
+					}
+					if (latestDaAction != null && MajiangPai.isZipai(gangmoShoupai)
+							&& latestDaAction.getPai().equals(gangmoShoupai)
+							&& player.getShoupaiCalculator().count(gangmoShoupai) == 0) {
+						player.addActionCandidate(new MajiangDaAction(player.getId(), gangmoShoupai));
+					}
 				}
 			}
 		} else if (action.getType().equals(MajiangPlayerActionType.da)) {// 过的是别人打出牌之后我可以吃碰杠胡
