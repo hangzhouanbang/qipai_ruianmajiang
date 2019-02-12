@@ -11,7 +11,7 @@ import com.dml.majiang.player.MajiangPlayer;
 import com.dml.majiang.player.action.da.MajiangDaAction;
 import com.dml.majiang.player.action.da.MajiangPlayerDaActionUpdater;
 import com.dml.majiang.player.action.hu.MajiangHuAction;
-import com.dml.majiang.player.action.listener.comprehensive.DianpaoDihuOpportunityDetector;
+import com.dml.majiang.player.action.listener.comprehensive.TianHuAndDihuOpportunityDetector;
 import com.dml.majiang.player.action.listener.comprehensive.GuoPengBuPengStatisticsListener;
 import com.dml.majiang.player.action.mo.LundaoMopai;
 import com.dml.majiang.player.action.mo.MajiangMoAction;
@@ -26,8 +26,8 @@ public class RuianMajiangDaActionUpdater implements MajiangPlayerDaActionUpdater
 		MajiangPlayer daPlayer = currentPan.findPlayerById(daAction.getActionPlayerId());
 		List<MajiangPai> daplayerFangruShoupaiList = daPlayer.getFangruShoupaiList();
 		// 是否是地胡
-		DianpaoDihuOpportunityDetector dianpaoDihuOpportunityDetector = ju.getActionStatisticsListenerManager()
-				.findListener(DianpaoDihuOpportunityDetector.class);
+		TianHuAndDihuOpportunityDetector dianpaoDihuOpportunityDetector = ju.getActionStatisticsListenerManager()
+				.findListener(TianHuAndDihuOpportunityDetector.class);
 		boolean couldDihu = dianpaoDihuOpportunityDetector.ifDihuOpportunity();
 		daPlayer.clearActionCandidates();
 		boolean baibanIsGuipai = currentPan.getPublicGuipaiSet().contains(MajiangPai.baiban);
