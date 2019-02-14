@@ -324,9 +324,11 @@ public class RuianMajiangJiesuanCalculator {
 		int shoupaiKeziCount = shoupaiPaiXing.countKezi();
 		int shoupaiGangziCount = shoupaiPaiXing.countGangzi();
 		ShoupaiDuiziZu huPaiDuiziZu = shoupaiPaiXing.findDuiziZuHasLastActionPai();
+		boolean shunziWithTwoDang = shoupaiPaiXing.hasShunziWithDangTimes(GuipaiDangPai.dangType, 2);// 两张财神不能算顺子
+		shoupaiPaiXing.getShunziList();
 		boolean allShunzi = (shoupaixingWuguanJiesuancanshu.getPengchupaiZuCount() == 0
 				&& shoupaixingWuguanJiesuancanshu.getGangchupaiZuCount() == 0 && shoupaiKeziCount == 0
-				&& shoupaiGangziCount == 0);
+				&& shoupaiGangziCount == 0 && (!shunziWithTwoDang));
 		boolean biandangHu = false;
 		boolean qiandangHu = false;
 		if (hu && allShunzi) {
