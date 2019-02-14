@@ -79,7 +79,7 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 					playerResult.setScore(huPlayerScore);
 				} else {
 					// 计算非胡玩家分数
-					if (dianpaoPlayerId.equals(player.getId()) && hu.isQianggang()) {// 如果是抢杠胡，删除最后的杠
+					if (dianpaoPlayerId != null && dianpaoPlayerId.equals(player.getId()) && hu.isQianggang()) {// 如果是抢杠胡，删除最后的杠
 						List<GangchuPaiZu> gangchupaiZuList = player.getGangchupaiZuList();
 						GangchuPaiZu gangChuPaiZu = gangchupaiZuList.remove(gangchupaiZuList.size() - 1);
 						PengchuPaiZu pengChuPaiZu = new PengchuPaiZu(new Kezi(gangChuPaiZu.getGangzi().getPaiType()),

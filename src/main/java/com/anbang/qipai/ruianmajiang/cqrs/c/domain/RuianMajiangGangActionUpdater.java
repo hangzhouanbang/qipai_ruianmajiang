@@ -84,6 +84,7 @@ public class RuianMajiangGangActionUpdater implements MajiangPlayerGangActionUpd
 									baibanIsGuipai);
 							if (bestHu != null) {
 								bestHu.setQianggang(true);
+								bestHu.setDianpaoPlayerId(gangAction.getActionPlayerId());
 								xiajia.addActionCandidate(new MajiangHuAction(xiajia.getId(), bestHu));
 								xiajia.checkAndGenerateGuoCandidateAction();
 								qiangganghu = true;

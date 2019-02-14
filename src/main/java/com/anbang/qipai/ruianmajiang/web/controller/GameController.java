@@ -498,6 +498,7 @@ public class GameController {
 				data.put("queryScope", QueryScope.gameFinishVote);
 			} else {
 				data.put("queryScope", null);
+				gameMsgService.gamePlayerLeave(majiangGameValueObject, playerId);
 			}
 		}
 
