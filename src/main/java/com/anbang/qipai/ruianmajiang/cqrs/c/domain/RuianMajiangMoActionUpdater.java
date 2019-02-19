@@ -36,7 +36,7 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 		currentPan.clearAllPlayersActionCandidates();
 		int playersCount = currentPan.countPlayers();
 		int avaliablePaiLeft = currentPan.countAvaliablePai();
-		if (avaliablePaiLeft - liupai == 0) {// 没牌了
+		if (avaliablePaiLeft - liupai < 0) {// 没牌了
 			// 当然啥也不干了
 		} else {
 			// 摸到公开牌了要补牌(继续摸牌)
