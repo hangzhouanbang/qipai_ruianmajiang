@@ -8,14 +8,11 @@ import java.util.Map;
 
 import com.dml.majiang.ju.Ju;
 import com.dml.majiang.pai.MajiangPai;
-import com.dml.majiang.pai.fenzu.Kezi;
 import com.dml.majiang.pan.Pan;
 import com.dml.majiang.pan.frame.PanValueObject;
 import com.dml.majiang.pan.result.CurrentPanResultBuilder;
 import com.dml.majiang.pan.result.PanResult;
 import com.dml.majiang.player.MajiangPlayer;
-import com.dml.majiang.player.chupaizu.GangchuPaiZu;
-import com.dml.majiang.player.chupaizu.PengchuPaiZu;
 
 public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 
@@ -79,13 +76,6 @@ public class RuianMajiangPanResultBuilder implements CurrentPanResultBuilder {
 					playerResult.setScore(huPlayerScore);
 				} else {
 					// 计算非胡玩家分数
-					if (dianpaoPlayerId != null && dianpaoPlayerId.equals(player.getId()) && hu.isQianggang()) {// 如果是抢杠胡，删除最后的杠
-						List<GangchuPaiZu> gangchupaiZuList = player.getGangchupaiZuList();
-						GangchuPaiZu gangChuPaiZu = gangchupaiZuList.remove(gangchupaiZuList.size() - 1);
-						PengchuPaiZu pengChuPaiZu = new PengchuPaiZu(new Kezi(gangChuPaiZu.getGangzi().getPaiType()),
-								null, player.getId());
-						player.getPengchupaiZuList().add(pengChuPaiZu);
-					}
 					playerResult.setScore(RuianMajiangJiesuanCalculator.calculateBestScoreForBuhuPlayer(dapao, dihu,
 							maxtai, player, baibanIsGuipai));
 				}
