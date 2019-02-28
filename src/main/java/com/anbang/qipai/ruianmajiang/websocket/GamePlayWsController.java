@@ -1,13 +1,16 @@
 package com.anbang.qipai.ruianmajiang.websocket;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.dml.mpgame.game.watch.Watcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -161,6 +164,16 @@ public class GamePlayWsController extends TextWebSocketHandler {
 		}
 		wsNotifier.bindPlayer(session.getId(), playerId);
 		gameCmdService.bindPlayer(playerId, gameId);
+
+		//查询观战信息
+		Map<String, Watcher> watcherMap = gameCmdService.getwatch(gameId);
+		if (!CollectionUtils.isEmpty(watcherMap) && watcherMap.containsKey(playerId)) {
+			List<String> playerIds = new ArrayList<>();
+			playerIds.add(playerId);
+			wsNotifier.notifyToWatchQuery(playerIds,"query");
+			return;
+		}
+
 		// 给用户安排query scope
 		MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
 		if (majiangGameDbo != null) {

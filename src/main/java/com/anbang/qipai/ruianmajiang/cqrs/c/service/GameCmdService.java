@@ -3,6 +3,8 @@ package com.anbang.qipai.ruianmajiang.cqrs.c.service;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangGameValueObject;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyForGameResult;
 
+import java.util.Map;
+
 public interface GameCmdService {
 
 	MajiangGameValueObject newMajiangGame(String gameId, String playerId, Integer difen, Integer taishu, Integer panshu,
@@ -34,5 +36,13 @@ public interface GameCmdService {
 	MajiangGameValueObject leaveGameByOffline(String playerId) throws Exception;
 
 	MajiangGameValueObject leaveGameByHangup(String playerId) throws Exception;
+
+	MajiangGameValueObject joinWatch (String playerId, String nickName, String headimgurl, String gameId) throws Exception;
+
+	MajiangGameValueObject leaveWatch (String playerId, String gameId) throws Exception;
+
+	Map getwatch (String gameId);
+
+	void recycleWatch(String gameId);
 
 }
