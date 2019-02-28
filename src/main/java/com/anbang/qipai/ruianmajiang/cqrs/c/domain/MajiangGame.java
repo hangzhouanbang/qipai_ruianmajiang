@@ -97,8 +97,8 @@ public class MajiangGame extends FixedPlayersMultipanAndVotetofinishGame {
 		return ju.getCurrentPan().findLatestActionFrame();
 	}
 
-	public MajiangActionResult action(String playerId, int actionId, long actionTime) throws Exception {
-		PanActionFrame panActionFrame = ju.action(playerId, actionId, actionTime);
+	public MajiangActionResult action(String playerId, int actionId, int actionNo, long actionTime) throws Exception {
+		PanActionFrame panActionFrame = ju.action(playerId, actionId, actionNo, actionTime);
 		MajiangActionResult result = new MajiangActionResult();
 		result.setPanActionFrame(panActionFrame);
 		if (state.name().equals(VoteNotPassWhenPlaying.name)) {
