@@ -52,16 +52,17 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 				}
 			}
 
-			// 有手牌或刻子可以杠这个摸来的牌
-			player.tryShoupaigangmoAndGenerateCandidateAction();
-			player.tryKezigangmoAndGenerateCandidateAction();
+			if ((avaliablePaiLeft - liupai) >= playersCount) {// 进入流局前最后4张
+				// 有手牌或刻子可以杠这个摸来的牌
+				player.tryShoupaigangmoAndGenerateCandidateAction();
+				player.tryKezigangmoAndGenerateCandidateAction();
 
-			// 杠四个手牌
-			player.tryGangsigeshoupaiAndGenerateCandidateAction();
+				// 杠四个手牌
+				player.tryGangsigeshoupaiAndGenerateCandidateAction();
 
-			// 刻子杠手牌
-			player.tryKezigangshoupaiAndGenerateCandidateAction();
-
+				// 刻子杠手牌
+				player.tryKezigangshoupaiAndGenerateCandidateAction();
+			}
 			// 胡
 			RuianMajiangPanResultBuilder ruianMajiangPanResultBuilder = (RuianMajiangPanResultBuilder) ju
 					.getCurrentPanResultBuilder();

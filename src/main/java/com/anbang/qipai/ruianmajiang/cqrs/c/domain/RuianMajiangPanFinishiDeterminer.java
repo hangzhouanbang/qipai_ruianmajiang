@@ -72,7 +72,7 @@ public class RuianMajiangPanFinishiDeterminer implements CurrentPanFinishiDeterm
 
 			int avaliablePaiLeft = currentPan.countAvaliablePai();
 
-			if (avaliablePaiLeft <= liupai) {
+			if (avaliablePaiLeft < liupai) {
 				return true;
 			} else {
 				return false;
