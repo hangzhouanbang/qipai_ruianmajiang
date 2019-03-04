@@ -8,6 +8,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
@@ -30,6 +32,8 @@ public class GamePlayWsNotifier {
 
 	private Gson gson = new Gson();
 
+	private Logger logger = LoggerFactory.getLogger(getClass());
+
 	public WebSocketSession removeSession(String id) {
 		WebSocketSession removedSession = idSessionMap.remove(id);
 		sessionIdActivetimeMap.remove(id);
@@ -51,6 +55,8 @@ public class GamePlayWsNotifier {
 	}
 
 	public void bindPlayer(String sessionId, String playerId) {
+		long bindTime = System.currentTimeMillis();
+		logger.info("bindPlayer,bindTime:" + bindTime + ",playerId:" + playerId + ",sessionId:" + sessionId);
 		String sessionAlreadyExistsId = playerIdSessionIdMap.get(playerId);
 		sessionIdPlayerIdMap.put(sessionId, playerId);
 		playerIdSessionIdMap.put(playerId, sessionId);
@@ -78,6 +84,8 @@ public class GamePlayWsNotifier {
 	public void notifyToQuery(String playerId, List<QueryScope> scopes) {
 		executorService.submit(() -> {
 			for (QueryScope scope : scopes) {
+				long notifyTime = System.currentTimeMillis();
+				logger.info("notifyToQuery,notifyTime:" + notifyTime + ",playerId:" + playerId + ",scope:" + scope);
 				CommonMO mo = new CommonMO();
 				mo.setMsg("query");
 				Map data = new HashMap();
@@ -145,8 +153,11 @@ public class GamePlayWsNotifier {
 
 	/**
 	 * 进入离开观战
-	 * @param key input(进入) leave(离开)
-	 * @param playerId 接收方id
+	 * 
+	 * @param key
+	 *            input(进入) leave(离开)
+	 * @param playerId
+	 *            接收方id
 	 */
 	public void notifyWatchInfo(String playerId, String key, String id, String watcher, String headimgurl) {
 		executorService.submit(() -> {
@@ -157,7 +168,7 @@ public class GamePlayWsNotifier {
 			data.put("id", id);
 			data.put("watcher", watcher);
 			data.put("headimgurl", headimgurl);
-			data.put("scope","watcher");
+			data.put("scope", "watcher");
 			mo.setData(data);
 			String payLoad = gson.toJson(mo);
 			String sessionId = playerIdSessionIdMap.get(playerId);
@@ -176,14 +187,14 @@ public class GamePlayWsNotifier {
 	/**
 	 * 通知观战者
 	 */
-	public void notifyToWatchQuery(List<String> playerIds,String flag) {
+	public void notifyToWatchQuery(List<String> playerIds, String flag) {
 		executorService.submit(() -> {
 			for (String playerId : playerIds) {
 				for (WatchQueryScope list : WatchQueryScope.getQueryList(flag)) {
 					CommonMO mo = new CommonMO();
 					mo.setMsg("watch query");
 					Map data = new HashMap();
-					data.put("scope",list.name());
+					data.put("scope", list.name());
 					mo.setData(data);
 					String payLoad = gson.toJson(mo);
 					String sessionId = playerIdSessionIdMap.get(playerId);
@@ -199,29 +210,29 @@ public class GamePlayWsNotifier {
 		});
 	}
 
-//	/**
-//	 * 观战结束(待废弃)
-//	 */
-//	public void notifyToWatchEnd(List<String> playerIds) {
-//		executorService.submit(() -> {
-//			for (String playerId : playerIds) {
-//				CommonMO mo = new CommonMO();
-//				mo.setMsg("watch end");
-//				Map data = new HashMap();
-//				data.put("scope","watch end");
-//				mo.setData(data);
-//				String payLoad = gson.toJson(mo);
-//				String sessionId = playerIdSessionIdMap.get(playerId);
-//				if (sessionId == null) {
-//					continue;
-//				}
-//				WebSocketSession session = idSessionMap.get(sessionId);
-//				if (session != null) {
-//					sendMessage(session, payLoad);
-//				}
-//			}
-//		});
-//	}
+	// /**
+	// * 观战结束(待废弃)
+	// */
+	// public void notifyToWatchEnd(List<String> playerIds) {
+	// executorService.submit(() -> {
+	// for (String playerId : playerIds) {
+	// CommonMO mo = new CommonMO();
+	// mo.setMsg("watch end");
+	// Map data = new HashMap();
+	// data.put("scope","watch end");
+	// mo.setData(data);
+	// String payLoad = gson.toJson(mo);
+	// String sessionId = playerIdSessionIdMap.get(playerId);
+	// if (sessionId == null) {
+	// continue;
+	// }
+	// WebSocketSession session = idSessionMap.get(sessionId);
+	// if (session != null) {
+	// sendMessage(session, payLoad);
+	// }
+	// }
+	// });
+	// }
 
 	private void sendMessage(WebSocketSession session, String message) {
 		synchronized (session) {

@@ -37,6 +37,16 @@ public class RuianMajiangGameMsgService {
 		}
 	}
 
+	public void newSessionForPlayer(String playerId, String token) {
+		CommonMO mo = new CommonMO();
+		mo.setMsg("new token");
+		Map data = new HashMap();
+		data.put("playerId", playerId);
+		data.put("token", token);
+		mo.setData(data);
+		ruianMajiangGameSource.ruianMajiangGame().send(MessageBuilder.withPayload(mo).build());
+	}
+
 	/**
 	 * 游戏非正常结束
 	 */
