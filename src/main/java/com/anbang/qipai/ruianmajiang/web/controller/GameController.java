@@ -121,7 +121,7 @@ public class GameController {
 		Map data = new HashMap();
 		data.put("gameId", newGameId);
 		data.put("token", token);
-		gameMsgService.newSessionForPlayer(playerId, token);
+		gameMsgService.newSessionForPlayer(playerId, token, newGameId);
 		vo.setData(data);
 		return vo;
 	}
@@ -141,7 +141,7 @@ public class GameController {
 		Map data = new HashMap();
 		data.put("gameId", newGameId);
 		data.put("token", token);
-		gameMsgService.newSessionForPlayer(playerId, token);
+		gameMsgService.newSessionForPlayer(playerId, token, newGameId);
 		vo.setData(data);
 		return vo;
 	}
@@ -174,7 +174,7 @@ public class GameController {
 		String token = playerAuthService.newSessionForPlayer(playerId);
 		Map data = new HashMap();
 		data.put("token", token);
-		gameMsgService.newSessionForPlayer(playerId, token);
+		gameMsgService.newSessionForPlayer(playerId, token, gameId);
 		vo.setData(data);
 		return vo;
 	}
@@ -221,7 +221,7 @@ public class GameController {
 		watchRecordMsgService.joinWatch(gameId, playerId);
 		Map data = new HashMap();
 		data.put("token", token);
-		gameMsgService.newSessionForPlayer(playerId, token);
+		gameMsgService.newSessionForPlayer(playerId, token, gameId);
 		return CommonVoUtil.success(data, "join watch success");
 	}
 
@@ -475,7 +475,7 @@ public class GameController {
 		}
 		String token = playerAuthService.newSessionForPlayer(playerId);
 		data.put("token", token);
-		gameMsgService.newSessionForPlayer(playerId, token);
+		gameMsgService.newSessionForPlayer(playerId, token, gameId);
 		return vo;
 	}
 
