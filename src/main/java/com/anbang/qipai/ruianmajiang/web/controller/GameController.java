@@ -7,6 +7,13 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.alibaba.fastjson.JSON;
+import com.anbang.qipai.ruianmajiang.msg.service.*;
+import com.anbang.qipai.ruianmajiang.utils.CommonVoUtil;
+import com.anbang.qipai.ruianmajiang.websocket.WatchQueryScope;
+import com.dml.mpgame.game.*;
+import com.dml.mpgame.game.watch.WatchRecord;
+import com.dml.mpgame.game.watch.Watcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -218,7 +225,16 @@ public class GameController {
 
 		// 返回查询token
 		String token = playerAuthService.newSessionForPlayer(playerId);
-		watchRecordMsgService.joinWatch(gameId, playerId);
+
+		Watcher watcher = new Watcher();
+		watcher.setId(playerId);
+		watcher.setHeadimgurl(headimgurl);
+		watcher.setNickName(nickName);
+		watcher.setState("join");
+		watcher.setJoinTime(System.currentTimeMillis());
+		WatchRecord watchRecord = majiangGameQueryService.saveWatchRecord(gameId,watcher);
+		watchRecordMsgService.joinWatch(watchRecord);
+
 		Map data = new HashMap();
 		data.put("token", token);
 		gameMsgService.newSessionForPlayer(playerId, token, gameId);
@@ -261,7 +277,14 @@ public class GameController {
 			}
 		}
 
-		watchRecordMsgService.leaveWatch(gameId, playerId);
+		Watcher watcher = new Watcher();
+		watcher.setId(playerId);
+		watcher.setHeadimgurl(headimgurl);
+		watcher.setNickName(nickName);
+		watcher.setState("leave");
+		WatchRecord watchRecord = majiangGameQueryService.saveWatchRecord(gameId,watcher);
+		watchRecordMsgService.leaveWatch(watchRecord);
+
 		return CommonVoUtil.success("leave success");
 	}
 

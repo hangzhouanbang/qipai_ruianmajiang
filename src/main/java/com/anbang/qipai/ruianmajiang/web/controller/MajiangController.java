@@ -146,7 +146,7 @@ public class MajiangController {
 	 */
 	@RequestMapping(value = "/action")
 	@ResponseBody
-	public CommonVO action(String token, int id, int actionNo) {
+	public CommonVO action(String token, int id, Integer actionNo) {
 		long startTime = System.currentTimeMillis();
 		CommonVO vo = new CommonVO();
 		Map data = new HashMap();
