@@ -36,7 +36,7 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 		currentPan.clearAllPlayersActionCandidates();
 		int playersCount = currentPan.countPlayers();
 		int avaliablePaiLeft = currentPan.countAvaliablePai();
-		if (avaliablePaiLeft - liupai < 0) {// 没牌了
+		if (avaliablePaiLeft - liupai <= 0) {// 没牌了
 			// 当然啥也不干了
 		} else {
 			// 摸到公开牌了要补牌(继续摸牌)
@@ -52,7 +52,7 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 				}
 			}
 
-			if ((avaliablePaiLeft - liupai) >= playersCount) {// 进入流局前最后4张
+			if ((avaliablePaiLeft - liupai) > playersCount) {// 进入流局前最后4张
 				// 有手牌或刻子可以杠这个摸来的牌
 				player.tryShoupaigangmoAndGenerateCandidateAction();
 				player.tryKezigangmoAndGenerateCandidateAction();
@@ -143,9 +143,6 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 					}
 				}
 			}
-
 		}
-
 	}
-
 }
