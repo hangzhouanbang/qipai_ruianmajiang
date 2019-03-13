@@ -36,6 +36,11 @@ public class PanValueObjectVO {
 	 */
 	private PaiCursor activePaiCursor;
 
+	/**
+	 * 流局警告
+	 */
+	private boolean liujuWarning;
+
 	public PanValueObjectVO(PanValueObject panValueObject) {
 		no = panValueObject.getNo();
 		zhuangPlayerId = panValueObject.getZhuangPlayerId();
@@ -46,34 +51,81 @@ public class PanValueObjectVO {
 		playerList = new ArrayList<>();
 		panValueObject.getPlayerList()
 				.forEach((playerValueObject) -> playerList.add(new MajiangPlayerValueObjectVO(playerValueObject)));
+		int liupai = 15;
+		int gangCount = 0;
+		for (MajiangPlayerValueObjectVO player : playerList) {
+			gangCount += player.getGangchupaiZuList().size();
+		}
+		if (gangCount > 0) {
+			liupai += (4 + (gangCount - 1) * 2);
+		}
+		if ((avaliablePaiList.getPaiCount() - liupai) < playerList.size()) {// 进入流局前最后4张
+			liujuWarning = true;
+		}
 	}
 
 	public int getNo() {
 		return no;
 	}
 
+	public void setNo(int no) {
+		this.no = no;
+	}
+
 	public List<MajiangPlayerValueObjectVO> getPlayerList() {
 		return playerList;
+	}
+
+	public void setPlayerList(List<MajiangPlayerValueObjectVO> playerList) {
+		this.playerList = playerList;
 	}
 
 	public String getZhuangPlayerId() {
 		return zhuangPlayerId;
 	}
 
+	public void setZhuangPlayerId(String zhuangPlayerId) {
+		this.zhuangPlayerId = zhuangPlayerId;
+	}
+
 	public PaiListValueObject getAvaliablePaiList() {
 		return avaliablePaiList;
+	}
+
+	public void setAvaliablePaiList(PaiListValueObject avaliablePaiList) {
+		this.avaliablePaiList = avaliablePaiList;
 	}
 
 	public List<MajiangPai> getPublicGuipaiList() {
 		return publicGuipaiList;
 	}
 
+	public void setPublicGuipaiList(List<MajiangPai> publicGuipaiList) {
+		this.publicGuipaiList = publicGuipaiList;
+	}
+
 	public String getPublicWaitingPlayerId() {
 		return publicWaitingPlayerId;
 	}
 
+	public void setPublicWaitingPlayerId(String publicWaitingPlayerId) {
+		this.publicWaitingPlayerId = publicWaitingPlayerId;
+	}
+
 	public PaiCursor getActivePaiCursor() {
 		return activePaiCursor;
+	}
+
+	public void setActivePaiCursor(PaiCursor activePaiCursor) {
+		this.activePaiCursor = activePaiCursor;
+	}
+
+	public boolean isLiujuWarning() {
+		return liujuWarning;
+	}
+
+	public void setLiujuWarning(boolean liujuWarning) {
+		this.liujuWarning = liujuWarning;
 	}
 
 }

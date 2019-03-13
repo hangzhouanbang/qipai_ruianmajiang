@@ -24,7 +24,7 @@ public class RuianMajiangGuoActionUpdater implements MajiangPlayerGuoActionUpdat
 	@Override
 	public void updateActions(MajiangGuoAction guoAction, Ju ju) {
 
-		int liupai = 14;
+		int liupai = 15;
 		RuianMajiangChiPengGangActionStatisticsListener gangCounter = ju.getActionStatisticsListenerManager()
 				.findListener(RuianMajiangChiPengGangActionStatisticsListener.class);
 		if (gangCounter.getCount() > 0) {
