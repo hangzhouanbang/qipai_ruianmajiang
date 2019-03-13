@@ -9,6 +9,10 @@ import org.springframework.stereotype.Component;
 @PropertySource(value = "classpath:application.yml", factory = YamlPropertySourceFactory.class)
 public class FilePathConfig {
 
+	// private String snapshotFileBasePath = "D://qipai/qipai_ruianmajiang_snap";
+	//
+	// private String jFileBasePath = "D://qipai/qipai_ruianmajiang";
+
 	private String snapshotFileBasePath;
 
 	private String jFileBasePath;
