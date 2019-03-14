@@ -42,7 +42,8 @@ public class RuianMajiangJiesuanCalculator {
 
 			// 要选出分数最高的牌型
 			// 先计算和手牌型无关的参数
-			ShoupaixingWuguanJiesuancanshu shoupaixingWuguanJiesuancanshu = new ShoupaixingWuguanJiesuancanshu(player);
+			ShoupaixingWuguanJiesuancanshu shoupaixingWuguanJiesuancanshu = new ShoupaixingWuguanJiesuancanshu(player,
+					null);
 			RuianMajiangPanPlayerScore bestScore = null;
 			ShoupaiPaiXing bestHuShoupaiPaiXing = null;
 			for (ShoupaiPaiXing shoupaiPaiXing : huPaiShoupaiPaiXingList) {
@@ -83,7 +84,8 @@ public class RuianMajiangJiesuanCalculator {
 
 			// 要选出分数最高的牌型
 			// 先计算和手牌型无关的参数
-			ShoupaixingWuguanJiesuancanshu shoupaixingWuguanJiesuancanshu = new ShoupaixingWuguanJiesuancanshu(player);
+			ShoupaixingWuguanJiesuancanshu shoupaixingWuguanJiesuancanshu = new ShoupaixingWuguanJiesuancanshu(player,
+					gangPai);
 			RuianMajiangPanPlayerScore bestScore = null;
 			ShoupaiPaiXing bestHuShoupaiPaiXing = null;
 			for (ShoupaiPaiXing shoupaiPaiXing : huPaiShoupaiPaiXingList) {
@@ -124,7 +126,8 @@ public class RuianMajiangJiesuanCalculator {
 
 			// 要选出分数最高的牌型
 			// 先计算和手牌型无关的参数
-			ShoupaixingWuguanJiesuancanshu shoupaixingWuguanJiesuancanshu = new ShoupaixingWuguanJiesuancanshu(player);
+			ShoupaixingWuguanJiesuancanshu shoupaixingWuguanJiesuancanshu = new ShoupaixingWuguanJiesuancanshu(player,
+					hupai);
 			RuianMajiangPanPlayerScore bestScore = null;
 			ShoupaiPaiXing bestHuShoupaiPaiXing = null;
 			for (ShoupaiPaiXing shoupaiPaiXing : huPaiShoupaiPaiXingList) {
@@ -162,7 +165,8 @@ public class RuianMajiangJiesuanCalculator {
 
 		// 要选出分数最高的牌型
 		// 先计算和手牌型无关的参数
-		ShoupaixingWuguanJiesuancanshu shoupaixingWuguanJiesuancanshu = new ShoupaixingWuguanJiesuancanshu(player);
+		ShoupaixingWuguanJiesuancanshu shoupaixingWuguanJiesuancanshu = new ShoupaixingWuguanJiesuancanshu(player,
+				null);
 		RuianMajiangPanPlayerScore bestScore = null;
 		for (ShoupaiPaiXing shoupaiPaiXing : shoupaiPaiXingList) {
 			RuianMajiangPanPlayerScore score = calculateScoreForShoupaiPaiXing(false, false, false, false,
@@ -192,7 +196,8 @@ public class RuianMajiangJiesuanCalculator {
 
 		// 要选出分数最高的牌型
 		// 先计算和手牌型无关的参数
-		ShoupaixingWuguanJiesuancanshu shoupaixingWuguanJiesuancanshu = new ShoupaixingWuguanJiesuancanshu(player);
+		ShoupaixingWuguanJiesuancanshu shoupaixingWuguanJiesuancanshu = new ShoupaixingWuguanJiesuancanshu(player,
+				null);
 		RuianMajiangPanPlayerScore bestScore = null;
 		for (ShoupaiPaiXing shoupaiPaiXing : shoupaiPaiXingList) {
 			RuianMajiangPanPlayerScore score = calculateTuidaohuScoreForShoupaiPaiXing(false, false, false, false,

@@ -59,7 +59,7 @@ public class PanValueObjectVO {
 		if (gangCount > 0) {
 			liupai += (4 + (gangCount - 1) * 2);
 		}
-		if ((avaliablePaiList.getPaiCount() - liupai) < playerList.size()) {// 进入流局前最后4张
+		if ((avaliablePaiList.getPaiCount() - liupai) < 2 * playerList.size()) {// 进入流局提示
 			liujuWarning = true;
 		}
 	}

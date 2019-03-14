@@ -45,7 +45,7 @@ public class ShoupaixingWuguanJiesuancanshu {
 	private MajiangPai[] erbapaiArray;
 	private MajiangPai[] fengzipaiArray;
 
-	public ShoupaixingWuguanJiesuancanshu(MajiangPlayer player) {
+	public ShoupaixingWuguanJiesuancanshu(MajiangPlayer player, MajiangPai huPai) {
 		pengchuHongzhong = player.ifPengchu(MajiangPai.hongzhong);
 		gangchuHongzhong = player.ifGangchu(MajiangPai.hongzhong);
 		pengchuFacai = player.ifPengchu(MajiangPai.facai);
@@ -71,7 +71,7 @@ public class ShoupaixingWuguanJiesuancanshu {
 		zuofengGang = player.ifGangchu(menFengPai);
 		baibanShu = player.countPublicPai();
 		caishenShu = player.countGuipai();
-		allXushupaiInSameCategory = player.allXushupaiInSameCategory();
+		allXushupaiInSameCategory = player.allXushupaiInSameCategory(huPai);
 		hasZipai = player.hasZipai();
 		qingyise = (allXushupaiInSameCategory && !hasZipai);
 		hunyise = (allXushupaiInSameCategory && hasZipai);

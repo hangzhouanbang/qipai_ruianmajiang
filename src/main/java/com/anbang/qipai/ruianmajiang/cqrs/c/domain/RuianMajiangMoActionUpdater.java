@@ -52,7 +52,7 @@ public class RuianMajiangMoActionUpdater implements MajiangPlayerMoActionUpdater
 				}
 			}
 
-			if ((avaliablePaiLeft - liupai) > playersCount) {// 进入流局前最后4张
+			if ((avaliablePaiLeft - liupai) > playersCount) {
 				// 有手牌或刻子可以杠这个摸来的牌
 				player.tryShoupaigangmoAndGenerateCandidateAction();
 				player.tryKezigangmoAndGenerateCandidateAction();
