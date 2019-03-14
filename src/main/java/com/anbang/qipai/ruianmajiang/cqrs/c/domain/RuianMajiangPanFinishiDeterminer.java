@@ -63,7 +63,7 @@ public class RuianMajiangPanFinishiDeterminer implements CurrentPanFinishiDeterm
 			}
 			return false;
 		} else {
-			int liupai = 15;
+			int liupai = 14;
 			RuianMajiangChiPengGangActionStatisticsListener gangCounter = ju.getActionStatisticsListenerManager()
 					.findListener(RuianMajiangChiPengGangActionStatisticsListener.class);
 			if (gangCounter.getCount() > 0) {
