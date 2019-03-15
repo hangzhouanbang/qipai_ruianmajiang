@@ -51,7 +51,7 @@ public class PanValueObjectVO {
 		playerList = new ArrayList<>();
 		panValueObject.getPlayerList()
 				.forEach((playerValueObject) -> playerList.add(new MajiangPlayerValueObjectVO(playerValueObject)));
-		int liupai = 15;
+		int liupai = 14;
 		int gangCount = 0;
 		for (MajiangPlayerValueObjectVO player : playerList) {
 			gangCount += player.getGangchupaiZuList().size();
