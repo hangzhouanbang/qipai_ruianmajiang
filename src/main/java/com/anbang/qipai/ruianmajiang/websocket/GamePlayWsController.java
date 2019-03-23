@@ -173,12 +173,6 @@ public class GamePlayWsController extends TextWebSocketHandler {
 			wsNotifier.notifyToWatchQuery(playerIds, "bindPlayer");
 			return;
 		}
-		if (majiangGameQueryService.findByPlayerId(gameId, playerId)) {
-			List<String> playerIds = new ArrayList<>();
-			playerIds.add(playerId);
-			wsNotifier.notifyToWatchQuery(playerIds, WatchQueryScope.watchEnd.name());
-			return;
-		}
 
 		// 给用户安排query scope
 		MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
