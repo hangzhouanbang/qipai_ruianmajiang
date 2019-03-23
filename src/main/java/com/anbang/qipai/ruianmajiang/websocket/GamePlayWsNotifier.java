@@ -2,10 +2,8 @@ package com.anbang.qipai.ruianmajiang.websocket;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -28,7 +26,7 @@ public class GamePlayWsNotifier {
 
 	private Map<String, String> sessionIdPlayerIdMap = new ConcurrentHashMap<>();
 
-	private Map<String, Set<String>> playerIdSessionIdsMap = new ConcurrentHashMap<>();
+	private Map<String, String> playerIdSessionIdMap = new ConcurrentHashMap<>();
 
 	private ExecutorService executorService = Executors.newCachedThreadPool();
 
@@ -42,12 +40,9 @@ public class GamePlayWsNotifier {
 		if (removedSession != null) {
 			String removedPlayerId = sessionIdPlayerIdMap.remove(id);
 			if (removedPlayerId != null) {
-				Set<String> currentSessionIdSetForPlayer = playerIdSessionIdsMap.get(removedPlayerId);
-				if (currentSessionIdSetForPlayer != null) {
-					currentSessionIdSetForPlayer.remove(id);
-					if (currentSessionIdSetForPlayer.isEmpty()) {
-						playerIdSessionIdsMap.remove(removedPlayerId);
-					}
+				String currentSessionIdForPlayer = playerIdSessionIdMap.get(removedPlayerId);
+				if (currentSessionIdForPlayer.equals(id)) {
+					playerIdSessionIdMap.remove(removedPlayerId);
 				}
 			}
 		}
@@ -62,14 +57,20 @@ public class GamePlayWsNotifier {
 	public void bindPlayer(String sessionId, String playerId) {
 		long bindTime = System.currentTimeMillis();
 		logger.info("bindPlayer,bindTime:" + bindTime + ",playerId:" + playerId + ",sessionId:" + sessionId);
-		Set<String> sessionAlreadyExistsIdSet = playerIdSessionIdsMap.get(playerId);
+		String sessionAlreadyExistsId = playerIdSessionIdMap.get(playerId);
 		sessionIdPlayerIdMap.put(sessionId, playerId);
-		if (sessionAlreadyExistsIdSet == null) {
-			sessionAlreadyExistsIdSet = new HashSet<>();
-		}
-		sessionAlreadyExistsIdSet.add(sessionId);
-		playerIdSessionIdsMap.put(playerId, sessionAlreadyExistsIdSet);
+		playerIdSessionIdMap.put(playerId, sessionId);
 		updateSession(sessionId);
+		if (sessionAlreadyExistsId != null) {
+			WebSocketSession sessionAlreadyExists = idSessionMap.get(sessionAlreadyExistsId);
+			if (sessionAlreadyExists != null) {
+				try {
+					sessionAlreadyExists.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	public void updateSession(String id) {
@@ -85,39 +86,28 @@ public class GamePlayWsNotifier {
 			for (QueryScope scope : scopes) {
 				long notifyTime = System.currentTimeMillis();
 				logger.info("notifyToQuery,notifyTime:" + notifyTime + ",playerId:" + playerId + ",scope:" + scope);
-				Set<String> sessionIdSet = playerIdSessionIdsMap.get(playerId);
-				if (sessionIdSet == null) {
-					return;
-				}
 				CommonMO mo = new CommonMO();
 				mo.setMsg("query");
 				Map data = new HashMap();
 				data.put("scope", scope.name());
-				if (sessionIdSet.size() > 1) {
-					data.put("tuoguan", true);
-				} else {
-					data.put("tuoguan", false);
-				}
 				mo.setData(data);
 				String payLoad = gson.toJson(mo);
-				sessionIdSet.forEach((sessionId) -> {
-					WebSocketSession session = idSessionMap.get(sessionId);
-					if (session != null) {
-						sendMessage(session, payLoad);
-					} else {
+				String sessionId = playerIdSessionIdMap.get(playerId);
+				if (sessionId == null) {
+					return;
+				}
+				WebSocketSession session = idSessionMap.get(sessionId);
+				if (session != null) {
+					sendMessage(session, payLoad);
+				} else {
 
-					}
-				});
+				}
 			}
 		});
 	}
 
 	public void notifyToListenWisecrack(String playerId, String ordinal, String speakerId) {
 		executorService.submit(() -> {
-			Set<String> sessionIdSet = playerIdSessionIdsMap.get(playerId);
-			if (sessionIdSet == null) {
-				return;
-			}
 			CommonMO mo = new CommonMO();
 			mo.setMsg("wisecrack");
 			Map data = new HashMap();
@@ -125,23 +115,21 @@ public class GamePlayWsNotifier {
 			data.put("speakerId", speakerId);
 			mo.setData(data);
 			String payLoad = gson.toJson(mo);
-			sessionIdSet.forEach((sessionId) -> {
-				WebSocketSession session = idSessionMap.get(sessionId);
-				if (session != null) {
-					sendMessage(session, payLoad);
-				} else {
+			String sessionId = playerIdSessionIdMap.get(playerId);
+			if (sessionId == null) {
+				return;
+			}
+			WebSocketSession session = idSessionMap.get(sessionId);
+			if (session != null) {
+				sendMessage(session, payLoad);
+			} else {
 
-				}
-			});
+			}
 		});
 	}
 
 	public void notifyToListenSpeak(String playerId, String wordId, String speakerId, boolean isPlayer) {
 		executorService.submit(() -> {
-			Set<String> sessionIdSet = playerIdSessionIdsMap.get(playerId);
-			if (sessionIdSet == null) {
-				return;
-			}
 			CommonMO mo = new CommonMO();
 			mo.setMsg("speaking");
 			Map data = new HashMap();
@@ -150,14 +138,16 @@ public class GamePlayWsNotifier {
 			data.put("isPlayer", isPlayer);
 			mo.setData(data);
 			String payLoad = gson.toJson(mo);
-			sessionIdSet.forEach((sessionId) -> {
-				WebSocketSession session = idSessionMap.get(sessionId);
-				if (session != null) {
-					sendMessage(session, payLoad);
-				} else {
+			String sessionId = playerIdSessionIdMap.get(playerId);
+			if (sessionId == null) {
+				return;
+			}
+			WebSocketSession session = idSessionMap.get(sessionId);
+			if (session != null) {
+				sendMessage(session, payLoad);
+			} else {
 
-				}
-			});
+			}
 		});
 	}
 
@@ -171,10 +161,6 @@ public class GamePlayWsNotifier {
 	 */
 	public void notifyWatchInfo(String playerId, String key, String id, String watcher, String headimgurl) {
 		executorService.submit(() -> {
-			Set<String> sessionIdSet = playerIdSessionIdsMap.get(playerId);
-			if (sessionIdSet == null) {
-				return;
-			}
 			CommonMO mo = new CommonMO();
 			mo.setMsg("watcher");
 			Map data = new HashMap();
@@ -185,14 +171,16 @@ public class GamePlayWsNotifier {
 			data.put("scope", "watcher");
 			mo.setData(data);
 			String payLoad = gson.toJson(mo);
-			sessionIdSet.forEach((sessionId) -> {
-				WebSocketSession session = idSessionMap.get(sessionId);
-				if (session != null) {
-					sendMessage(session, payLoad);
-				} else {
+			String sessionId = playerIdSessionIdMap.get(playerId);
+			if (sessionId == null) {
+				return;
+			}
+			WebSocketSession session = idSessionMap.get(sessionId);
+			if (session != null) {
+				sendMessage(session, payLoad);
+			} else {
 
-				}
-			});
+			}
 		});
 	}
 
@@ -202,10 +190,6 @@ public class GamePlayWsNotifier {
 	public void notifyToWatchQuery(List<String> playerIds, String flag) {
 		executorService.submit(() -> {
 			for (String playerId : playerIds) {
-				Set<String> sessionIdSet = playerIdSessionIdsMap.get(playerId);
-				if (sessionIdSet == null) {
-					return;
-				}
 				for (WatchQueryScope list : WatchQueryScope.getQueryList(flag)) {
 					CommonMO mo = new CommonMO();
 					mo.setMsg("watch query");
@@ -213,14 +197,14 @@ public class GamePlayWsNotifier {
 					data.put("scope", list.name());
 					mo.setData(data);
 					String payLoad = gson.toJson(mo);
-					sessionIdSet.forEach((sessionId) -> {
-						WebSocketSession session = idSessionMap.get(sessionId);
-						if (session != null) {
-							sendMessage(session, payLoad);
-						} else {
-
-						}
-					});
+					String sessionId = playerIdSessionIdMap.get(playerId);
+					if (sessionId == null) {
+						continue;
+					}
+					WebSocketSession session = idSessionMap.get(sessionId);
+					if (session != null) {
+						sendMessage(session, payLoad);
+					}
 				}
 			}
 		});
@@ -253,23 +237,21 @@ public class GamePlayWsNotifier {
 	}
 
 	public void closeSessionForPlayer(String playerId) {
-		Set<String> sessionIdSet = playerIdSessionIdsMap.get(playerId);
-		if (sessionIdSet != null) {
-			sessionIdSet.forEach((sessionId) -> {
-				WebSocketSession session = idSessionMap.get(sessionId);
-				if (session != null) {
-					try {
-						session.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+		String sessionId = playerIdSessionIdMap.get(playerId);
+		if (sessionId != null) {
+			WebSocketSession session = idSessionMap.get(sessionId);
+			if (session != null) {
+				try {
+					session.close();
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
-			});
+			}
 		}
 	}
 
 	public boolean hasSessionForPlayer(String playerId) {
-		return playerIdSessionIdsMap.containsKey(playerId);
+		return playerIdSessionIdMap.containsKey(playerId);
 	}
 
 }
