@@ -169,6 +169,8 @@ public class MajiangController {
 		try {
 			majiangActionResult = majiangPlayCmdService.action(playerId, id, actionNo, System.currentTimeMillis());
 		} catch (Exception e) {
+			// data.put("actionNo",
+			// majiangPlayQueryService.findCurrentPanLastestActionNo(gameId));
 			vo.setSuccess(false);
 			vo.setMsg(e.getClass().getName());
 			long endTime = System.currentTimeMillis();
