@@ -163,7 +163,12 @@ public class GamePlayWsController extends TextWebSocketHandler {
 			return;
 		}
 		wsNotifier.bindPlayer(session.getId(), playerId);
-		gameCmdService.bindPlayer(playerId, gameId);
+		try {
+			gameCmdService.bindPlayer(playerId, gameId);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		// 查询观战信息
 		Map<String, Watcher> watcherMap = gameCmdService.getwatch(gameId);

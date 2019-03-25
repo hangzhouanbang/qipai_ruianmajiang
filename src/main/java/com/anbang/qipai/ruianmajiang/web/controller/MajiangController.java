@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangActionResult;
+import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangGameValueObject;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyToNextPanResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.GameCmdService;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.MajiangPlayCmdService;
@@ -26,8 +27,13 @@ import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangGameQueryService;
 import com.anbang.qipai.ruianmajiang.cqrs.q.service.MajiangPlayQueryService;
 import com.anbang.qipai.ruianmajiang.msg.msjobj.MajiangHistoricalJuResult;
 import com.anbang.qipai.ruianmajiang.msg.msjobj.MajiangHistoricalPanResult;
+import com.anbang.qipai.ruianmajiang.msg.service.MemberGoldsMsgService;
 import com.anbang.qipai.ruianmajiang.msg.service.RuianMajiangGameMsgService;
 import com.anbang.qipai.ruianmajiang.msg.service.RuianMajiangResultMsgService;
+import com.anbang.qipai.ruianmajiang.plan.bean.MemberGoldBalance;
+import com.anbang.qipai.ruianmajiang.plan.bean.PlayerInfo;
+import com.anbang.qipai.ruianmajiang.plan.service.MemberGoldBalanceService;
+import com.anbang.qipai.ruianmajiang.plan.service.PlayerInfoService;
 import com.anbang.qipai.ruianmajiang.web.vo.CommonVO;
 import com.anbang.qipai.ruianmajiang.web.vo.JuResultVO;
 import com.anbang.qipai.ruianmajiang.web.vo.PanActionFrameVO;
@@ -58,6 +64,15 @@ public class MajiangController {
 
 	@Autowired
 	private PlayerAuthService playerAuthService;
+
+	@Autowired
+	private PlayerInfoService playerInfoService;
+
+	@Autowired
+	private MemberGoldBalanceService memberGoldBalanceService;
+
+	@Autowired
+	private MemberGoldsMsgService memberGoldsMsgService;
 
 	@Autowired
 	private GamePlayWsNotifier wsNotifier;
@@ -137,6 +152,50 @@ public class MajiangController {
 		return vo;
 	}
 
+	@RequestMapping(value = "/xipai")
+	@ResponseBody
+	public CommonVO xipai(String token) {
+		CommonVO vo = new CommonVO();
+		Map data = new HashMap();
+		List<String> queryScopes = new ArrayList<>();
+		data.put("queryScopes", queryScopes);
+		vo.setData(data);
+		String playerId = playerAuthService.getPlayerIdByToken(token);
+		if (playerId == null) {
+			vo.setSuccess(false);
+			vo.setMsg("invalid token");
+			return vo;
+		}
+		PlayerInfo playerInfo = playerInfoService.findPlayerInfoById(playerId);
+		if (!playerInfo.isVip()) {
+			MemberGoldBalance account = memberGoldBalanceService.findByMemberId(playerId);
+			if (account.getBalanceAfter() < 20) {
+				vo.setSuccess(false);
+				vo.setMsg("InsufficientBalanceException");
+				return vo;
+			}
+			memberGoldsMsgService.withdraw(playerId, 20, "xipai");
+		}
+		MajiangGameValueObject majiangGameValueObject = null;
+		try {
+			majiangGameValueObject = majiangPlayCmdService.xipai(playerId);
+		} catch (Exception e) {
+			vo.setSuccess(false);
+			vo.setMsg(e.getClass().getName());
+			return vo;
+		}
+		majiangPlayQueryService.xipai(majiangGameValueObject);
+		queryScopes.add(QueryScope.gameInfo.name());
+		// 通知其他人
+		for (String otherPlayerId : majiangGameValueObject.allPlayerIds()) {
+			if (!otherPlayerId.equals(playerId)) {
+				wsNotifier.notifyToQuery(otherPlayerId, QueryScope.scopesForState(majiangGameValueObject.getState(),
+						majiangGameValueObject.findPlayerState(otherPlayerId)));
+			}
+		}
+		return vo;
+	}
+
 	/**
 	 * 麻将行牌
 	 * 
@@ -146,7 +205,7 @@ public class MajiangController {
 	 */
 	@RequestMapping(value = "/action")
 	@ResponseBody
-	public CommonVO action(String token, int id, Integer actionNo) {
+	public CommonVO action(String token, int id, Integer actionNo, String gameId) {
 		long startTime = System.currentTimeMillis();
 		CommonVO vo = new CommonVO();
 		Map data = new HashMap();
@@ -169,8 +228,7 @@ public class MajiangController {
 		try {
 			majiangActionResult = majiangPlayCmdService.action(playerId, id, actionNo, System.currentTimeMillis());
 		} catch (Exception e) {
-			// data.put("actionNo",
-			// majiangPlayQueryService.findCurrentPanLastestActionNo(gameId));
+			data.put("actionNo", majiangPlayQueryService.findCurrentPanLastestActionNo(gameId));
 			vo.setSuccess(false);
 			vo.setMsg(e.getClass().getName());
 			long endTime = System.currentTimeMillis();
@@ -195,7 +253,7 @@ public class MajiangController {
 		if (majiangActionResult.getPanResult() == null) {// 盘没结束
 			queryScopes.add(QueryScope.panForMe.name());
 		} else {// 盘结束了
-			String gameId = majiangActionResult.getMajiangGame().getId();
+			gameId = majiangActionResult.getMajiangGame().getId();
 			MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
 			if (majiangActionResult.getJuResult() != null) {// 局也结束了
 				JuResultDbo juResultDbo = majiangPlayQueryService.findJuResultDbo(gameId);

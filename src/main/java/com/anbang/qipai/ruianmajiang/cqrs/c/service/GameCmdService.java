@@ -1,9 +1,9 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.service;
 
+import java.util.Map;
+
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangGameValueObject;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyForGameResult;
-
-import java.util.Map;
 
 public interface GameCmdService {
 
@@ -23,7 +23,7 @@ public interface GameCmdService {
 
 	MajiangGameValueObject backToGame(String playerId, String gameId) throws Exception;
 
-	void bindPlayer(String playerId, String gameId);
+	void bindPlayer(String playerId, String gameId) throws Exception;
 
 	MajiangGameValueObject finish(String playerId, Long currentTime) throws Exception;
 
@@ -37,11 +37,12 @@ public interface GameCmdService {
 
 	MajiangGameValueObject leaveGameByHangup(String playerId) throws Exception;
 
-	MajiangGameValueObject joinWatch (String playerId, String nickName, String headimgurl, String gameId) throws Exception;
+	MajiangGameValueObject joinWatch(String playerId, String nickName, String headimgurl, String gameId)
+			throws Exception;
 
-	MajiangGameValueObject leaveWatch (String playerId, String gameId) throws Exception;
+	MajiangGameValueObject leaveWatch(String playerId, String gameId) throws Exception;
 
-	Map getwatch (String gameId);
+	Map getwatch(String gameId);
 
 	void recycleWatch(String gameId);
 

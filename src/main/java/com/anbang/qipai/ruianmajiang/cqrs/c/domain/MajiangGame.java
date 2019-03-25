@@ -1,7 +1,9 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.listener.RuianMajiangChiPengGangActionStatisticsListener;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.listener.SiFengQiMoDaActionListener;
@@ -44,6 +46,12 @@ public class MajiangGame extends FixedPlayersMultipanAndVotetofinishGame {
 	private boolean dapao;
 	private Ju ju;
 	private Map<String, Integer> playeTotalScoreMap = new HashMap<>();
+	private Set<String> xipaiPlayerIds = new HashSet<>();
+
+	public MajiangGameValueObject xipai(String playerId) {
+		xipaiPlayerIds.add(playerId);
+		return new MajiangGameValueObject(this);
+	}
 
 	public PanActionFrame createJuAndStartFirstPan(long currentTime) throws Exception {
 		ju = new Ju();
@@ -89,7 +97,6 @@ public class MajiangGame extends FixedPlayersMultipanAndVotetofinishGame {
 		ju.addActionStatisticsListener(new TianHuAndDihuOpportunityDetector());
 		ju.addActionStatisticsListener(new SiFengQiMoDaActionListener());
 		ju.addActionStatisticsListener(new GuoPengBuPengStatisticsListener());
-
 		// 开始第一盘
 		ju.startFirstPan(allPlayerIds());
 
@@ -107,6 +114,7 @@ public class MajiangGame extends FixedPlayersMultipanAndVotetofinishGame {
 		checkAndFinishPan();
 
 		if (state.name().equals(WaitingNextPan.name) || state.name().equals(Finished.name)) {// 盘结束了
+			xipaiPlayerIds.clear();
 			RuianMajiangPanResult panResult = (RuianMajiangPanResult) ju.findLatestFinishedPanResult();
 			for (RuianMajiangPanPlayerResult ruianMajiangPanPlayerResult : panResult.getPanPlayerResultList()) {
 				playeTotalScoreMap.put(ruianMajiangPanPlayerResult.getPlayerId(),
@@ -156,6 +164,7 @@ public class MajiangGame extends FixedPlayersMultipanAndVotetofinishGame {
 
 	@Override
 	public void start(long currentTime) throws Exception {
+		xipaiPlayerIds.clear();
 		state = new Playing();
 		updateAllPlayersState(new PlayerPlaying());
 	}
@@ -231,6 +240,14 @@ public class MajiangGame extends FixedPlayersMultipanAndVotetofinishGame {
 
 	public void setPlayeTotalScoreMap(Map<String, Integer> playeTotalScoreMap) {
 		this.playeTotalScoreMap = playeTotalScoreMap;
+	}
+
+	public Set<String> getXipaiPlayerIds() {
+		return xipaiPlayerIds;
+	}
+
+	public void setXipaiPlayerIds(Set<String> xipaiPlayerIds) {
+		this.xipaiPlayerIds = xipaiPlayerIds;
 	}
 
 }

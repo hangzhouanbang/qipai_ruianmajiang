@@ -1,6 +1,7 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.service.impl;
 
-import com.dml.mpgame.game.watch.WatcherMap;
+import java.util.Map;
+
 import org.springframework.stereotype.Component;
 
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangGame;
@@ -25,9 +26,8 @@ import com.dml.mpgame.game.leave.PlayerGameLeaveStrategy;
 import com.dml.mpgame.game.leave.PlayerLeaveCancelGameGameLeaveStrategy;
 import com.dml.mpgame.game.player.PlayerFinished;
 import com.dml.mpgame.game.ready.FixedNumberOfPlayersGameReadyStrategy;
+import com.dml.mpgame.game.watch.WatcherMap;
 import com.dml.mpgame.server.GameServer;
-
-import java.util.Map;
 
 @Component
 public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService {
@@ -161,7 +161,7 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
 	}
 
 	@Override
-	public void bindPlayer(String playerId, String gameId) {
+	public void bindPlayer(String playerId, String gameId) throws Exception {
 		GameServer gameServer = singletonEntityRepository.getEntity(GameServer.class);
 		gameServer.bindPlayer(playerId, gameId);
 	}
@@ -240,7 +240,8 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
 	}
 
 	@Override
-	public MajiangGameValueObject joinWatch(String playerId, String nickName, String headimgurl, String gameId) throws Exception {
+	public MajiangGameValueObject joinWatch(String playerId, String nickName, String headimgurl, String gameId)
+			throws Exception {
 		WatcherMap watcherMap = singletonEntityRepository.getEntity(WatcherMap.class);
 		watcherMap.join(playerId, nickName, headimgurl, gameId);
 		GameServer gameServer = singletonEntityRepository.getEntity(GameServer.class);

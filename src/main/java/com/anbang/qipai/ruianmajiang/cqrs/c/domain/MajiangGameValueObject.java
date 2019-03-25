@@ -1,7 +1,9 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.dml.majiang.ju.result.JuResult;
 import com.dml.mpgame.game.extend.fpmpv.FixedPlayersMultipanAndVotetofinishGameValueObject;
@@ -13,6 +15,7 @@ public class MajiangGameValueObject extends FixedPlayersMultipanAndVotetofinishG
 	private int renshu;
 	private boolean dapao;
 	private Map<String, Integer> playeTotalScoreMap = new HashMap<>();
+	private Set<String> xipaiPlayerIds = new HashSet<>();
 	private JuResult juResult;
 
 	public MajiangGameValueObject(MajiangGame majiangGame) {
@@ -23,6 +26,7 @@ public class MajiangGameValueObject extends FixedPlayersMultipanAndVotetofinishG
 		renshu = majiangGame.getRenshu();
 		dapao = majiangGame.isDapao();
 		playeTotalScoreMap.putAll(majiangGame.getPlayeTotalScoreMap());
+		xipaiPlayerIds = new HashSet<>(majiangGame.getXipaiPlayerIds());
 		if (majiangGame.getJu() != null) {
 			juResult = majiangGame.getJu().getJuResult();
 		}
@@ -82,6 +86,14 @@ public class MajiangGameValueObject extends FixedPlayersMultipanAndVotetofinishG
 
 	public void setJuResult(JuResult juResult) {
 		this.juResult = juResult;
+	}
+
+	public Set<String> getXipaiPlayerIds() {
+		return xipaiPlayerIds;
+	}
+
+	public void setXipaiPlayerIds(Set<String> xipaiPlayerIds) {
+		this.xipaiPlayerIds = xipaiPlayerIds;
 	}
 
 }
