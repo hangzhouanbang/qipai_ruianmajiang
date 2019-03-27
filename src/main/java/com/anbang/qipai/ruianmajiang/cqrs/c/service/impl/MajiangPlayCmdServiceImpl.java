@@ -10,6 +10,7 @@ import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyToNextPanResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.service.MajiangPlayCmdService;
 import com.dml.majiang.pan.frame.PanActionFrame;
 import com.dml.mpgame.game.Playing;
+import com.dml.mpgame.game.extend.fpmpv.VoteNotPassWhenWaitingNextPan;
 import com.dml.mpgame.game.extend.multipan.WaitingNextPan;
 import com.dml.mpgame.game.player.PlayerNotInGameException;
 import com.dml.mpgame.server.GameServer;
@@ -67,7 +68,8 @@ public class MajiangPlayCmdServiceImpl extends CmdServiceBase implements Majiang
 			throw new PlayerNotInGameException();
 		}
 		MajiangGame majiangGame = (MajiangGame) gameServer.findGame(gameId);
-		if (!majiangGame.getState().name().equals(WaitingNextPan.name)) {// 准备下一盘
+		if (!(majiangGame.getState().name().equals(WaitingNextPan.name)
+				|| majiangGame.getState().name().equals(VoteNotPassWhenWaitingNextPan.name))) {// 准备下一盘
 			throw new CannotXipaiException();
 		}
 		return majiangGame.xipai(playerId);

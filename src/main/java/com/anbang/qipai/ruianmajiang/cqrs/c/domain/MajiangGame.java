@@ -111,10 +111,12 @@ public class MajiangGame extends FixedPlayersMultipanAndVotetofinishGame {
 		if (state.name().equals(VoteNotPassWhenPlaying.name)) {
 			state = new Playing();
 		}
+		if (!xipaiPlayerIds.isEmpty()) {
+			xipaiPlayerIds.clear();
+		}
 		checkAndFinishPan();
 
 		if (state.name().equals(WaitingNextPan.name) || state.name().equals(Finished.name)) {// 盘结束了
-			xipaiPlayerIds.clear();
 			RuianMajiangPanResult panResult = (RuianMajiangPanResult) ju.findLatestFinishedPanResult();
 			for (RuianMajiangPanPlayerResult ruianMajiangPanPlayerResult : panResult.getPanPlayerResultList()) {
 				playeTotalScoreMap.put(ruianMajiangPanPlayerResult.getPlayerId(),
