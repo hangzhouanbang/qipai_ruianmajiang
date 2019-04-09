@@ -1,17 +1,17 @@
 package com.anbang.qipai.ruianmajiang.cqrs.q.dbo;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangGameValueObject;
 import com.anbang.qipai.ruianmajiang.plan.bean.PlayerInfo;
+import com.dml.majiang.serializer.ByteBufferAble;
+import com.dml.majiang.serializer.ByteBufferSerializer;
 import com.dml.mpgame.game.GamePlayerValueObject;
-import com.dml.mpgame.game.GameState;
 
-public class MajiangGameDbo {
+public class MajiangGameDbo implements ByteBufferAble {
 	private String id;
 	private int difen;
 	private int taishu;
@@ -19,9 +19,61 @@ public class MajiangGameDbo {
 	private int renshu;
 	private boolean dapao;
 	private int panNo;
-	private GameState state;// 原来是 waitingStart, playing, waitingNextPan, finished
+	private String state;// 原来是 waitingStart, playing, waitingNextPan, finished
 	private List<MajiangGamePlayerDbo> players;
-	private Set<String> xipaiPlayerIds;
+	private List<String> xipaiPlayerIds;
+
+	public byte[] toByteArray(int bufferSize) throws Throwable {
+		byte[] buffer = new byte[bufferSize];
+		ByteBuffer bb = ByteBuffer.wrap(buffer);
+		ByteBufferSerializer.objToByteBuffer(this, bb);
+		byte[] byteArray = new byte[bb.position()];
+		System.arraycopy(buffer, 0, byteArray, 0, byteArray.length);
+		return byteArray;
+	}
+
+	public static MajiangGameDbo fromByteArray(byte[] byteArray) {
+		try {
+			return ByteBufferSerializer.byteBufferToObj(ByteBuffer.wrap(byteArray));
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public void toByteBuffer(ByteBuffer bb) throws Throwable {
+		ByteBufferSerializer.stringToByteBuffer(id, bb);
+		bb.putInt(difen);
+		bb.putInt(taishu);
+		bb.putInt(panshu);
+		bb.putInt(renshu);
+		ByteBufferSerializer.booleanToByteBuffer(dapao, bb);
+		bb.putInt(panNo);
+		ByteBufferSerializer.stringToByteBuffer(state, bb);
+		ByteBufferSerializer.listToByteBuffer(new ArrayList<>(players), bb);
+		ByteBufferSerializer.listToByteBuffer(new ArrayList<>(xipaiPlayerIds), bb);
+	}
+
+	@Override
+	public void fillByByteBuffer(ByteBuffer bb) throws Throwable {
+		id = ByteBufferSerializer.byteBufferToString(bb);
+		difen = bb.getInt();
+		taishu = bb.getInt();
+		panshu = bb.getInt();
+		renshu = bb.getInt();
+		dapao = ByteBufferSerializer.byteBufferToBoolean(bb);
+		panNo = bb.getInt();
+		state = ByteBufferSerializer.byteBufferToString(bb);
+		players = new ArrayList<>();
+		ByteBufferSerializer.byteBufferToList(bb).forEach((player) -> {
+			players.add((MajiangGamePlayerDbo) player);
+		});
+		xipaiPlayerIds = new ArrayList<>();
+		ByteBufferSerializer.byteBufferToList(bb).forEach((playerId) -> {
+			xipaiPlayerIds.add((String) playerId);
+		});
+	}
 
 	public MajiangGameDbo() {
 	}
@@ -34,8 +86,8 @@ public class MajiangGameDbo {
 		renshu = majiangGame.getRenshu();
 		dapao = majiangGame.isDapao();
 		panNo = majiangGame.getPanNo();
-		state = majiangGame.getState();
-		xipaiPlayerIds = new HashSet<>(majiangGame.getXipaiPlayerIds());
+		state = majiangGame.getState().name();
+		xipaiPlayerIds = new ArrayList<>(majiangGame.getXipaiPlayerIds());
 		players = new ArrayList<>();
 		Map<String, Integer> playeTotalScoreMap = majiangGame.getPlayeTotalScoreMap();
 		for (GamePlayerValueObject playerValueObject : majiangGame.getPlayers()) {
@@ -47,7 +99,7 @@ public class MajiangGameDbo {
 			playerDbo.setGender(playerInfo.getGender());
 			playerDbo.setOnlineState(playerValueObject.getOnlineState());
 			playerDbo.setPlayerId(playerId);
-			playerDbo.setState(playerValueObject.getState());
+			playerDbo.setState(playerValueObject.getState().name());
 			if (playeTotalScoreMap.get(playerId) != null) {
 				playerDbo.setTotalScore(playeTotalScoreMap.get(playerId));
 			}
@@ -121,11 +173,11 @@ public class MajiangGameDbo {
 		this.panNo = panNo;
 	}
 
-	public GameState getState() {
+	public String getState() {
 		return state;
 	}
 
-	public void setState(GameState state) {
+	public void setState(String state) {
 		this.state = state;
 	}
 
@@ -137,11 +189,11 @@ public class MajiangGameDbo {
 		this.players = players;
 	}
 
-	public Set<String> getXipaiPlayerIds() {
+	public List<String> getXipaiPlayerIds() {
 		return xipaiPlayerIds;
 	}
 
-	public void setXipaiPlayerIds(Set<String> xipaiPlayerIds) {
+	public void setXipaiPlayerIds(List<String> xipaiPlayerIds) {
 		this.xipaiPlayerIds = xipaiPlayerIds;
 	}
 

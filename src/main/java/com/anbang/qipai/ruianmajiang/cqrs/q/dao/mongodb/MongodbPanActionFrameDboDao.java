@@ -34,4 +34,9 @@ public class MongodbPanActionFrameDboDao implements PanActionFrameDboDao {
 		return mongoTemplate.find(query, PanActionFrameDbo.class);
 	}
 
+	@Override
+	public void save(List<PanActionFrameDbo> frameList) {
+		mongoTemplate.insert(frameList, PanActionFrameDbo.class);
+	}
+
 }

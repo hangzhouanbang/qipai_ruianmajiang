@@ -27,9 +27,7 @@ import com.anbang.qipai.ruianmajiang.msg.service.RuianMajiangGameMsgService;
 import com.anbang.qipai.ruianmajiang.msg.service.RuianMajiangResultMsgService;
 import com.dml.mpgame.game.Canceled;
 import com.dml.mpgame.game.Finished;
-import com.dml.mpgame.game.GameState;
 import com.dml.mpgame.game.extend.vote.FinishedByVote;
-import com.dml.mpgame.game.player.GamePlayerState;
 import com.dml.mpgame.game.watch.Watcher;
 import com.google.gson.Gson;
 
@@ -95,7 +93,11 @@ public class GamePlayWsController extends TextWebSocketHandler {
 		}
 		MajiangGameValueObject majiangGameValueObject = gameCmdService.leaveGameByOffline(closedPlayerId);
 		if (majiangGameValueObject != null) {
-			majiangGameQueryService.leaveGame(majiangGameValueObject);
+			try {
+				majiangGameQueryService.leaveGame(majiangGameValueObject);
+			} catch (Throwable e) {
+				e.printStackTrace();
+			}
 			gameMsgService.gamePlayerLeave(majiangGameValueObject, closedPlayerId);
 
 			String gameId = majiangGameValueObject.getId();
@@ -114,8 +116,8 @@ public class GamePlayWsController extends TextWebSocketHandler {
 			// 通知其他人
 			for (String otherPlayerId : majiangGameValueObject.allPlayerIds()) {
 				if (!otherPlayerId.equals(closedPlayerId)) {
-					List<QueryScope> scopes = QueryScope.scopesForState(majiangGameValueObject.getState(),
-							majiangGameValueObject.findPlayerState(otherPlayerId));
+					List<QueryScope> scopes = QueryScope.scopesForState(majiangGameValueObject.getState().name(),
+							majiangGameValueObject.findPlayerState(otherPlayerId).name());
 					scopes.remove(QueryScope.panResult);
 					wsNotifier.notifyToQuery(otherPlayerId, scopes);
 				}
@@ -180,20 +182,25 @@ public class GamePlayWsController extends TextWebSocketHandler {
 		}
 
 		// 给用户安排query scope
-		MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
+		MajiangGameDbo majiangGameDbo = null;
+		try {
+			majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		if (majiangGameDbo != null) {
 
-			GameState gameState = majiangGameDbo.getState();
+			String gameState = majiangGameDbo.getState();
 
 			// 观战结束
-			if (majiangGameQueryService.findByPlayerId(gameId, playerId) && gameState.name().equals(Finished.name)) {
+			if (majiangGameQueryService.findByPlayerId(gameId, playerId) && gameState.equals(Finished.name)) {
 				List<String> playerIds = new ArrayList<>();
 				playerIds.add(playerId);
 				wsNotifier.notifyToWatchQuery(playerIds, WatchQueryScope.watchEnd.name());
 				return;
 			}
 
-			GamePlayerState playerState = majiangGameDbo.findPlayer(playerId).getState();
+			String playerState = majiangGameDbo.findPlayer(playerId).getState();
 
 			List<QueryScope> scopes = QueryScope.scopesForState(gameState, playerState);
 			wsNotifier.notifyToQuery(playerId, scopes);

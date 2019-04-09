@@ -31,7 +31,8 @@ public class JuResultVO {
 		this.panshu = majiangGameDbo.getPanshu();
 		finishedPanCount = ruianMajiangJuResult.getFinishedPanCount();
 		playerResultList = new ArrayList<>();
-		if (ruianMajiangJuResult.getPlayerResultList() != null) {
+		if (ruianMajiangJuResult.getPlayerResultList() != null
+				&& !ruianMajiangJuResult.getPlayerResultList().isEmpty()) {
 			ruianMajiangJuResult.getPlayerResultList()
 					.forEach((juPlayerResult) -> playerResultList.add(new RuianMajiangJuPlayerResultVO(juPlayerResult,
 							majiangGameDbo.findPlayer(juPlayerResult.getPlayerId()))));

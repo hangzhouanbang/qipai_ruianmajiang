@@ -1,24 +1,57 @@
 package com.anbang.qipai.ruianmajiang.cqrs.q.dbo;
 
-import com.dml.majiang.pan.frame.PanActionFrame;
+import java.nio.ByteBuffer;
+
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document
-@CompoundIndexes({
-        @CompoundIndex(name = "gameId_1_panNo_1", def = "{'gameId': 1, 'panNo': 1}")
-})
-public class PanActionFrameDbo {
+import com.dml.majiang.pan.frame.PanActionFrame;
+import com.dml.majiang.serializer.ByteBufferAble;
+import com.dml.majiang.serializer.ByteBufferSerializer;
 
+@Document
+@CompoundIndexes({ @CompoundIndex(name = "gameId_1_panNo_1", def = "{'gameId': 1, 'panNo': 1}") })
+public class PanActionFrameDbo implements ByteBufferAble {
 	private String id;
-	//@Indexed
 	private String gameId;
-	//@Indexed
 	private int panNo;
 	private int actionNo;
 	private PanActionFrame panActionFrame;
+
+	public byte[] toByteArray(int bufferSize) throws Throwable {
+		byte[] buffer = new byte[bufferSize];
+		ByteBuffer bb = ByteBuffer.wrap(buffer);
+		ByteBufferSerializer.objToByteBuffer(this, bb);
+		byte[] byteArray = new byte[bb.position()];
+		System.arraycopy(buffer, 0, byteArray, 0, byteArray.length);
+		return byteArray;
+	}
+
+	public static PanActionFrameDbo fromByteArray(byte[] byteArray) {
+		try {
+			return ByteBufferSerializer.byteBufferToObj(ByteBuffer.wrap(byteArray));
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public void toByteBuffer(ByteBuffer bb) throws Throwable {
+		ByteBufferSerializer.stringToByteBuffer(gameId, bb);
+		bb.putInt(panNo);
+		bb.putInt(actionNo);
+		ByteBufferSerializer.objToByteBuffer(panActionFrame, bb);
+	}
+
+	@Override
+	public void fillByByteBuffer(ByteBuffer bb) throws Throwable {
+		gameId = ByteBufferSerializer.byteBufferToString(bb);
+		panNo = bb.getInt();
+		actionNo = bb.getInt();
+		panActionFrame = ByteBufferSerializer.byteBufferToObj(bb);
+	}
 
 	public PanActionFrameDbo() {
 

@@ -36,7 +36,8 @@ public class GameRoomMsgReceiver {
 				try {
 					gameValueObject = gameCmdService.finishGameImmediately(gameId);
 					majiangGameQueryService.finishGameImmediately(gameValueObject);
-				} catch (Exception e) {
+				} catch (Throwable e) {
+					e.printStackTrace();
 				}
 			}
 		}

@@ -38,8 +38,7 @@ public class MajiangGamePlayerVO {
 		headimgurl = dbo.getHeadimgurl();
 		onlineState = dbo.getOnlineState().name();
 		totalScore = dbo.getTotalScore();
-
-		String sn = dbo.getState().name();
+		String sn = dbo.getState();
 		if (sn.equals(PlayerFinished.name)) {
 			state = "finished";
 		} else if (sn.equals(PlayerJoined.name)) {

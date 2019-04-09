@@ -8,5 +8,7 @@ public interface PanActionFrameDboDao {
 
 	void save(PanActionFrameDbo dbo);
 
+	void save(List<PanActionFrameDbo> frameList);
+
 	List<PanActionFrameDbo> findByGameIdAndPanNo(String gameId, int panNo);
 }

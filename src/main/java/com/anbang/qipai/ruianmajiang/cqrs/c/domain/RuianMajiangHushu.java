@@ -1,6 +1,11 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
-public class RuianMajiangHushu {
+import java.nio.ByteBuffer;
+
+import com.dml.majiang.serializer.ByteBufferAble;
+import com.dml.majiang.serializer.ByteBufferSerializer;
+
+public class RuianMajiangHushu implements ByteBufferAble {
 	private int dihu;
 	private boolean hu;
 	private boolean zimoHu;
@@ -25,6 +30,62 @@ public class RuianMajiangHushu {
 	private int baibanShu;
 	private RuianMajiangTaishu taishu;
 	private int value;
+
+	@Override
+	public void toByteBuffer(ByteBuffer bb) throws Throwable {
+		bb.putInt(dihu);
+		ByteBufferSerializer.booleanToByteBuffer(hu, bb);
+		ByteBufferSerializer.booleanToByteBuffer(zimoHu, bb);
+		ByteBufferSerializer.booleanToByteBuffer(biandangHu, bb);
+		ByteBufferSerializer.booleanToByteBuffer(qiandangHu, bb);
+		ByteBufferSerializer.booleanToByteBuffer(dandiaoHu, bb);
+		bb.putInt(yijiupengShu);
+		bb.putInt(erbapengShu);
+		bb.putInt(fengzipengShu);
+		bb.putInt(yijiuankeShu);
+		bb.putInt(erbaankeShu);
+		bb.putInt(fengziankeShu);
+		bb.putInt(yijiuminggangShu);
+		bb.putInt(erbaminggangShu);
+		bb.putInt(fengziminggangShu);
+		bb.putInt(yijiuangangShu);
+		bb.putInt(erbaangangShu);
+		bb.putInt(fengziangangShu);
+		ByteBufferSerializer.booleanToByteBuffer(hongzhongDuizi, bb);
+		ByteBufferSerializer.booleanToByteBuffer(facaiDuizi, bb);
+		ByteBufferSerializer.booleanToByteBuffer(zuofengDuizi, bb);
+		bb.putInt(baibanShu);
+		ByteBufferSerializer.objToByteBuffer(taishu, bb);
+		bb.putInt(value);
+	}
+
+	@Override
+	public void fillByByteBuffer(ByteBuffer bb) throws Throwable {
+		dihu = bb.getInt();
+		hu = ByteBufferSerializer.byteBufferToBoolean(bb);
+		zimoHu = ByteBufferSerializer.byteBufferToBoolean(bb);
+		biandangHu = ByteBufferSerializer.byteBufferToBoolean(bb);
+		qiandangHu = ByteBufferSerializer.byteBufferToBoolean(bb);
+		dandiaoHu = ByteBufferSerializer.byteBufferToBoolean(bb);
+		bb.putInt(yijiupengShu);
+		bb.putInt(erbapengShu);
+		bb.putInt(fengzipengShu);
+		bb.putInt(yijiuankeShu);
+		bb.putInt(erbaankeShu);
+		bb.putInt(fengziankeShu);
+		bb.putInt(yijiuminggangShu);
+		bb.putInt(erbaminggangShu);
+		bb.putInt(fengziminggangShu);
+		bb.putInt(yijiuangangShu);
+		bb.putInt(erbaangangShu);
+		bb.putInt(fengziangangShu);
+		hongzhongDuizi = ByteBufferSerializer.byteBufferToBoolean(bb);
+		facaiDuizi = ByteBufferSerializer.byteBufferToBoolean(bb);
+		zuofengDuizi = ByteBufferSerializer.byteBufferToBoolean(bb);
+		baibanShu = bb.getInt();
+		taishu = ByteBufferSerializer.byteBufferToObj(bb);
+		value = bb.getInt();
+	}
 
 	public void calculate() {
 		taishu.calculate();

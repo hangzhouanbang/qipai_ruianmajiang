@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.dml.mpgame.game.Canceled;
 import com.dml.mpgame.game.Finished;
-import com.dml.mpgame.game.GameState;
 import com.dml.mpgame.game.Playing;
 import com.dml.mpgame.game.WaitingStart;
 import com.dml.mpgame.game.extend.fpmpv.VoteNotPassWhenWaitingNextPan;
@@ -16,47 +15,46 @@ import com.dml.mpgame.game.extend.multipan.player.PlayerReadyToStartNextPan;
 import com.dml.mpgame.game.extend.vote.FinishedByVote;
 import com.dml.mpgame.game.extend.vote.VoteNotPassWhenPlaying;
 import com.dml.mpgame.game.extend.vote.VotingWhenPlaying;
-import com.dml.mpgame.game.player.GamePlayerState;
 
 public enum QueryScope {
 	gameInfo, panForMe, panResult, juResult, gameFinishVote;
 
-	public static List<QueryScope> scopesForState(GameState gameState, GamePlayerState playerState) {
+	public static List<QueryScope> scopesForState(String gameState, String playerState) {
 		List<QueryScope> scopes = new ArrayList<>();
-		if (gameState.name().equals(WaitingStart.name)) {
+		if (gameState.equals(WaitingStart.name)) {
 			scopes.add(gameInfo);
-		} else if (gameState.name().equals(Canceled.name)) {
+		} else if (gameState.equals(Canceled.name)) {
 			scopes.add(gameInfo);
-		} else if (gameState.name().equals(Playing.name)) {
+		} else if (gameState.equals(Playing.name)) {
 			scopes.add(gameInfo);
 			scopes.add(panForMe);
-		} else if (gameState.name().equals(VotingWhenPlaying.name)) {
+		} else if (gameState.equals(VotingWhenPlaying.name)) {
 			scopes.add(gameInfo);
 			scopes.add(panForMe);
 			scopes.add(gameFinishVote);
-		} else if (gameState.name().equals(VoteNotPassWhenPlaying.name)) {
+		} else if (gameState.equals(VoteNotPassWhenPlaying.name)) {
 			scopes.add(QueryScope.gameInfo);
 			scopes.add(QueryScope.gameFinishVote);
 			scopes.add(QueryScope.panForMe);
-		} else if (gameState.name().equals(FinishedByVote.name)) {
+		} else if (gameState.equals(FinishedByVote.name)) {
 			scopes.add(juResult);
-		} else if (gameState.name().equals(WaitingNextPan.name)) {
-			if (playerState.name().equals(PlayerPanFinished.name)) {
+		} else if (gameState.equals(WaitingNextPan.name)) {
+			if (playerState.equals(PlayerPanFinished.name)) {
 				scopes.add(gameInfo);
 				scopes.add(panResult);
-			} else if (playerState.name().equals(PlayerReadyToStartNextPan.name)) {
+			} else if (playerState.equals(PlayerReadyToStartNextPan.name)) {
 				scopes.add(gameInfo);
 			}
-		} else if (gameState.name().equals(VotingWhenWaitingNextPan.name)) {
+		} else if (gameState.equals(VotingWhenWaitingNextPan.name)) {
 			scopes.add(gameInfo);
 			scopes.add(gameFinishVote);
-		} else if (gameState.name().equals(VoteNotPassWhenWaitingNextPan.name)) {
+		} else if (gameState.equals(VoteNotPassWhenWaitingNextPan.name)) {
 			scopes.add(QueryScope.gameFinishVote);
 			scopes.add(QueryScope.gameInfo);
-			if (playerState.name().equals(PlayerPanFinished.name)) {
+			if (playerState.equals(PlayerPanFinished.name)) {
 				scopes.add(QueryScope.panResult);
 			}
-		} else if (gameState.name().equals(Finished.name)) {
+		} else if (gameState.equals(Finished.name)) {
 			scopes.add(juResult);
 		}
 		return scopes;

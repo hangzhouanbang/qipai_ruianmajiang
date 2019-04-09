@@ -3,6 +3,8 @@ package com.anbang.qipai.ruianmajiang.cqrs.q.service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,11 +14,15 @@ import com.anbang.qipai.ruianmajiang.cqrs.c.domain.MajiangGameValueObject;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyForGameResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.ReadyToNextPanResult;
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.RuianMajiangPanResult;
-import com.anbang.qipai.ruianmajiang.cqrs.q.dao.GameLatestPanActionFrameDboDao;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dao.JuResultDboDao;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dao.MajiangGameDboDao;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dao.PanActionFrameDboDao;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dao.PanResultDboDao;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dao.memcached.MemcachedGameLatestPanActionFrameDboDao;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dao.memcached.MemcachedJuResultDboDao;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dao.memcached.MemcachedMajiangGameDboDao;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dao.memcached.MemcachedPanActionFrameDboDao;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dao.memcached.MemcachedPanResultDboDao;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.GameLatestPanActionFrameDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.JuResultDbo;
 import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.MajiangGameDbo;
@@ -34,6 +40,9 @@ import com.dml.mpgame.game.extend.vote.VotingWhenPlaying;
 public class MajiangPlayQueryService {
 
 	@Autowired
+	private PlayerInfoDao playerInfoDao;
+
+	@Autowired
 	private MajiangGameDboDao majiangGameDboDao;
 
 	@Autowired
@@ -43,33 +52,43 @@ public class MajiangPlayQueryService {
 	private JuResultDboDao juResultDboDao;
 
 	@Autowired
-	private PlayerInfoDao playerInfoDao;
-
-	@Autowired
-	private GameLatestPanActionFrameDboDao gameLatestPanActionFrameDboDao;
-
-	@Autowired
 	private PanActionFrameDboDao panActionFrameDboDao;
+
+	@Autowired
+	private MemcachedMajiangGameDboDao memcachedMajiangGameDboDao;
+
+	@Autowired
+	private MemcachedPanResultDboDao memcachedPanResultDboDao;
+
+	@Autowired
+	private MemcachedJuResultDboDao memcachedJuResultDboDao;
+
+	@Autowired
+	private MemcachedGameLatestPanActionFrameDboDao memcachedGameLatestPanActionFrameDboDao;
+
+	@Autowired
+	private MemcachedPanActionFrameDboDao memcachedPanActionFrameDboDao;
+
+	private ExecutorService executorService = Executors.newCachedThreadPool();
 
 	private LiangangangPanActionFramePlayerViewFilter pvFilter = new LiangangangPanActionFramePlayerViewFilter();
 
 	public PanActionFrame findAndFilterCurrentPanValueObjectForPlayer(String gameId, String playerId) throws Exception {
-		MajiangGameDbo majiangGameDbo = majiangGameDboDao.findById(gameId);
-		if (!(majiangGameDbo.getState().name().equals(Playing.name)
-				|| majiangGameDbo.getState().name().equals(VotingWhenPlaying.name)
-				|| majiangGameDbo.getState().name().equals(VoteNotPassWhenPlaying.name))) {
+		MajiangGameDbo majiangGameDbo = memcachedMajiangGameDboDao.findById(gameId);
+		if (!(majiangGameDbo.getState().equals(Playing.name) || majiangGameDbo.getState().equals(VotingWhenPlaying.name)
+				|| majiangGameDbo.getState().equals(VoteNotPassWhenPlaying.name))) {
 			throw new Exception("game not playing");
 		}
 
-		GameLatestPanActionFrameDbo frame = gameLatestPanActionFrameDboDao.findById(gameId);
+		GameLatestPanActionFrameDbo frame = memcachedGameLatestPanActionFrameDboDao.findById(gameId);
 		byte[] frameData = frame.getData();
 		PanActionFrame panActionFrame = PanActionFrame.fromByteArray(frameData);
 		pvFilter.filter(panActionFrame, playerId);
 		return panActionFrame;
 	}
 
-	public int findCurrentPanLastestActionNo(String gameId) {
-		GameLatestPanActionFrameDbo frame = gameLatestPanActionFrameDboDao.findById(gameId);
+	public int findCurrentPanLastestActionNo(String gameId) throws Exception {
+		GameLatestPanActionFrameDbo frame = memcachedGameLatestPanActionFrameDboDao.findById(gameId);
 		if (frame == null) {
 			return 0;
 		}
@@ -83,38 +102,37 @@ public class MajiangPlayQueryService {
 		Map<String, PlayerInfo> playerInfoMap = new HashMap<>();
 		majiangGame.allPlayerIds().forEach((playerId) -> playerInfoMap.put(playerId, playerInfoDao.findById(playerId)));
 		MajiangGameDbo majiangGameDbo = new MajiangGameDbo(majiangGame, playerInfoMap);
-		majiangGameDboDao.save(majiangGameDbo);
+		memcachedMajiangGameDboDao.save(majiangGameDbo);
 
 		if (majiangGame.getState().name().equals(Playing.name)) {
 			PanActionFrame panActionFrame = readyForGameResult.getFirstActionFrame();
-			gameLatestPanActionFrameDboDao.save(majiangGame.getId(), panActionFrame.toByteArray(1024 * 8));
+			memcachedGameLatestPanActionFrameDboDao.save(majiangGame.getId(), panActionFrame.toByteArray(1024 * 8));
 			// 记录一条Frame，回放的时候要做
 			String gameId = majiangGame.getId();
 			int panNo = panActionFrame.getPanAfterAction().getNo();
 			int actionNo = panActionFrame.getNo();
 			PanActionFrameDbo panActionFrameDbo = new PanActionFrameDbo(gameId, panNo, actionNo);
 			panActionFrameDbo.setPanActionFrame(panActionFrame);
-			panActionFrameDboDao.save(panActionFrameDbo);
+			memcachedPanActionFrameDboDao.save(panActionFrameDbo);
 		}
 	}
 
-	public void xipai(MajiangGameValueObject majiangGame) {
+	public void xipai(MajiangGameValueObject majiangGame) throws Throwable {
 		Map<String, PlayerInfo> playerInfoMap = new HashMap<>();
 		majiangGame.allPlayerIds().forEach((pid) -> playerInfoMap.put(pid, playerInfoDao.findById(pid)));
 		MajiangGameDbo majiangGameDbo = new MajiangGameDbo(majiangGame, playerInfoMap);
-		majiangGameDboDao.save(majiangGameDbo);
+		memcachedMajiangGameDboDao.save(majiangGameDbo);
 	}
 
 	public void readyToNextPan(ReadyToNextPanResult readyToNextPanResult) throws Throwable {
-
 		MajiangGameValueObject majiangGame = readyToNextPanResult.getMajiangGame();
 		Map<String, PlayerInfo> playerInfoMap = new HashMap<>();
 		majiangGame.allPlayerIds().forEach((pid) -> playerInfoMap.put(pid, playerInfoDao.findById(pid)));
 		MajiangGameDbo majiangGameDbo = new MajiangGameDbo(majiangGame, playerInfoMap);
-		majiangGameDboDao.save(majiangGameDbo);
+		memcachedMajiangGameDboDao.save(majiangGameDbo);
 
 		if (readyToNextPanResult.getFirstActionFrame() != null) {
-			gameLatestPanActionFrameDboDao.save(majiangGame.getId(),
+			memcachedGameLatestPanActionFrameDboDao.save(majiangGame.getId(),
 					readyToNextPanResult.getFirstActionFrame().toByteArray(1024 * 8));
 			// 记录一条Frame，回放的时候要做
 			String gameId = majiangGame.getId();
@@ -122,48 +140,61 @@ public class MajiangPlayQueryService {
 			int actionNo = readyToNextPanResult.getFirstActionFrame().getNo();
 			PanActionFrameDbo panActionFrameDbo = new PanActionFrameDbo(gameId, panNo, actionNo);
 			panActionFrameDbo.setPanActionFrame(readyToNextPanResult.getFirstActionFrame());
-			panActionFrameDboDao.save(panActionFrameDbo);
+			memcachedPanActionFrameDboDao.save(panActionFrameDbo);
 		}
 
 	}
 
 	public void action(MajiangActionResult majiangActionResult) throws Throwable {
-
 		MajiangGameValueObject majiangGame = majiangActionResult.getMajiangGame();
 		Map<String, PlayerInfo> playerInfoMap = new HashMap<>();
 		majiangGame.allPlayerIds().forEach((playerId) -> playerInfoMap.put(playerId, playerInfoDao.findById(playerId)));
 		MajiangGameDbo majiangGameDbo = new MajiangGameDbo(majiangGame, playerInfoMap);
-		majiangGameDboDao.save(majiangGameDbo);
+		memcachedMajiangGameDboDao.save(majiangGameDbo);
 
 		String gameId = majiangGame.getId();
 		PanActionFrame panActionFrame = majiangActionResult.getPanActionFrame();
-		gameLatestPanActionFrameDboDao.save(gameId, panActionFrame.toByteArray(1024 * 8));
+		memcachedGameLatestPanActionFrameDboDao.save(gameId, panActionFrame.toByteArray(1024 * 8));
 		// 记录一条Frame，回放的时候要做
 		int panNo = panActionFrame.getPanAfterAction().getNo();
 		int actionNo = panActionFrame.getNo();
 		PanActionFrameDbo panActionFrameDbo = new PanActionFrameDbo(gameId, panNo, actionNo);
 		panActionFrameDbo.setPanActionFrame(panActionFrame);
-		panActionFrameDboDao.save(panActionFrameDbo);
+		memcachedPanActionFrameDboDao.save(panActionFrameDbo);
 		// 盘出结果的话要记录结果
 		RuianMajiangPanResult ruianMajiangPanResult = majiangActionResult.getPanResult();
 		if (ruianMajiangPanResult != null) {
 			PanResultDbo panResultDbo = new PanResultDbo(gameId, ruianMajiangPanResult);
 			panResultDbo.setPanActionFrame(panActionFrame);
-			panResultDboDao.save(panResultDbo);
+			memcachedPanResultDboDao.save(panResultDbo);
+			executorService.submit(() -> {
+				panResultDboDao.save(panResultDbo);
+				try {
+					List<PanActionFrameDbo> frameList = memcachedPanActionFrameDboDao.findByGameIdAndActionNo(gameId,
+							panNo, actionNo);
+					panActionFrameDboDao.save(frameList);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			});
 			if (majiangActionResult.getJuResult() != null) {// 一切都结束了
 				// 要记录局结果
 				JuResultDbo juResultDbo = new JuResultDbo(gameId, panResultDbo, majiangActionResult.getJuResult());
-				juResultDboDao.save(juResultDbo);
+				memcachedJuResultDboDao.save(juResultDbo);
+				executorService.submit(() -> {
+					majiangGameDboDao.save(majiangGameDbo);
+					juResultDboDao.save(juResultDbo);
+				});
 			}
 		}
 	}
 
-	public PanResultDbo findPanResultDbo(String gameId, int panNo) {
-		return panResultDboDao.findByGameIdAndPanNo(gameId, panNo);
+	public PanResultDbo findPanResultDbo(String gameId, int panNo) throws Exception {
+		return memcachedPanResultDboDao.findByGameIdAndPanNo(gameId, panNo);
 	}
 
-	public JuResultDbo findJuResultDbo(String gameId) {
-		return juResultDboDao.findByGameId(gameId);
+	public JuResultDbo findJuResultDbo(String gameId) throws Exception {
+		return memcachedJuResultDboDao.findByGameId(gameId);
 	}
 
 	public List<PanActionFrameDbo> findPanActionFrameDboForBackPlay(String gameId, int panNo) {

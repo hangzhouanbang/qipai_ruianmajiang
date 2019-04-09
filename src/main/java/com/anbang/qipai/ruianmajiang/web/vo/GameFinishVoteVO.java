@@ -1,9 +1,11 @@
 package com.anbang.qipai.ruianmajiang.web.vo;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.dml.mpgame.game.extend.vote.GameFinishVoteValueObject;
+import com.anbang.qipai.ruianmajiang.cqrs.q.dbo.GameFinishVoteValueObjectDbo;
 import com.dml.mpgame.game.extend.vote.VoteOption;
 import com.dml.mpgame.game.extend.vote.VoteResult;
 
@@ -24,10 +26,13 @@ public class GameFinishVoteVO {
 
 	}
 
-	public GameFinishVoteVO(GameFinishVoteValueObject vote) {
+	public GameFinishVoteVO(GameFinishVoteValueObjectDbo vote) {
 		sponsorId = vote.getSponsorId();
-		votePlayerIds = vote.getVotePlayerIds();
-		playerIdVoteOptionMap = vote.getPlayerIdVoteOptionMap();
+		votePlayerIds = new HashSet<>(vote.getVotePlayerIds());
+		playerIdVoteOptionMap = new HashMap<>();
+		vote.getPlayerIdVoteOptionList().forEach((playerVote) -> {
+			playerIdVoteOptionMap.put(playerVote.getPlayerId(), playerVote.getVote());
+		});
 		result = vote.getResult();
 		startTime = vote.getStartTime();
 		long endTime = vote.getEndTime();

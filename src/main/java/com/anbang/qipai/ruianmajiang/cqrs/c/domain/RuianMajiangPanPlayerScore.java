@@ -1,6 +1,11 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
-public class RuianMajiangPanPlayerScore {
+import java.nio.ByteBuffer;
+
+import com.dml.majiang.serializer.ByteBufferAble;
+import com.dml.majiang.serializer.ByteBufferSerializer;
+
+public class RuianMajiangPanPlayerScore implements ByteBufferAble {
 
 	private RuianMajiangPao pao;
 	private int paoScore;
@@ -19,6 +24,28 @@ public class RuianMajiangPanPlayerScore {
 	private int jiesuanScore;
 
 	private int value;
+
+	@Override
+	public void toByteBuffer(ByteBuffer bb) throws Throwable {
+		ByteBufferSerializer.objToByteBuffer(pao, bb);
+		bb.putInt(paoScore);
+		ByteBufferSerializer.objToByteBuffer(hushu, bb);
+		bb.putInt(jiesuanHushu);
+		bb.putInt(jiesuanPao);
+		bb.putInt(jiesuanScore);
+		bb.putInt(value);
+	}
+
+	@Override
+	public void fillByByteBuffer(ByteBuffer bb) throws Throwable {
+		pao = ByteBufferSerializer.byteBufferToObj(bb);
+		paoScore = bb.getInt();
+		hushu = ByteBufferSerializer.byteBufferToObj(bb);
+		jiesuanHushu = bb.getInt();
+		jiesuanPao = bb.getInt();
+		jiesuanScore = bb.getInt();
+		value = bb.getInt();
+	}
 
 	public void jiesuan() {
 		jiesuanScore = (jiesuanHushu / 10) + (jiesuanPao * 5);// TODO 一炮10或者5要配置

@@ -1,12 +1,30 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
-import com.dml.majiang.pan.result.PanPlayerResult;
+import java.nio.ByteBuffer;
 
-public class RuianMajiangPanPlayerResult extends PanPlayerResult {
+import com.dml.majiang.pan.result.PanPlayerResult;
+import com.dml.majiang.serializer.ByteBufferAble;
+import com.dml.majiang.serializer.ByteBufferSerializer;
+
+public class RuianMajiangPanPlayerResult extends PanPlayerResult implements ByteBufferAble {
 
 	private RuianMajiangPanPlayerScore score;
 
 	private int totalScore;
+
+	@Override
+	public void toByteBuffer(ByteBuffer bb) throws Throwable {
+		ByteBufferSerializer.stringToByteBuffer(getPlayerId(), bb);
+		ByteBufferSerializer.objToByteBuffer(score, bb);
+		bb.putInt(totalScore);
+	}
+
+	@Override
+	public void fillByByteBuffer(ByteBuffer bb) throws Throwable {
+		setPlayerId(ByteBufferSerializer.byteBufferToString(bb));
+		score = ByteBufferSerializer.byteBufferToObj(bb);
+		totalScore = bb.getInt();
+	}
 
 	public RuianMajiangPanPlayerResult() {
 	}

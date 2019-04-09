@@ -67,7 +67,13 @@
 			<artifactId>mpgame.dml</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
-
+		
+		<!-- https://mvnrepository.com/artifact/com.googlecode.xmemcached/xmemcached -->
+		<dependency>
+			<groupId>com.googlecode.xmemcached</groupId>
+			<artifactId>xmemcached</artifactId>
+			<version>2.4.5</version>
+		</dependency>
 
 		<!-- 其它 -->
 		<dependency>

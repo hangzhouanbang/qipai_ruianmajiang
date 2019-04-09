@@ -16,10 +16,10 @@ public class MajiangHistoricalJuResult {
 	private int panshu;
 	private long finishTime;
 
-    public MajiangHistoricalJuResult() {
-    }
+	public MajiangHistoricalJuResult() {
+	}
 
-    public MajiangHistoricalJuResult(JuResultDbo juResultDbo, MajiangGameDbo majiangGameDbo) {
+	public MajiangHistoricalJuResult(JuResultDbo juResultDbo, MajiangGameDbo majiangGameDbo) {
 		gameId = juResultDbo.getGameId();
 		RuianMajiangJuResult ruianMajiangJuResult = juResultDbo.getJuResult();
 		dayingjiaId = ruianMajiangJuResult.getDayingjiaId();

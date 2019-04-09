@@ -1,6 +1,11 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
-public class RuianMajiangJuPlayerResult {
+import java.nio.ByteBuffer;
+
+import com.dml.majiang.serializer.ByteBufferAble;
+import com.dml.majiang.serializer.ByteBufferSerializer;
+
+public class RuianMajiangJuPlayerResult implements ByteBufferAble {
 
 	private String playerId;
 	private int huCount;
@@ -9,6 +14,28 @@ public class RuianMajiangJuPlayerResult {
 	private int maxTaishu;
 	private int maxHushu;
 	private int totalScore;
+
+	@Override
+	public void toByteBuffer(ByteBuffer bb) throws Throwable {
+		ByteBufferSerializer.stringToByteBuffer(playerId, bb);
+		bb.putInt(huCount);
+		bb.putInt(caishenCount);
+		bb.putInt(dapaoCount);
+		bb.putInt(maxTaishu);
+		bb.putInt(maxHushu);
+		bb.putInt(totalScore);
+	}
+
+	@Override
+	public void fillByByteBuffer(ByteBuffer bb) throws Throwable {
+		playerId = ByteBufferSerializer.byteBufferToString(bb);
+		huCount = bb.getInt();
+		caishenCount = bb.getInt();
+		dapaoCount = bb.getInt();
+		maxTaishu = bb.getInt();
+		maxHushu = bb.getInt();
+		totalScore = bb.getInt();
+	}
 
 	public void increaseHuCount() {
 		huCount++;

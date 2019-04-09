@@ -1,6 +1,10 @@
 package com.anbang.qipai.ruianmajiang.cqrs.c.domain;
 
-public class RuianMajiangTaishu {
+import java.nio.ByteBuffer;
+
+import com.dml.majiang.serializer.ByteBufferAble;
+
+public class RuianMajiangTaishu implements ByteBufferAble {
 	/**
 	 * 封顶台数。0为不封顶
 	 */
@@ -28,6 +32,230 @@ public class RuianMajiangTaishu {
 	private boolean qingyiseHu;
 	private boolean shuangCaishengHu;
 	private int value;
+
+	@Override
+	public void toByteBuffer(ByteBuffer bb) throws Throwable {
+		bb.putInt(maxtai);
+		if (hongzhongPeng) {
+			bb.putInt(1);
+		} else {
+			bb.putInt(0);
+		}
+		if (hongzhongAnke) {
+			bb.putInt(1);
+		} else {
+			bb.putInt(0);
+		}
+		if (hongzhongGang) {
+			bb.putInt(1);
+		} else {
+			bb.putInt(0);
+		}
+		if (facaiPeng) {
+			bb.putInt(1);
+		} else {
+			bb.putInt(0);
+		}
+		if (facaiAnke) {
+			bb.putInt(1);
+		} else {
+			bb.putInt(0);
+		}
+		if (facaiGang) {
+			bb.putInt(1);
+		} else {
+			bb.putInt(0);
+		}
+		if (zuofengPeng) {
+			bb.putInt(1);
+		} else {
+			bb.putInt(0);
+		}
+		if (zuofengAnke) {
+			bb.putInt(1);
+		} else {
+			bb.putInt(0);
+		}
+		if (zuofengGang) {
+			bb.putInt(1);
+		} else {
+			bb.putInt(0);
+		}
+		bb.putInt(baibanShu);
+		if (danzhangdiaoHu) {
+			bb.putInt(1);
+		} else {
+			bb.putInt(0);
+		}
+		if (pingHu) {
+			bb.putInt(1);
+		} else {
+			bb.putInt(0);
+		}
+		if (qianggangHu) {
+			bb.putInt(1);
+		} else {
+			bb.putInt(0);
+		}
+		if (gangkaiHu) {
+			bb.putInt(1);
+		} else {
+			bb.putInt(0);
+		}
+		if (hunyiseHu) {
+			bb.putInt(1);
+		} else {
+			bb.putInt(0);
+		}
+		if (duiduiHu) {
+			bb.putInt(1);
+		} else {
+			bb.putInt(0);
+		}
+		if (sifengqiHu) {
+			bb.putInt(1);
+		} else {
+			bb.putInt(0);
+		}
+		if (sancaishenHu) {
+			bb.putInt(1);
+		} else {
+			bb.putInt(0);
+		}
+		if (tianHu) {
+			bb.putInt(1);
+		} else {
+			bb.putInt(0);
+		}
+		if (diHu) {
+			bb.putInt(1);
+		} else {
+			bb.putInt(0);
+		}
+		if (qingyiseHu) {
+			bb.putInt(1);
+		} else {
+			bb.putInt(0);
+		}
+		if (shuangCaishengHu) {
+			bb.putInt(1);
+		} else {
+			bb.putInt(0);
+		}
+		bb.putInt(value);
+	}
+
+	@Override
+	public void fillByByteBuffer(ByteBuffer bb) throws Throwable {
+		maxtai = bb.getInt();
+		if (bb.getInt() == 1) {
+			hongzhongPeng = true;
+		} else {
+			hongzhongPeng = false;
+		}
+		if (bb.getInt() == 1) {
+			hongzhongAnke = true;
+		} else {
+			hongzhongAnke = false;
+		}
+		if (bb.getInt() == 1) {
+			hongzhongGang = true;
+		} else {
+			hongzhongGang = false;
+		}
+		if (bb.getInt() == 1) {
+			facaiPeng = true;
+		} else {
+			facaiPeng = false;
+		}
+		if (bb.getInt() == 1) {
+			facaiAnke = true;
+		} else {
+			facaiAnke = false;
+		}
+		if (bb.getInt() == 1) {
+			facaiGang = true;
+		} else {
+			facaiGang = false;
+		}
+		if (bb.getInt() == 1) {
+			zuofengPeng = true;
+		} else {
+			zuofengPeng = false;
+		}
+		if (bb.getInt() == 1) {
+			zuofengAnke = true;
+		} else {
+			zuofengAnke = false;
+		}
+		if (bb.getInt() == 1) {
+			zuofengGang = true;
+		} else {
+			zuofengGang = false;
+		}
+		bb.putInt(baibanShu);
+		if (bb.getInt() == 1) {
+			danzhangdiaoHu = true;
+		} else {
+			danzhangdiaoHu = false;
+		}
+		if (bb.getInt() == 1) {
+			pingHu = true;
+		} else {
+			pingHu = false;
+		}
+		if (bb.getInt() == 1) {
+			qianggangHu = true;
+		} else {
+			qianggangHu = false;
+		}
+		if (bb.getInt() == 1) {
+			gangkaiHu = true;
+		} else {
+			gangkaiHu = false;
+		}
+		if (bb.getInt() == 1) {
+			hunyiseHu = true;
+		} else {
+			hunyiseHu = false;
+		}
+		if (bb.getInt() == 1) {
+			duiduiHu = true;
+		} else {
+			duiduiHu = false;
+		}
+		if (bb.getInt() == 1) {
+			sifengqiHu = true;
+		} else {
+			sifengqiHu = false;
+		}
+		if (bb.getInt() == 1) {
+			sancaishenHu = true;
+		} else {
+			sancaishenHu = false;
+		}
+		if (bb.getInt() == 1) {
+			tianHu = true;
+		} else {
+			tianHu = false;
+		}
+		if (bb.getInt() == 1) {
+			diHu = true;
+		} else {
+			diHu = false;
+		}
+		if (bb.getInt() == 1) {
+			qingyiseHu = true;
+		} else {
+			qingyiseHu = false;
+		}
+		if (bb.getInt() == 1) {
+			shuangCaishengHu = true;
+		} else {
+			shuangCaishengHu = false;
+		}
+		bb.putInt(value);
+	}
 
 	public void calculate() {
 		int tai = 0;
