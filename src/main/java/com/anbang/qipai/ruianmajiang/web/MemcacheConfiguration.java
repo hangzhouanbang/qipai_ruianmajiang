@@ -24,6 +24,13 @@ public class MemcacheConfiguration {
 	public MemcachedClient memCachedClient() throws IOException {
 		MemcachedClientBuilder builder = new XMemcachedClientBuilder(
 				AddrUtil.getAddresses(memcacheIP + ":" + memcachedPort));
+		builder.setConnectionPoolSize(20);
+		// 设置发送缓冲区为16K，默认为8K
+		// builder.setSocketOption(StandardSocketOption.SO_SNDBUF,16 *1024);
+		// 启用nagle算法，提高吞吐量，默认关闭
+		// builder.setSocketOption(StandardSocketOption.TCP_NODELAY,false);
+		// 默认如果连接超过5秒没有任何IO操作发生即认为空闲并发起心跳检测，你可以调长这个时间：  
+		builder.getConfiguration().setSessionIdleTimeout(10000); // 设置为10秒;
 		return builder.build();
 	}
 }

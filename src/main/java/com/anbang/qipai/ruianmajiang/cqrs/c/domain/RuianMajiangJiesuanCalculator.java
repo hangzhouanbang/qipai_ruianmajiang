@@ -377,9 +377,17 @@ public class RuianMajiangJiesuanCalculator {
 			if (huPaiShunziZu != null) {
 				if (!huPaiShunziZu.getPai2().isLastActionPai()) {
 					if (huPaiShunziZu.getPai3().isLastActionPai()) {
-						biandangHu = true;
+						MajiangPai zuoyongPaiType = huPaiShunziZu.getPai3().getZuoyongPaiType();
+						if ((zuoyongPaiType.equals(MajiangPai.sanwan) || zuoyongPaiType.equals(MajiangPai.santong)
+								|| zuoyongPaiType.equals(MajiangPai.santiao))) {
+							biandangHu = true;
+						}
 					} else if (huPaiShunziZu.getPai1().isLastActionPai()) {
-						biandangHu = true;
+						MajiangPai zuoyongPaiType = huPaiShunziZu.getPai1().getZuoyongPaiType();
+						if ((zuoyongPaiType.equals(MajiangPai.qiwan) || zuoyongPaiType.equals(MajiangPai.qitong)
+								|| zuoyongPaiType.equals(MajiangPai.qitiao))) {
+							biandangHu = true;
+						}
 					} else {
 					}
 				} else {

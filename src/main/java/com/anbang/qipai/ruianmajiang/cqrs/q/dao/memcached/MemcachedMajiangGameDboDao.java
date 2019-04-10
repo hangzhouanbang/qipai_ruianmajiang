@@ -25,7 +25,7 @@ public class MemcachedMajiangGameDboDao {
 
 	public void save(MajiangGameDbo majiangGameDbo) throws Throwable {
 		boolean operator = memcachedClient.set("gameinfo_" + majiangGameDbo.getId(), 0,
-				majiangGameDbo.toByteArray(1024 * 8), 24 * 60 * 60 * 1000);
+				majiangGameDbo.toByteArray(1024 * 1), 24 * 60 * 60 * 1000);
 		if (!operator) {
 			throw new MemcachedException();
 		}
@@ -44,7 +44,7 @@ public class MemcachedMajiangGameDboDao {
 			}
 		});
 		boolean operator = memcachedClient.set("gameinfo_" + majiangGameDbo.getId(), 0,
-				majiangGameDbo.toByteArray(1024 * 8), 24 * 60 * 60 * 1000);
+				majiangGameDbo.toByteArray(1024 * 1), 24 * 60 * 60 * 1000);
 		if (!operator) {
 			throw new MemcachedException();
 		}
