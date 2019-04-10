@@ -15,7 +15,7 @@ public class MemcachedJuResultDboDao {
 
 	public void save(JuResultDbo juResultDbo) throws Throwable {
 		boolean operator = memcachedClient.set("juresult_" + juResultDbo.getGameId(), 0,
-				juResultDbo.toByteArray(1024 * 8), 24 * 60 * 60 * 1000);
+				juResultDbo.toByteArray(1024 * 16), 24 * 60 * 60 * 1000);
 		if (!operator) {
 			throw new MemcachedException();
 		}

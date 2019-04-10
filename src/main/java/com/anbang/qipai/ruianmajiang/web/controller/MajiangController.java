@@ -255,6 +255,7 @@ public class MajiangController {
 		try {
 			majiangActionResult = majiangPlayCmdService.action(playerId, id, actionNo, System.currentTimeMillis());
 		} catch (Exception e) {
+			e.printStackTrace();
 			try {
 				data.put("actionNo", majiangPlayQueryService.findCurrentPanLastestActionNo(gameId));
 			} catch (Exception e1) {
@@ -271,8 +272,9 @@ public class MajiangController {
 		try {
 			majiangPlayQueryService.action(majiangActionResult);
 		} catch (Throwable e) {
+			e.printStackTrace();
 			vo.setSuccess(false);
-			vo.setMsg(e.getMessage());
+			vo.setMsg(e.getClass().getName());
 			long endTime = System.currentTimeMillis();
 			logger.info("action," + "startTime:" + startTime + "," + "gameId:"
 					+ majiangActionResult.getMajiangGame().getId() + "," + "playerId:" + playerId + "," + "id:" + id
