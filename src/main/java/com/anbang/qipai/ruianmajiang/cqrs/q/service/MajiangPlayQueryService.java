@@ -106,7 +106,7 @@ public class MajiangPlayQueryService {
 
 		if (majiangGame.getState().name().equals(Playing.name)) {
 			PanActionFrame panActionFrame = readyForGameResult.getFirstActionFrame();
-			memcachedGameLatestPanActionFrameDboDao.save(majiangGame.getId(), panActionFrame.toByteArray(1024 * 8));
+			memcachedGameLatestPanActionFrameDboDao.save(majiangGame.getId(), panActionFrame.toByteArray(1024 * 4));
 			// 记录一条Frame，回放的时候要做
 			String gameId = majiangGame.getId();
 			int panNo = panActionFrame.getPanAfterAction().getNo();
@@ -133,7 +133,7 @@ public class MajiangPlayQueryService {
 
 		if (readyToNextPanResult.getFirstActionFrame() != null) {
 			memcachedGameLatestPanActionFrameDboDao.save(majiangGame.getId(),
-					readyToNextPanResult.getFirstActionFrame().toByteArray(1024 * 8));
+					readyToNextPanResult.getFirstActionFrame().toByteArray(1024 * 4));
 			// 记录一条Frame，回放的时候要做
 			String gameId = majiangGame.getId();
 			int panNo = readyToNextPanResult.getFirstActionFrame().getPanAfterAction().getNo();
@@ -154,7 +154,7 @@ public class MajiangPlayQueryService {
 
 		String gameId = majiangGame.getId();
 		PanActionFrame panActionFrame = majiangActionResult.getPanActionFrame();
-		memcachedGameLatestPanActionFrameDboDao.save(gameId, panActionFrame.toByteArray(1024 * 8));
+		memcachedGameLatestPanActionFrameDboDao.save(gameId, panActionFrame.toByteArray(1024 * 4));
 		// 记录一条Frame，回放的时候要做
 		int panNo = panActionFrame.getPanAfterAction().getNo();
 		int actionNo = panActionFrame.getNo();
