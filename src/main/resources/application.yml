@@ -3,7 +3,7 @@ spring:
     default-domain: qipai_ruianmajiang
   data:
     mongodb:
-      uri: mongodb://localhost:27017/qipai_ruianmajiang
+      #uri: mongodb://localhost:27017/qipai_ruianmajiang
 
   cloud:
     stream:
@@ -112,10 +112,15 @@ spring:
           contentType: application/json
           producer:
             partitionCount: 1
-      
+memcache:
+  ip: 127.0.0.1
+  port: 11211
+  
 server:
   port: 2001
   tomcat:
+    max-connections: 2000
+    max-threads: 2000
     access-log-enabled: true
     access-log-pattern: '%a %h %A %p %U %t %H %m %r %s %b %D'
     basedir: ./

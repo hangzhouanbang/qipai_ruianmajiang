@@ -12,7 +12,7 @@ import com.dml.majiang.serializer.ByteBufferSerializer;
 public class GameFinishVoteDbo implements ByteBufferAble {
 
 	private String id;
-	@Indexed(unique = true)
+	@Indexed(unique = false)
 	private String gameId;
 	private GameFinishVoteValueObjectDbo vote;
 
