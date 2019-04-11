@@ -193,7 +193,7 @@ public class RuianMajiangTaishu implements ByteBufferAble {
 		} else {
 			zuofengGang = false;
 		}
-		bb.putInt(baibanShu);
+		baibanShu = bb.getInt();
 		if (bb.getInt() == 1) {
 			danzhangdiaoHu = true;
 		} else {
@@ -254,7 +254,7 @@ public class RuianMajiangTaishu implements ByteBufferAble {
 		} else {
 			shuangCaishengHu = false;
 		}
-		bb.putInt(value);
+		value = bb.getInt();
 	}
 
 	public void calculate() {
