@@ -18,7 +18,7 @@ public class MemcachedPanActionFrameDboDao {
 	private MemcachedClient memcachedClient;
 
 	public void save(PanActionFrameDbo dbo) throws Throwable {
-		boolean operator = memcachedClient.set(dbo.getGameId() + "_" + dbo.getActionNo(), 0, dbo.toByteArray(1024 * 4),
+		boolean operator = memcachedClient.set(dbo.getGameId() + "_" + dbo.getActionNo(), 0, dbo.toByteArray(1024 * 8),
 				24 * 60 * 60 * 1000);
 		if (!operator) {
 			throw new MemcachedException();
