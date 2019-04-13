@@ -18,8 +18,8 @@ public class MemcachedPanActionFrameDboDao {
 	private MemcachedClient memcachedClient;
 
 	public void save(PanActionFrameDbo dbo) throws Throwable {
-		boolean operator = memcachedClient.set(dbo.getGameId() + "_" + dbo.getPanNo() + "_" + dbo.getActionNo(), 0,
-				dbo.toByteArray(1024 * 4), 24 * 60 * 60 * 1000);
+		boolean operator = memcachedClient.set(dbo.getGameId() + "_" + dbo.getActionNo(), 0, dbo.toByteArray(1024 * 4),
+				24 * 60 * 60 * 1000);
 		if (!operator) {
 			throw new MemcachedException();
 		}
@@ -29,7 +29,7 @@ public class MemcachedPanActionFrameDboDao {
 			throws Exception {
 		final List<String> keys = new ArrayList<>();
 		for (int i = 0; i <= lastestActionNo; i++) {
-			keys.add(gameId + "_" + panNo + "_" + i);
+			keys.add(gameId + "_" + i);
 		}
 		Map<String, byte[]> frameMap = memcachedClient.get(keys);
 		List<PanActionFrameDbo> frameList = new ArrayList<>();
@@ -37,5 +37,18 @@ public class MemcachedPanActionFrameDboDao {
 			frameList.add(PanActionFrameDbo.fromByteArray(data));
 		}
 		return frameList;
+	}
+
+	/**
+	 * memcached不提供批量删除，如果循环删除则代价太高，推荐通过key来覆盖，减少缓存。故不使用该方法
+	 */
+	public void removePanActionFrame(String gameId, int panNo, int lastestActionNo) {
+		for (int i = 0; i <= lastestActionNo; i++) {
+			try {
+				memcachedClient.delete(gameId + "_" + i);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }

@@ -29,4 +29,12 @@ public class MemcachedPanResultDboDao {
 		PanResultDbo panResultDbo = PanResultDbo.fromByteArray(data);
 		return panResultDbo;
 	}
+
+	public void removePanResultDboByGameId(String gameId, int panNo) {
+		try {
+			memcachedClient.delete("panresult_" + panNo + gameId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

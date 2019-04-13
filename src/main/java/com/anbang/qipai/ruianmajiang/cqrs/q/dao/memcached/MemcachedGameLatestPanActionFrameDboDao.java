@@ -39,4 +39,12 @@ public class MemcachedGameLatestPanActionFrameDboDao {
 			throw new MemcachedException();
 		}
 	}
+
+	public void removeGameLatestPanActionFrameDboByGameId(String gameId) {
+		try {
+			memcachedClient.delete("latest" + gameId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

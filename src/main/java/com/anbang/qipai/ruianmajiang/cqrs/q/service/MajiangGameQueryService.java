@@ -104,7 +104,6 @@ public class MajiangGameQueryService {
 		if (majiangGame.getJuResult() != null) {
 			RuianMajiangJuResult ruianMajiangJuResult = (RuianMajiangJuResult) majiangGame.getJuResult();
 			JuResultDbo juResultDbo = new JuResultDbo(majiangGame.getId(), null, ruianMajiangJuResult);
-			memcachedJuResultDboDao.save(juResultDbo);
 			executorService.submit(() -> {
 				majiangGameDboDao.save(majiangGameDbo);
 				juResultDboDao.save(juResultDbo);
@@ -118,6 +117,7 @@ public class MajiangGameQueryService {
 					e.printStackTrace();
 				}
 			});
+			memcachedJuResultDboDao.save(juResultDbo);
 		}
 	}
 
@@ -131,11 +131,11 @@ public class MajiangGameQueryService {
 		if (majiangGameValueObject.getJuResult() != null) {
 			RuianMajiangJuResult ruianMajiangJuResult = (RuianMajiangJuResult) majiangGameValueObject.getJuResult();
 			JuResultDbo juResultDbo = new JuResultDbo(majiangGameValueObject.getId(), null, ruianMajiangJuResult);
-			memcachedJuResultDboDao.save(juResultDbo);
 			executorService.submit(() -> {
 				majiangGameDboDao.save(majiangGameDbo);
 				juResultDboDao.save(juResultDbo);
 			});
+			memcachedJuResultDboDao.save(juResultDbo);
 		}
 	}
 
@@ -156,7 +156,6 @@ public class MajiangGameQueryService {
 		if (majiangGameValueObject.getJuResult() != null) {
 			RuianMajiangJuResult ruianMajiangJuResult = (RuianMajiangJuResult) majiangGameValueObject.getJuResult();
 			JuResultDbo juResultDbo = new JuResultDbo(majiangGameValueObject.getId(), null, ruianMajiangJuResult);
-			memcachedJuResultDboDao.save(juResultDbo);
 			executorService.submit(() -> {
 				majiangGameDboDao.save(majiangGameDbo);
 				juResultDboDao.save(juResultDbo);
@@ -170,6 +169,7 @@ public class MajiangGameQueryService {
 					e.printStackTrace();
 				}
 			});
+			memcachedJuResultDboDao.save(juResultDbo);
 		}
 	}
 
@@ -187,7 +187,6 @@ public class MajiangGameQueryService {
 		if (majiangGameValueObject.getJuResult() != null) {
 			RuianMajiangJuResult ruianMajiangJuResult = (RuianMajiangJuResult) majiangGameValueObject.getJuResult();
 			JuResultDbo juResultDbo = new JuResultDbo(majiangGameValueObject.getId(), null, ruianMajiangJuResult);
-			memcachedJuResultDboDao.save(juResultDbo);
 			executorService.submit(() -> {
 				majiangGameDboDao.save(majiangGameDbo);
 				juResultDboDao.save(juResultDbo);
@@ -201,6 +200,7 @@ public class MajiangGameQueryService {
 					e.printStackTrace();
 				}
 			});
+			memcachedJuResultDboDao.save(juResultDbo);
 		}
 	}
 

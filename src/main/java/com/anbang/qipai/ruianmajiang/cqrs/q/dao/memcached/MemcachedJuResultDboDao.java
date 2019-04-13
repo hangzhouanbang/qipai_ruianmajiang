@@ -29,4 +29,12 @@ public class MemcachedJuResultDboDao {
 		JuResultDbo juResultDbo = JuResultDbo.fromByteArray(data);
 		return juResultDbo;
 	}
+
+	public void removeJuResultDboByGameId(String gameId) {
+		try {
+			memcachedClient.delete("juresult_" + gameId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

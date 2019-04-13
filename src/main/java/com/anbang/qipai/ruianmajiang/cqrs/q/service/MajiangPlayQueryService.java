@@ -106,7 +106,7 @@ public class MajiangPlayQueryService {
 
 		if (majiangGame.getState().name().equals(Playing.name)) {
 			PanActionFrame panActionFrame = readyForGameResult.getFirstActionFrame();
-			memcachedGameLatestPanActionFrameDboDao.save(majiangGame.getId(), panActionFrame.toByteArray(1024 * 4));
+			memcachedGameLatestPanActionFrameDboDao.save(majiangGame.getId(), panActionFrame.toByteArray(1024 * 8));
 			// 记录一条Frame，回放的时候要做
 			String gameId = majiangGame.getId();
 			int panNo = panActionFrame.getPanAfterAction().getNo();
@@ -133,7 +133,7 @@ public class MajiangPlayQueryService {
 
 		if (readyToNextPanResult.getFirstActionFrame() != null) {
 			memcachedGameLatestPanActionFrameDboDao.save(majiangGame.getId(),
-					readyToNextPanResult.getFirstActionFrame().toByteArray(1024 * 4));
+					readyToNextPanResult.getFirstActionFrame().toByteArray(1024 * 8));
 			// 记录一条Frame，回放的时候要做
 			String gameId = majiangGame.getId();
 			int panNo = readyToNextPanResult.getFirstActionFrame().getPanAfterAction().getNo();
@@ -142,7 +142,6 @@ public class MajiangPlayQueryService {
 			panActionFrameDbo.setPanActionFrame(readyToNextPanResult.getFirstActionFrame());
 			memcachedPanActionFrameDboDao.save(panActionFrameDbo);
 		}
-
 	}
 
 	public void action(MajiangActionResult majiangActionResult) throws Throwable {
@@ -154,7 +153,7 @@ public class MajiangPlayQueryService {
 
 		String gameId = majiangGame.getId();
 		PanActionFrame panActionFrame = majiangActionResult.getPanActionFrame();
-		memcachedGameLatestPanActionFrameDboDao.save(gameId, panActionFrame.toByteArray(1024 * 4));
+		memcachedGameLatestPanActionFrameDboDao.save(gameId, panActionFrame.toByteArray(1024 * 8));
 		// 记录一条Frame，回放的时候要做
 		int panNo = panActionFrame.getPanAfterAction().getNo();
 		int actionNo = panActionFrame.getNo();
@@ -166,13 +165,14 @@ public class MajiangPlayQueryService {
 		if (ruianMajiangPanResult != null) {
 			PanResultDbo panResultDbo = new PanResultDbo(gameId, ruianMajiangPanResult);
 			panResultDbo.setPanActionFrame(panActionFrame);
-			memcachedPanResultDboDao.save(panResultDbo);
 			executorService.submit(() -> {
 				panResultDboDao.save(panResultDbo);
 				try {
 					List<PanActionFrameDbo> frameList = memcachedPanActionFrameDboDao.findByGameIdAndActionNo(gameId,
 							panNo, actionNo);
 					panActionFrameDboDao.save(frameList);
+					// memcached不提供批量删除，如果循环删除则代价太高，这里通过key来覆盖，减少缓存
+					// memcachedPanActionFrameDboDao.removePanActionFrame(gameId, panNo, actionNo);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -180,12 +180,13 @@ public class MajiangPlayQueryService {
 			if (majiangActionResult.getJuResult() != null) {// 一切都结束了
 				// 要记录局结果
 				JuResultDbo juResultDbo = new JuResultDbo(gameId, panResultDbo, majiangActionResult.getJuResult());
-				memcachedJuResultDboDao.save(juResultDbo);
 				executorService.submit(() -> {
 					majiangGameDboDao.save(majiangGameDbo);
 					juResultDboDao.save(juResultDbo);
 				});
+				memcachedJuResultDboDao.save(juResultDbo);
 			}
+			memcachedPanResultDboDao.save(panResultDbo);
 		}
 	}
 

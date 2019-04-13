@@ -43,10 +43,11 @@ public class MemcachedGameFinishVoteDboDao {
 		return gameFinishVoteDbo;
 	}
 
-	public void removeGameFinishVoteDboByGameId(String gameId) throws Exception {
-		boolean operator = memcachedClient.delete("vote_" + gameId);
-		if (!operator) {
-			throw new MemcachedException();
+	public void removeGameFinishVoteDboByGameId(String gameId) {
+		try {
+			memcachedClient.delete("vote_" + gameId);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 

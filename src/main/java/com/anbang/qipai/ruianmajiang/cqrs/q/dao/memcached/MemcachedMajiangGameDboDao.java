@@ -49,4 +49,12 @@ public class MemcachedMajiangGameDboDao {
 			throw new MemcachedException();
 		}
 	}
+
+	public void removeMajiangGameDboByGameId(String gameId) {
+		try {
+			memcachedClient.delete("gameinfo_" + gameId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }
