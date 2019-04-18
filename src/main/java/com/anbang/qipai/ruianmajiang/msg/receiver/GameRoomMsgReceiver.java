@@ -62,10 +62,13 @@ public class GameRoomMsgReceiver {
 					} else {
 						MajiangGameValueObject gameValueObject = gameCmdService.finishGameImmediately(gameId);
 						majiangGameQueryService.finishGameImmediately(gameValueObject);
-						JuResultDbo juResultDbo = majiangPlayQueryService.findJuResultDbo(gameId);
-						MajiangHistoricalJuResult juResult = new MajiangHistoricalJuResult(juResultDbo, majiangGameDbo);
-						ruianMajiangResultMsgService.recordJuResult(juResult);
 						ruianMajiangGameMsgService.gameFinished(gameId);
+						JuResultDbo juResultDbo = majiangPlayQueryService.findJuResultDbo(gameId);
+						if (juResultDbo != null) {
+							MajiangHistoricalJuResult juResult = new MajiangHistoricalJuResult(juResultDbo,
+									majiangGameDbo);
+							ruianMajiangResultMsgService.recordJuResult(juResult);
+						}
 					}
 				} catch (Throwable e) {
 					e.printStackTrace();
