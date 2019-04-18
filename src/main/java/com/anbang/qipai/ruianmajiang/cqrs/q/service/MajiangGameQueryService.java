@@ -67,8 +67,8 @@ public class MajiangGameQueryService {
 		Map<String, PlayerInfo> playerInfoMap = new HashMap<>();
 		majiangGame.allPlayerIds().forEach((playerId) -> playerInfoMap.put(playerId, playerInfoDao.findById(playerId)));
 		MajiangGameDbo majiangGameDbo = new MajiangGameDbo(majiangGame, playerInfoMap);
+		majiangGameDboDao.save(majiangGameDbo);
 		memcachedMajiangGameDboDao.save(majiangGameDbo);
-
 	}
 
 	public void backToGame(String playerId, MajiangGameValueObject majiangGameValueObject) throws Throwable {

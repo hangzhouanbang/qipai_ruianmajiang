@@ -17,7 +17,7 @@ public class MemcachedGameFinishVoteDboDao {
 
 	public void save(GameFinishVoteDbo gameFinishVoteDbo) throws Throwable {
 		boolean operator = memcachedClient.set("vote_" + gameFinishVoteDbo.getGameId(), 0,
-				gameFinishVoteDbo.toByteArray(1024 * 1), 24 * 60 * 60 * 1000);
+				gameFinishVoteDbo.toByteArray(1024 * 1), 7 * 24 * 60 * 60 * 1000);
 		if (!operator) {
 			throw new MemcachedException();
 		}
@@ -28,7 +28,7 @@ public class MemcachedGameFinishVoteDboDao {
 		gameFinishVoteDbo.setGameId(gameId);
 		gameFinishVoteDbo.setVote(new GameFinishVoteValueObjectDbo(gameFinishVoteValueObject));
 		boolean operator = memcachedClient.set("vote_" + gameFinishVoteDbo.getGameId(), 0,
-				gameFinishVoteDbo.toByteArray(1024 * 1), 24 * 60 * 60 * 1000);
+				gameFinishVoteDbo.toByteArray(1024 * 1), 7 * 24 * 60 * 60 * 1000);
 		if (!operator) {
 			throw new MemcachedException();
 		}

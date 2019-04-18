@@ -166,6 +166,7 @@ public class MajiangPlayQueryService {
 			PanResultDbo panResultDbo = new PanResultDbo(gameId, ruianMajiangPanResult);
 			panResultDbo.setPanActionFrame(panActionFrame);
 			executorService.submit(() -> {
+				majiangGameDboDao.save(majiangGameDbo);
 				panResultDboDao.save(panResultDbo);
 				try {
 					List<PanActionFrameDbo> frameList = memcachedPanActionFrameDboDao.findByGameIdAndActionNo(gameId,

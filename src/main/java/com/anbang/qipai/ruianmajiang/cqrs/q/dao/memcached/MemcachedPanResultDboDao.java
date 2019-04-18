@@ -15,7 +15,7 @@ public class MemcachedPanResultDboDao {
 
 	public void save(PanResultDbo panResultDbo) throws Throwable {
 		boolean operator = memcachedClient.set("panresult_" + panResultDbo.getPanNo() + panResultDbo.getGameId(), 0,
-				panResultDbo.toByteArray(1024 * 16), 24 * 60 * 60 * 1000);
+				panResultDbo.toByteArray(1024 * 16), 2 * 24 * 60 * 60 * 1000);
 		if (!operator) {
 			throw new MemcachedException();
 		}

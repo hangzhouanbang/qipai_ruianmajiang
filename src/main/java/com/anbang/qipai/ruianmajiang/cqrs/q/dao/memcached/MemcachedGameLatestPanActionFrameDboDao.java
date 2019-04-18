@@ -34,7 +34,7 @@ public class MemcachedGameLatestPanActionFrameDboDao {
 		GameLatestPanActionFrameDbo dbo = new GameLatestPanActionFrameDbo();
 		dbo.setId(id);
 		dbo.setData(data);
-		boolean operator = memcachedClient.set("latest" + id, 0, gson.toJson(dbo), 24 * 60 * 60 * 1000);
+		boolean operator = memcachedClient.set("latest" + id, 0, gson.toJson(dbo), 7 * 24 * 60 * 60 * 1000);
 		if (!operator) {
 			throw new MemcachedException();
 		}
