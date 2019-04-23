@@ -160,6 +160,32 @@ public class GameController {
 	}
 
 	/**
+	 * 新一局游戏,游戏未开始时退出就不在房间内
+	 */
+	@RequestMapping(value = "/newgame_player_quit")
+	@ResponseBody
+	public CommonVO newgame_player_quit(String playerId, int difen, int taishu, int panshu, int renshu, boolean dapao) {
+		CommonVO vo = new CommonVO();
+		String newGameId = UUID.randomUUID().toString();
+		MajiangGameValueObject majiangGameValueObject = gameCmdService.newMajiangGamePlayerLeaveAndQuit(newGameId,
+				playerId, difen, taishu, panshu, renshu, dapao);
+		try {
+			majiangGameQueryService.newMajiangGame(majiangGameValueObject);
+		} catch (Throwable e) {
+			vo.setSuccess(false);
+			vo.setMsg(e.getClass().getName());
+			return vo;
+		}
+		String token = playerAuthService.newSessionForPlayer(playerId);
+		Map data = new HashMap();
+		data.put("gameId", newGameId);
+		data.put("token", token);
+		gameMsgService.newSessionForPlayer(playerId, token, newGameId);
+		vo.setData(data);
+		return vo;
+	}
+
+	/**
 	 * 加入游戏
 	 */
 	@RequestMapping(value = "/joingame")
@@ -627,6 +653,7 @@ public class GameController {
 		queryScopes.add(QueryScope.gameInfo);
 		if (readyForGameResult.getMajiangGame().getState().name().equals(Playing.name)) {
 			queryScopes.add(QueryScope.panForMe);
+			gameMsgService.start(readyForGameResult.getMajiangGame().getId());
 		}
 		data.put("queryScopes", queryScopes);
 		return vo;
