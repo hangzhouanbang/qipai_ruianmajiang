@@ -3,11 +3,13 @@ package com.anbang.qipai.ruianmajiang.cqrs.q.dbo;
 import java.nio.ByteBuffer;
 
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.anbang.qipai.ruianmajiang.cqrs.c.domain.RuianMajiangJuResult;
 import com.dml.majiang.serializer.ByteBufferAble;
 import com.dml.majiang.serializer.ByteBufferSerializer;
 
+@Document
 public class JuResultDbo implements ByteBufferAble {
 
 	private String id;
