@@ -953,10 +953,10 @@ public class GameController {
 			frameVOList.add(new PanActionFrameVO(frame.getPanActionFrame()));
 		}
 		try {
-			MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
+			MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboByIdForPlayBack(gameId);
 			majiangGameDbo.setPanNo(panNo);
 			GameVO gameVO = new GameVO(majiangGameDbo);
-			PanResultDbo panResultDbo = majiangPlayQueryService.findPanResultDbo(gameId, panNo);
+			PanResultDbo panResultDbo = majiangPlayQueryService.findPanResultDboForBackPlay(gameId, panNo);
 			data.put("panResult", new PanResultVO(panResultDbo, majiangGameDbo));
 			data.put("game", gameVO);
 			data.put("framelist", frameVOList);

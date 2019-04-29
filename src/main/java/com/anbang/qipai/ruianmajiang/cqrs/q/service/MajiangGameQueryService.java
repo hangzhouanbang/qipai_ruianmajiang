@@ -62,6 +62,10 @@ public class MajiangGameQueryService {
 		return memcachedMajiangGameDboDao.findById(gameId);
 	}
 
+	public MajiangGameDbo findMajiangGameDboByIdForPlayBack(String gameId) {
+		return majiangGameDboDao.findById(gameId);
+	}
+
 	public void newMajiangGame(MajiangGameValueObject majiangGame) throws Throwable {
 
 		Map<String, PlayerInfo> playerInfoMap = new HashMap<>();

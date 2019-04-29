@@ -192,7 +192,17 @@ public class MajiangPlayQueryService {
 	}
 
 	public PanResultDbo findPanResultDbo(String gameId, int panNo) throws Exception {
-		return memcachedPanResultDboDao.findByGameIdAndPanNo(gameId, panNo);
+		PanResultDbo panResultDbo = memcachedPanResultDboDao.findByGameIdAndPanNo(gameId, panNo);
+		int i = 0;
+		while (panResultDbo == null && i < 10) {
+			panResultDbo = panResultDboDao.findByGameIdAndPanNo(gameId, panNo);
+			i++;
+		}
+		return panResultDbo;
+	}
+
+	public PanResultDbo findPanResultDboForBackPlay(String gameId, int panNo) throws Exception {
+		return panResultDboDao.findByGameIdAndPanNo(gameId, panNo);
 	}
 
 	public JuResultDbo findJuResultDbo(String gameId) throws Exception {
